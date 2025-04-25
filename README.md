@@ -1,6 +1,6 @@
-# doko
+# DoKo
 
-Struktur Directory /lib
+Struktur Direktori
 
 ```
 /

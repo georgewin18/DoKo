@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:doko/components/bottom_navigation_bar.dart';
+import 'package:doko/pages/add_task.dart';
 
 void main() {
   runApp(const MyApp());
@@ -31,7 +32,7 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const MyHomePage(title: 'Doko')
+      home: const MyHomePage(title: 'Doko'),
     );
   }
 }
@@ -113,7 +114,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      
+
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
         tooltip: 'Increment',

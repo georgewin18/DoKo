@@ -1,21 +1,43 @@
+// import 'package:doko/components/calendar.dart';
+// import 'package:flutter/material.dart';
+// import 'package:intl/date_symbol_data_local.dart';
+
+// void main() async {
+//   // untuk inisialisasi tanggalan
+//   WidgetsFlutterBinding.ensureInitialized();
+//   await initializeDateFormatting('id_ID', null);
+
+//   runApp(
+//     MaterialApp(
+//       home: Scaffold(body: Center(child: Calendar(isHomepage: false))),
+//     ),
+//   );
+// }
+
+// contoh penggunaan calendar, di main harus di inisialisasi terlebih dahulu
+// guna mengetahui lokasi waktu yang digunakan, agar datanya sesuai dengan real time
+
 import 'package:doko/constants/colors.dart';
 import 'package:doko/models/task.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
-final class MonthYearScroller extends StatefulWidget {
-  const MonthYearScroller({super.key});
+final class Calendar extends StatefulWidget {
+  const Calendar({required this.isHomepage, super.key});
+
+  final bool isHomepage;
 
   @override
-  MonthYearScrollerState createState() => MonthYearScrollerState();
+  CalendarState createState() => CalendarState();
 }
 
-class MonthYearScrollerState extends State<MonthYearScroller> {
+class CalendarState extends State<Calendar> {
   PageController pageController = PageController(initialPage: 12);
-
   int currentIndex = 12;
   DateTime _currentDate = DateTime.now();
+  DateTime _selectedDate = DateTime.now();
+
   List<Task> _events = [];
 
   @override
@@ -45,7 +67,7 @@ class MonthYearScrollerState extends State<MonthYearScroller> {
       // ),
       Task(
         title: 'Deadline Project',
-        date: DateTime(2025, 4, 30),
+        date: DateTime(2025, 5, 01),
         endTime: TimeOfDay(hour: 17, minute: 0),
         isEvent: false,
         // status: TaskStatus.dueToday,
@@ -98,11 +120,27 @@ class MonthYearScrollerState extends State<MonthYearScroller> {
   Widget _navButton(IconData icon, VoidCallback onPressed) {
     return Container(
       decoration: BoxDecoration(
-        color: white.withAlpha(51),
+        color: widget.isHomepage ? white.withAlpha(51) : white,
         shape: BoxShape.circle,
+        boxShadow: [
+          if (!widget.isHomepage)
+            BoxShadow(
+              color: gray3.withAlpha(51),
+              offset: Offset(0, 4),
+              blurRadius: 4,
+            ),
+        ],
       ),
-      child: IconButton(icon: Icon(icon), color: white, onPressed: onPressed),
+      child: IconButton(
+        icon: Icon(icon),
+        color: widget.isHomepage ? white : black,
+        onPressed: onPressed,
+      ),
     );
+  }
+
+  bool isSameDate(DateTime a, DateTime b) {
+    return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 
   @override
@@ -113,7 +151,7 @@ class MonthYearScrollerState extends State<MonthYearScroller> {
         width: 500,
         height: 570,
         decoration: BoxDecoration(
-          color: themeColors[6],
+          // color: themeColors[6],
           borderRadius: BorderRadius.circular(10),
         ),
         child: LayoutBuilder(
@@ -154,7 +192,7 @@ class MonthYearScrollerState extends State<MonthYearScroller> {
                                 style: TextStyle(
                                   fontSize: monthFontSize,
                                   fontWeight: FontWeight.bold,
-                                  color: white,
+                                  color: widget.isHomepage ? white : black,
                                 ),
                               ),
                               Text(
@@ -162,7 +200,7 @@ class MonthYearScrollerState extends State<MonthYearScroller> {
                                 style: TextStyle(
                                   fontSize: yearFontSize,
                                   fontWeight: FontWeight.bold,
-                                  color: white,
+                                  color: widget.isHomepage ? white : black,
                                 ),
                               ),
                             ],
@@ -189,6 +227,7 @@ class MonthYearScrollerState extends State<MonthYearScroller> {
                           DateTime.now().year,
                           DateTime.now().month + (index - 12),
                         );
+                        _selectedDate = DateTime.now();
                       });
                     },
                     itemBuilder: (context, index) {
@@ -200,7 +239,7 @@ class MonthYearScrollerState extends State<MonthYearScroller> {
                       final days = _getWeekdayNames('en');
 
                       return Container(
-                        margin: EdgeInsets.symmetric(horizontal: 5),
+                        margin: EdgeInsets.all(5),
                         decoration: BoxDecoration(
                           color: white,
                           borderRadius: BorderRadius.circular(8),
@@ -212,109 +251,137 @@ class MonthYearScrollerState extends State<MonthYearScroller> {
                             ),
                           ],
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 15),
-                          child: Column(
-                            children: [
-                              GridView.count(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: width * 0.015,
-                                ),
-                                crossAxisCount: 7,
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                childAspectRatio: 2.5,
-                                children:
-                                    days
-                                        .map(
-                                          (day) => Center(
-                                            child: Text(
-                                              day,
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: dayFontSize,
-                                                color: gray2,
-                                              ),
+                        child: Column(
+                          children: [
+                            GridView.count(
+                              padding: EdgeInsets.only(
+                                left: width * 0.015,
+                                right: width * 0.015,
+                                top: width * 0.03,
+                              ),
+                              crossAxisCount: 7,
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              childAspectRatio: 2.5,
+                              children:
+                                  days
+                                      .map(
+                                        (day) => Center(
+                                          child: Text(
+                                            day,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: dayFontSize,
+                                              color: gray2,
                                             ),
                                           ),
-                                        )
-                                        .toList(),
-                              ),
-                              Expanded(
-                                child: GridView.builder(
-                                  padding: EdgeInsets.all(width * 0.015),
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: 7,
-                                        crossAxisSpacing: 0,
-                                        mainAxisSpacing: 0,
-                                      ),
-                                  itemCount: calendarDays.length,
-                                  itemBuilder: (context, index) {
-                                    final day = calendarDays[index];
-                                    final isCurrentMonth =
-                                        day.month == _currentDate.month;
-                                    final isToday =
-                                        day.day == DateTime.now().day &&
-                                        day.month == DateTime.now().month &&
-                                        day.year == DateTime.now().year;
+                                        ),
+                                      )
+                                      .toList(),
+                            ),
+                            Expanded(
+                              child: GridView.builder(
+                                padding: EdgeInsets.only(
+                                  left: width * 0.015,
+                                  top: width * 0.015,
+                                  right: width * 0.015,
+                                ),
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 7,
+                                      crossAxisSpacing: 0,
+                                      mainAxisSpacing: 0,
+                                    ),
+                                itemCount: calendarDays.length,
+                                itemBuilder: (context, index) {
+                                  final day = calendarDays[index];
+                                  final isCurrentMonth =
+                                      day.month == _currentDate.month;
+                                  DateTime today = DateTime.now();
+                                  DateTime normalizedToday = DateTime(
+                                    today.year,
+                                    today.month,
+                                    today.day,
+                                  );
+                                  bool isToday = isSameDate(
+                                    day,
+                                    DateTime.now(),
+                                  );
+                                  bool isSelected = isSameDate(
+                                    day,
+                                    _selectedDate,
+                                  );
 
-                                    return GestureDetector(
-                                      onTap: () => _showTasksOnDate(day),
-                                      child: Stack(
-                                        alignment: Alignment.center,
-                                        children: [
-                                          Container(
-                                            padding: EdgeInsets.all(
-                                              width * 0.015,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color:
-                                                  isToday
-                                                      ? themeColors[6]
-                                                      : Colors.transparent,
-                                              shape: BoxShape.circle,
-                                            ),
-                                            child: MouseRegion(
-                                              cursor: SystemMouseCursors.click,
-                                              child: Text(
-                                                '${day.day}',
-                                                style: TextStyle(
-                                                  fontSize: dayFontSize,
-                                                  fontWeight: FontWeight.bold,
-                                                  color:
-                                                      isToday
-                                                          ? white
-                                                          : isCurrentMonth
-                                                          ? (day.compareTo(
-                                                                    DateTime.now(),
-                                                                  ) <
-                                                                  0
-                                                              ? gray3.withAlpha(
-                                                                127,
-                                                              )
-                                                              : black)
-                                                          : gray3.withAlpha(35),
-                                                ),
+                                  return GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedDate = day;
+                                      });
+                                      _showTasksOnDate(day);
+                                    },
+
+                                    child: Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        Container(
+                                          alignment: Alignment.center,
+                                          width: width * 0.07,
+                                          height: width * 0.07,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color:
+                                                isSelected
+                                                    ? themeColors[6]
+                                                    : Colors.transparent,
+                                            border:
+                                                !isSelected && isToday
+                                                    ? Border.all(
+                                                      color: themeColors[6],
+                                                      width: 2,
+                                                    )
+                                                    : null,
+                                          ),
+                                          child: MouseRegion(
+                                            cursor: SystemMouseCursors.click,
+                                            child: Text(
+                                              '${day.day}',
+                                              style: TextStyle(
+                                                fontSize: dayFontSize,
+                                                fontWeight: FontWeight.bold,
+                                                color:
+                                                    isSelected
+                                                        ? Colors.white
+                                                        : isToday
+                                                        ? themeColors[6]
+                                                        : isCurrentMonth
+                                                        ? (day.compareTo(
+                                                                  normalizedToday,
+                                                                ) <
+                                                                0
+                                                            ? gray3.withAlpha(
+                                                              51,
+                                                            )
+                                                            : black)
+                                                        : gray3.withAlpha(35),
                                               ),
                                             ),
                                           ),
-                                          if (_getTasksOnDate(day).isNotEmpty)
-                                            Positioned(
-                                              bottom: width * 0,
-                                              child: _buildTaskIndicators(
-                                                day,
-                                                width,
-                                              ),
+                                        ),
+                                        if (_getTasksOnDate(day).isNotEmpty)
+                                          Positioned(
+                                            bottom: width * 0.01,
+                                            child: _buildTaskIndicators(
+                                              day,
+                                              width,
                                             ),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                ),
+                                          ),
+                                      ],
+                                    ),
+                                  );
+                                },
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       );
                     },
@@ -333,7 +400,7 @@ class MonthYearScrollerState extends State<MonthYearScroller> {
     indicators.add(
       Container(
         width: width * 0.07,
-        height: width * 0.012,
+        height: width * 0.01,
         margin: EdgeInsets.all(2),
         decoration: BoxDecoration(
           color: themeColors[6],

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:doko/components/calendar.dart';
 import 'package:doko/components/bottom_navigation_bar.dart';
 import 'package:doko/pages/add_task.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() {
   runApp(const MyApp());
@@ -9,7 +11,6 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

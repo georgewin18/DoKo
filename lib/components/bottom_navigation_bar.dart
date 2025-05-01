@@ -1,11 +1,11 @@
 import 'package:doko/main.dart';
-import 'package:doko/pages/calender_screen.dart';
-import 'package:doko/pages/group_screen.dart';
-import 'package:doko/pages/task_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar.dart';
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar_item.dart';
+// import 'package:doko/pages/calender_screen.dart';
+// import 'package:doko/pages/group_screen.dart';
+// import 'package:doko/pages/task_screen.dart';
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({super.key});
@@ -19,8 +19,7 @@ class BottomNavBarState extends State<BottomNavBar> {
 
   final List<Widget> _pages = [
     MyHomePage(title: 'Doko'),
-    GroupScreen(),
-
+    // GroupScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -34,9 +33,9 @@ class BottomNavBarState extends State<BottomNavBar> {
     return Scaffold(
       body: _pages[_selectedIndex],
       bottomNavigationBar: Theme(
-        data: Theme.of(context).copyWith(
-          iconTheme: IconThemeData(color: Colors.white)
-        ),
+        data: Theme.of(
+          context,
+        ).copyWith(iconTheme: IconThemeData(color: Colors.white)),
         child: CurvedNavigationBar(
           color: const Color(0xFF4D107F),
           backgroundColor: Colors.transparent,
@@ -55,7 +54,10 @@ class BottomNavBarState extends State<BottomNavBar> {
             CurvedNavigationBarItem(
               child: Icon(
                 LucideIcons.group,
-                color: _selectedIndex == 1 ? const Color(0xFF4D107F) : Colors.white,
+                color:
+                    _selectedIndex == 1
+                        ? const Color(0xFF4D107F)
+                        : Colors.white,
               ),
               label: 'Group',
               labelStyle: TextStyle(color: Colors.white), // Label tetap putih

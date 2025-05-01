@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class CalendarPage extends StatelessWidget {
+  const CalendarPage({super.key});
+
   void _showAddTaskBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -212,7 +214,7 @@ class CalendarPage extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.3),
+                  color: Colors.grey.withAlpha(77),
                   spreadRadius: 2,
                   blurRadius: 5,
                   offset: Offset(0, 3), // bayangan kecil

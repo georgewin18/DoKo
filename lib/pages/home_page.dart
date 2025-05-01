@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -11,7 +13,10 @@ class HomePage extends StatelessWidget {
           children: [
             // Header
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 12.0,
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -20,7 +25,11 @@ class HomePage extends StatelessWidget {
                     children: const [
                       Text(
                         "Hello, John!",
-                        style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       SizedBox(height: 4),
                       Text(
@@ -62,7 +71,10 @@ class HomePage extends StatelessWidget {
                 child: Column(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 12.0,
+                      ),
                       child: Column(
                         children: [
                           Row(
@@ -71,25 +83,37 @@ class HomePage extends StatelessWidget {
                               Icon(Icons.arrow_back_ios, size: 16),
                               Text(
                                 "April",
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                               Icon(Icons.arrow_forward_ios, size: 16),
                             ],
                           ),
                           SizedBox(height: 4),
-                          Text("2025", style: TextStyle(fontSize: 14, color: Colors.grey)),
+                          Text(
+                            "2025",
+                            style: TextStyle(fontSize: 14, color: Colors.grey),
+                          ),
                           SizedBox(height: 12),
                           buildCalendar(),
                         ],
                       ),
                     ),
                     const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 8.0,
+                      ),
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
                           "Activity List",
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
@@ -183,7 +207,10 @@ class HomePage extends StatelessWidget {
       child: ListTile(
         title: const Text(
           "Meeting in the centre",
-          style: TextStyle(color: Color(0xFF7A1FA2), fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: Color(0xFF7A1FA2),
+            fontWeight: FontWeight.bold,
+          ),
         ),
         subtitle: const Text("Today, 9.00 AM"),
         trailing: const Text(

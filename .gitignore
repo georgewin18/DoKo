@@ -1,2 +1,4 @@
 build
 .dart_tool
+lib/main.dart
+pubspec.lock

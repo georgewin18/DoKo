@@ -44,7 +44,7 @@ class TaskDbHelper {
         task_reminder: e[_taskReminder] as String, 
         date: e[_taskDate] as String, 
         time: e[_taskTime] as String,
-        progress: e[_taskProgress] as int? ?? 0
+        progress: e[_taskProgress] as int? ?? 0,
       ),
     ).toList();
     return tasks;

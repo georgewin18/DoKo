@@ -36,12 +36,14 @@ class DBProvider {
 
     await db.execute('''
       CREATE TABLE task (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        group_id INTEGER NOT NULL,
-        title TEXT NOT NULL,
-        description TEXT,
-        status TEXT NOT NULL,
-        created_at TEXT NOT NULL,
+        id INTEGER PRIMARY KEY AUTO INCREMENT,
+        name TEXT NOT NULL,
+        desc TEXT,
+        reminder TEXT NOT NULL,
+        date TEXT NOT NULL,
+        time TEXT NOT NULL,
+        progress INTEGER,
+        group_id INTEGER,
         FOREIGN KEY (group_id) REFERENCES task_group(id) ON DELETE CASCADE
       )
     ''');

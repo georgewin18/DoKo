@@ -227,10 +227,26 @@ class DetailGroupPage extends StatelessWidget {
                                   (context) => EditTaskBottomSheet(task: task),
                             );
                           },
-                          child: TaskCard(
-                            title: task.task_name,
-                            description: task.task_desc ?? '',
-                            color: color,
+                          child: GestureDetector(
+                            onTap: () {
+                              showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(20),
+                                  ),
+                                ),
+                                builder:
+                                    (context) =>
+                                        EditTaskBottomSheet(task: task),
+                              );
+                            },
+                            child: TaskCard(
+                              title: task.task_name,
+                              description: task.task_desc ?? '',
+                              color: color,
+                            ),
                           ),
                         ),
                       ),

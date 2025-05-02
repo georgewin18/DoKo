@@ -1,5 +1,6 @@
 import 'package:doko/components/add_task_bottom_sheet.dart';
 import 'package:doko/components/task_card.dart';
+import 'package:doko/components/edit_task_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import '../models/task_model.dart';
 
@@ -212,10 +213,25 @@ class DetailGroupPage extends StatelessWidget {
                         ),
                       ),
                       Expanded(
-                        child: TaskCard(
-                          title: task.task_name,
-                          description: task.task_desc ?? '',
-                          color: color,
+                        child: GestureDetector(
+                          onTap: () {
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(20),
+                                ),
+                              ),
+                              builder:
+                                  (context) => EditTaskBottomSheet(task: task),
+                            );
+                          },
+                          child: TaskCard(
+                            title: task.task_name,
+                            description: task.task_desc ?? '',
+                            color: color,
+                          ),
                         ),
                       ),
                     ],

@@ -1,5 +1,7 @@
+import 'package:doko/components/add_task_bottom_sheet.dart';
 import 'package:doko/components/task_card.dart';
 import 'package:flutter/material.dart';
+import '../models/task_model.dart';
 
 class DetailGroupPage extends StatelessWidget {
   final List<Color> cardColors = [
@@ -9,36 +11,55 @@ class DetailGroupPage extends StatelessWidget {
     Color(0xFFE045B1),
   ];
 
-  final List<Map<String, String>> dummyTasks = [
-    {
-      'time': '08:00',
-      'title': 'Tugas 6: Algoritma Genetika',
-      'desc':
-          'Menyesuaikan PPT Menyesuaikan PPT  Menyesuaikan PPT  Menyesuaikan PPT  Menyesuaikan PPT Menyesuaikan PPT  Menyesuaikan PPT  Menyesuaikan PPT ',
-    },
-    {
-      'time': '09:00',
-      'title': 'Tugas 6: Algoritma Genetika',
-      'desc': 'Menyesuaikan PPT',
-    },
-    {
-      'time': '10:00',
-      'title': 'Tugas 6: Algoritma Genetika',
-      'desc': 'Menyesuaikan PPT',
-    },
-    {
-      'time': '11:00',
-      'title': 'Tugas 6: Algoritma Genetika',
-      'desc': 'Menyesuaikan PPT',
-    },
-    {
-      'time': '07:00',
-      'title': 'Tugas 6: Algoritma Genetika',
-      'desc':
-          'Menyesuaikan PPT Menyesuaikan PPT  Menyesuaikan PPT  Menyesuaikan PPT  Menyesuaikan PPT Menyesuaikan PPT  Menyesuaikan PPT  Menyesuaikan PPT ',
-    },
+  final List<Task> dummyTasks = [
+    Task(
+      id: 1,
+      task_name: 'Tugas 6: Algoritma Genetika',
+      task_desc:
+          'Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT',
+      task_reminder: '1 day before',
+      date: '2025-05-04',
+      time: '08:00',
+      progress: 30,
+    ),
+    Task(
+      id: 2,
+      task_name: 'Tugas 6: Algoritma Genetika',
+      task_desc: 'Menyesuaikan PPT',
+      task_reminder: '2 days before',
+      date: '2025-05-17',
+      time: '09:00',
+      progress: 50,
+    ),
+    Task(
+      id: 3,
+      task_name: 'Tugas 6: Algoritma Genetika',
+      task_desc: 'Menyesuaikan PPT',
+      task_reminder: '1 day before',
+      date: '2025-05-08',
+      time: '10:00',
+      progress: 20,
+    ),
+    Task(
+      id: 4,
+      task_name: 'Tugas 6: Algoritma Genetika',
+      task_desc: 'Menyesuaikan PPT',
+      task_reminder: '3 days before',
+      date: '2025-05-20',
+      time: '11:00',
+      progress: 80,
+    ),
+    Task(
+      id: 5,
+      task_name: 'Tugas 6: Algoritma Genetika',
+      task_desc:
+          'Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT',
+      task_reminder: '2 days before',
+      date: '2025-05-13',
+      time: '07:00',
+      progress: 65,
+    ),
   ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,9 +89,7 @@ class DetailGroupPage extends StatelessWidget {
                         Navigator.pop(context);
                       },
                       child: Padding(
-                        padding: EdgeInsets.only(
-                          top: 8,
-                        ),
+                        padding: EdgeInsets.only(top: 8),
                         child: Icon(
                           Icons.chevron_left,
                           color: Colors.white,
@@ -99,16 +118,13 @@ class DetailGroupPage extends StatelessWidget {
                             ),
                           ),
                         ),
-                        const SizedBox(
-                          width: 8,
-                        ),
+                        const SizedBox(width: 8),
                         GestureDetector(
                           onTap: () {
                             // Edit Logic
                           },
                           child: const Icon(
-                            Icons
-                                .edit,
+                            Icons.edit,
                             color: Colors.white70,
                             size: 16,
                           ),
@@ -144,7 +160,18 @@ class DetailGroupPage extends StatelessWidget {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(20),
+                        ),
+                      ),
+                      builder: (context) => const AddTaskBottomSheet(),
+                    );
+                  },
                   child: CircleAvatar(
                     radius: 14,
                     backgroundColor: const Color(0xFF7E1AD1),
@@ -163,9 +190,7 @@ class DetailGroupPage extends StatelessWidget {
           // Scrollable Task List
           Flexible(
             child: ListView.builder(
-              padding: EdgeInsets.only(
-                top: 15,
-              ), 
+              padding: EdgeInsets.only(top: 15),
               itemCount: dummyTasks.length,
               itemBuilder: (context, index) {
                 final task = dummyTasks[index];
@@ -179,7 +204,7 @@ class DetailGroupPage extends StatelessWidget {
                         width: 60,
                         padding: EdgeInsets.only(top: 10),
                         child: Text(
-                          task['time'] ?? '',
+                          task.time,
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
@@ -188,8 +213,8 @@ class DetailGroupPage extends StatelessWidget {
                       ),
                       Expanded(
                         child: TaskCard(
-                          title: task['title'] ?? '',
-                          description: task['desc'] ?? '',
+                          title: task.task_name,
+                          description: task.task_desc ?? '',
                           color: color,
                         ),
                       ),

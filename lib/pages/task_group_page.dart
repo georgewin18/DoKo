@@ -1,5 +1,6 @@
 import 'package:doko/components/task_group_card.dart';
 import 'package:doko/models/task_group_model.dart';
+import 'package:doko/pages/detail_group_page.dart';
 import 'package:flutter/material.dart';
 
 class TaskGroupPage extends StatefulWidget {
@@ -198,14 +199,33 @@ class _TaskGroupPageState extends State<TaskGroupPage> {
                     itemCount: displayedGroups.length,
                     itemBuilder: (context, index) {
                       final group = displayedGroups[index];
-                      return TaskGroupCard(
-                        name: group.name,
-                        description: group.description ?? '',
-                        notStartedCount: group.notStartedCount,
-                        ongoingCount: group.ongoingCount,
-                        completedCount: group.completedCount,
-                        createdAt: DateTime.parse(group.createdAt),
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (context) => DetailGroupPage(group: group),
+                            ),
+                          );
+                        },
+                        child: TaskGroupCard(
+                          name: group.name,
+                          description: group.description ?? '',
+                          notStartedCount: group.notStartedCount,
+                          ongoingCount: group.ongoingCount,
+                          completedCount: group.completedCount,
+                          createdAt: DateTime.parse(group.createdAt),
+                        ),
                       );
+                      // return TaskGroupCard(
+                      //   name: group.name,
+                      //   description: group.description ?? '',
+                      //   notStartedCount: group.notStartedCount,
+                      //   ongoingCount: group.ongoingCount,
+                      //   completedCount: group.completedCount,
+                      //   createdAt: DateTime.parse(group.createdAt),
+                      // );
                     },
                     separatorBuilder: (context, index) => SizedBox(height: 16),
                   ),

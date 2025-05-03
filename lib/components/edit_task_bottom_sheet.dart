@@ -152,7 +152,7 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   widget.task.task_name,
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),

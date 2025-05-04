@@ -1,19 +1,3 @@
-// import 'package:doko/components/calendar.dart';
-// import 'package:flutter/material.dart';
-// import 'package:intl/date_symbol_data_local.dart';
-
-// void main() async {
-//   // untuk inisialisasi tanggalan
-//   WidgetsFlutterBinding.ensureInitialized();
-//   await initializeDateFormatting('id_ID', null);
-
-//   runApp(
-//     MaterialApp(
-//       home: Scaffold(body: Center(child: Calendar(isHomepage: false))),
-//     ),
-//   );
-// }
-
 // contoh penggunaan calendar, di main harus di inisialisasi terlebih dahulu
 // guna mengetahui lokasi waktu yang digunakan, agar datanya sesuai dengan real time
 
@@ -390,7 +374,7 @@ class CalendarState extends State<Calendar> {
                                       setState(() {
                                         _selectedDate = day;
                                       });
-                                      _showTasksOnDate(day);
+                                      print(_showTasksOnDate(day));
                                     },
 
                                     child: Stack(
@@ -489,29 +473,9 @@ class CalendarState extends State<Calendar> {
     );
   }
 
-  void _showTasksOnDate(DateTime date) {
-    showModalBottomSheet(
-      context: context,
-      builder:
-          (_) => StatefulBuilder(
-            builder:
-                (context, setModalState) => Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    ListTile(
-                      title: Text(
-                        'Task tanggal ${DateFormat('dd-MM-yyy').format(date)}',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ],
-                ),
-          ),
-      isScrollControlled: true,
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.7,
-      ),
-    );
+  String _showTasksOnDate(DateTime date) {
+    String dateConverted = DateFormat('dd-MM-yyy').format(date);
+    return dateConverted;
   }
 
   List<Task> _getTasksOnDate(DateTime date) {

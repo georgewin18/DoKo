@@ -515,14 +515,13 @@ class CalendarState extends State<Calendar> {
   }
 
   List<Task> _getTasksOnDate(DateTime date) {
-    return _events
-        .where(
-          (task) =>
-              !task.isEvent &&
-              task.date.year == date.year &&
-              task.date.month == date.month &&
-              task.date.day == date.day,
-        )
-        .toList();
+    return _events.where((task) {
+      if (task.isEvent && task.endDate != null) {
+        return date.isAfter(task.date.subtract(const Duration(days: 1))) &&
+            date.isBefore(task.endDate!.add(const Duration(days: 1)));
+      } else {
+        return isSameDate(task.date, date);
+      }
+    }).toList();
   }
 }

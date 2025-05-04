@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:doko/components/edit_task_bottom_sheet.dart';
+import '../models/task_model.dart';
 
 class TaskCard extends StatelessWidget {
+  final Task task;
   final String title;
   final String description;
   final Color color;
 
   const TaskCard({
+    required this.task,
     required this.title,
     required this.description,
     required this.color,
@@ -20,7 +23,7 @@ class TaskCard extends StatelessWidget {
         showModalBottomSheet(
           context: context,
           isScrollControlled: true,
-          builder: (context) => const EditTaskBottomSheet(),
+          builder: (context) => EditTaskBottomSheet(task: task),
         );
       },
       child: Container(

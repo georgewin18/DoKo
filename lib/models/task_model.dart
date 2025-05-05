@@ -6,6 +6,7 @@ class Task {
   final String date;
   final String time;
   final int progress;
+  final int task_group_id;
 
   Task({
     this.id,
@@ -14,6 +15,7 @@ class Task {
     required this.task_reminder,
     required this.date,
     required this.time,
+    required this.task_group_id,
     this.progress = 0,
   });
 
@@ -26,6 +28,7 @@ class Task {
       date: map['date'] ?? '',
       time: map['time'] ?? '',
       progress: map['progress'] ?? 0,
+      task_group_id: map['task_group_id'],
     );
   }
 
@@ -38,6 +41,7 @@ class Task {
       'date': date,
       'time': time,
       'progress': progress,
+      'task_group_id': task_group_id,
     };
   }
 }

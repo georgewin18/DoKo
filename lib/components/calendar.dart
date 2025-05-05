@@ -1,105 +1,20 @@
-// import 'package:doko/components/calendar.dart';
-// import 'package:flutter/material.dart';
-// import 'package:intl/date_symbol_data_local.dart';
-
-// void main() async {
-//   // untuk inisialisasi tanggalan
-//   WidgetsFlutterBinding.ensureInitialized();
-//   await initializeDateFormatting('id_ID', null);
-
-//   runApp(
-//     MaterialApp(
-//       home: Scaffold(body: Center(child: Calendar(isHomepage: false))),
-//     ),
-//   );
-// }
-
-// contoh penggunaan calendar, di main harus di inisialisasi terlebih dahulu
-// guna mengetahui lokasi waktu yang digunakan, agar datanya sesuai dengan real time
-
 import 'package:doko/constants/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
-
-// ini bisa nanti di comment
-class Task {
-  String title;
-  DateTime date; // tanggal
-  TimeOfDay? startTime; // Start time opsional buat event
-  TimeOfDay? endTime; // End time opsional buat event
-  DateTime? endDate; // End date untuk tenggat
-  bool isEvent; // true = event, false = task,
-  // TaskPriority priority;
-  // TaskStatus status; //isinya warna jadi nanti ada pengecekannya
-  bool
-  isCompleted; // warna hijau dan nanti akan ada pembatas untuk tugas yang sudah selesai.
-
-  Task({
-    required this.title,
-    required this.date,
-    this.startTime,
-    this.endTime,
-    this.endDate,
-    required this.isEvent,
-    // this.priority = TaskPriority.normal,
-    // this.status = TaskStatus.notStarted,
-    this.isCompleted = false,
-  });
-
-  // TaskStatus calculateStatus(DateTime now) {
-  //   if (isEvent) return TaskStatus.event;
-  //   if (isCompleted) return TaskStatus.completed;
-  //   if (priority == TaskPriority.priority) return TaskStatus.priority;
-
-  //   final taskDateTime = DateTime(
-  //     date.year,
-  //     date.month,
-  //     date.day,
-  //     endTime?.hour ?? 23,
-  //     endTime?.minute ?? 59,
-  //   );
-
-  //   if (now.isAfter(taskDateTime)) return TaskStatus.overdue;
-
-  //   final isSameDay =
-  //       now.year == date.year && now.month == date.month && now.day == date.day;
-
-  //   if (isSameDay) return TaskStatus.dueToday;
-
-  //   return TaskStatus.notStarted;
-  // }
-  // Color getStatusColor() {
-  //   switch (status) {
-  //     case TaskStatus.overdue:
-  //       return statusColor[0];
-  //     case TaskStatus.ongoing:
-  //       return statusColor[1];
-  //     case TaskStatus.notStarted:
-  //       return statusColor[2];
-  //     case TaskStatus.dueToday:
-  //       return statusColor[3];
-  //     case TaskStatus.completed:
-  //       return statusColor[4];
-  //     case TaskStatus.event:
-  //       return statusColor[5];
-  //     case TaskStatus.priority:
-  //       return statusColor[6];
-  //   }
-  // }
-
-  // // Update status based on current time
-  // void updateStatus() {
-  //   if (!isEvent) {
-  //     status = calculateStatus(DateTime.now());
-  //   }
-  // }
-}
+import 'package:doko/models/task_model.dart';
 
 final class Calendar extends StatefulWidget {
-  const Calendar({required this.isHomepage, super.key});
+  const Calendar({
+    super.key,
+    required this.isHomepage,
+    required this.onDateSelected,
+    this.tasks = const [],
+  });
 
   final bool isHomepage;
+  final List<Task> tasks;
+  final ValueChanged<String> onDateSelected;
 
   @override
   CalendarState createState() => CalendarState();
@@ -111,52 +26,9 @@ class CalendarState extends State<Calendar> {
   DateTime _currentDate = DateTime.now();
   DateTime _selectedDate = DateTime.now();
 
-  List<Task> _events = [];
-
   @override
   void initState() {
     super.initState();
-    _dummy(); // tolong dihilangkan nanti
-  }
-
-  void _dummy() {
-    _events = [
-      // Task(
-      //   title: 'Meeting Project',
-      //   date: DateTime(2025, 4, 28),
-      //   endTime: TimeOfDay(hour: 16, minute: 30),
-      //   isEvent: false,
-      //   // priority: TaskPriority.priority,
-      //   // status: TaskStatus.priority,
-      // ),
-      // Task(
-      //   title: 'Liburan ke Bali',
-      //   date: DateTime(2025, 4, 21),
-      //   startTime: TimeOfDay(hour: 9, minute: 0),
-      //   endTime: TimeOfDay(hour: 18, minute: 0),
-      //   endDate: DateTime(2025, 4, 28),
-      //   isEvent: true,
-      //   status: TaskStatus.event,
-      // ),
-      Task(
-        title: 'Deadline Project',
-        date: DateTime(2025, 5, 01),
-        endTime: TimeOfDay(hour: 17, minute: 0),
-        isEvent: false,
-        // status: TaskStatus.dueToday,
-      ),
-      // Task(
-      //   title: 'Late Task',
-      //   date: DateTime(2025, 4, 20),
-      //   endTime: TimeOfDay(hour: 23, minute: 59),
-      //   isEvent: false,
-      //   status: TaskStatus.overdue,
-      // ),
-    ];
-
-    // for (var event in _events) {
-    //   event.updateStatus();
-    // }
   }
 
   List<DateTime> _generateCalendarDays(DateTime date) {
@@ -389,8 +261,10 @@ class CalendarState extends State<Calendar> {
                                     onTap: () {
                                       setState(() {
                                         _selectedDate = day;
+                                        widget.onDateSelected(
+                                          DateFormat('yyyy-MM-dd').format(day),
+                                        );
                                       });
-                                      _showTasksOnDate(day);
                                     },
 
                                     child: Stack(
@@ -440,7 +314,7 @@ class CalendarState extends State<Calendar> {
                                             ),
                                           ),
                                         ),
-                                        if (_getTasksOnDate(day).isNotEmpty)
+                                        if (_hasTaskOnDate(day))
                                           Positioned(
                                             bottom: width * 0.01,
                                             child: _buildTaskIndicators(
@@ -489,39 +363,12 @@ class CalendarState extends State<Calendar> {
     );
   }
 
-  void _showTasksOnDate(DateTime date) {
-    showModalBottomSheet(
-      context: context,
-      builder:
-          (_) => StatefulBuilder(
-            builder:
-                (context, setModalState) => Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    ListTile(
-                      title: Text(
-                        'Task tanggal ${DateFormat('dd-MM-yyy').format(date)}',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ],
-                ),
-          ),
-      isScrollControlled: true,
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.7,
-      ),
-    );
-  }
-
-  List<Task> _getTasksOnDate(DateTime date) {
-    return _events.where((task) {
-      if (task.isEvent && task.endDate != null) {
-        return date.isAfter(task.date.subtract(const Duration(days: 1))) &&
-            date.isBefore(task.endDate!.add(const Duration(days: 1)));
-      } else {
-        return isSameDate(task.date, date);
-      }
-    }).toList();
+  bool _hasTaskOnDate(DateTime date) {
+    return widget.tasks.any((task) {
+      final taskDate = DateTime.parse(task.date);
+      return taskDate.year == date.year &&
+          taskDate.month == date.month &&
+          taskDate.day == date.day;
+    });
   }
 }

@@ -14,12 +14,14 @@ class AddGroupPage extends StatefulWidget {
 class AddGroupPageState extends State<AddGroupPage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   int _characterCount = 0;
 
   @override
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -145,8 +147,10 @@ class AddGroupPageState extends State<AddGroupPage> {
                       child: Column(
                         children: [
                           Scrollbar(
+                            controller: _scrollController,
                             thumbVisibility: true,
-                            child: Expanded(
+                            child: SingleChildScrollView(
+                              controller: _scrollController,
                               child: TextField(
                                 controller: _descriptionController,
                                 maxLines: null,

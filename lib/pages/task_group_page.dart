@@ -1,5 +1,8 @@
 import 'package:doko/components/task_group_card.dart';
+import 'package:doko/db/db_provider.dart';
+import 'package:doko/db/task_group_db_helper.dart';
 import 'package:doko/models/task_group_model.dart';
+import 'package:doko/pages/add_group_page.dart';
 import 'package:doko/pages/detail_group_page.dart';
 import 'package:flutter/material.dart';
 
@@ -11,8 +14,21 @@ class TaskGroupPage extends StatefulWidget {
 }
 
 class _TaskGroupPageState extends State<TaskGroupPage> {
-  List<TaskGroup> displayedGroups = List.from(taskGroups);
+  List<TaskGroup> displayedGroups = [];
   String sortBy = 'name';
+
+  @override
+  void initState() {
+    super.initState();
+    initTaskGroups();
+  }
+
+  void initTaskGroups() async {
+    List<TaskGroup> taskGroups = await TaskGroupDBHelper.getTaskGroups();
+    setState(() {
+      displayedGroups = taskGroups;
+    });
+  }
 
   void sortTaskGroups(String criteria) {
     setState(() {
@@ -30,12 +46,6 @@ class _TaskGroupPageState extends State<TaskGroupPage> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    sortTaskGroups(sortBy);
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
@@ -50,7 +60,7 @@ class _TaskGroupPageState extends State<TaskGroupPage> {
 
                 Center(
                   child: Text(
-                    "Your Group",
+                    "Task Group",
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -163,37 +173,51 @@ class _TaskGroupPageState extends State<TaskGroupPage> {
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Column(
               children: [
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: Color(0xFF7E1AD1),
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withAlpha(25),
-                        blurRadius: 10,
-                        offset: Offset(0, 2),
+                GestureDetector(
+                  onTap: () async {
+                    final result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const AddGroupPage(),
                       ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.add, size: 28, color: Colors.white),
+                    );
 
-                      SizedBox(width: 16),
+                    if (result == true) {
+                      initTaskGroups();
+                    }
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Color(0xFF7E1AD1),
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withAlpha(25),
+                          blurRadius: 10,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.add, size: 28, color: Colors.white),
 
-                      Text(
-                        "Create New Group",
-                        style: TextStyle(color: Colors.white, fontSize: 16),
-                      ),
-                    ],
+                        SizedBox(width: 16),
+
+                        Text(
+                          "Create New Group",
+                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
 
                 SizedBox(height: 16),
 
                 SizedBox(
-                  height: 584,
+                  height: 500,
                   child: ListView.separated(
                     padding: EdgeInsets.zero,
                     itemCount: displayedGroups.length,

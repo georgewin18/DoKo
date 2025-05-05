@@ -93,8 +93,8 @@ class CalendarState extends State<Calendar> {
     return Center(
       child: Container(
         padding: EdgeInsets.all(10),
-        width: 500,
-        height: 570,
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.width * 1.025,
         decoration: BoxDecoration(
           // color: themeColors[6],
           borderRadius: BorderRadius.circular(10),
@@ -163,175 +163,182 @@ class CalendarState extends State<Calendar> {
                 ),
                 SizedBox(height: height * 0.03),
                 Expanded(
-                  child: PageView.builder(
-                    controller: pageController,
-                    onPageChanged: (index) {
-                      setState(() {
-                        currentIndex = index;
-                        _currentDate = DateTime(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: white,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: gray3.withAlpha(51),
+                          blurRadius: 4,
+                          offset: Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: PageView.builder(
+                      controller: pageController,
+                      onPageChanged: (index) {
+                        setState(() {
+                          currentIndex = index;
+                          _currentDate = DateTime(
+                            DateTime.now().year,
+                            DateTime.now().month + (index - 12),
+                          );
+                          _selectedDate = DateTime.now();
+                        });
+                      },
+                      itemBuilder: (context, index) {
+                        final currentDate = DateTime(
                           DateTime.now().year,
                           DateTime.now().month + (index - 12),
                         );
-                        _selectedDate = DateTime.now();
-                      });
-                    },
-                    itemBuilder: (context, index) {
-                      final currentDate = DateTime(
-                        DateTime.now().year,
-                        DateTime.now().month + (index - 12),
-                      );
-                      final calendarDays = _generateCalendarDays(currentDate);
-                      final days = _getWeekdayNames('en');
+                        final calendarDays = _generateCalendarDays(currentDate);
+                        final days = _getWeekdayNames('en');
 
-                      return Container(
-                        margin: EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          color: white,
-                          borderRadius: BorderRadius.circular(8),
-                          boxShadow: [
-                            BoxShadow(
-                              color: gray3.withAlpha(51),
-                              blurRadius: 4,
-                              offset: Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          children: [
-                            GridView.count(
-                              padding: EdgeInsets.only(
-                                left: width * 0.015,
-                                right: width * 0.015,
-                                top: width * 0.03,
-                              ),
-                              crossAxisCount: 7,
-                              shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                              childAspectRatio: 2.5,
-                              children:
-                                  days
-                                      .map(
-                                        (day) => Center(
-                                          child: Text(
-                                            day,
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: dayFontSize,
-                                              color: gray2,
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                      .toList(),
-                            ),
-                            Expanded(
-                              child: GridView.builder(
+                        return Container(
+                          margin: EdgeInsets.all(5),
+                          child: Column(
+                            children: [
+                              GridView.count(
                                 padding: EdgeInsets.only(
                                   left: width * 0.015,
-                                  top: width * 0.015,
                                   right: width * 0.015,
+                                  top: width * 0.03,
                                 ),
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 7,
-                                      crossAxisSpacing: 0,
-                                      mainAxisSpacing: 0,
-                                    ),
-                                itemCount: calendarDays.length,
-                                itemBuilder: (context, index) {
-                                  final day = calendarDays[index];
-                                  final isCurrentMonth =
-                                      day.month == _currentDate.month;
-                                  DateTime today = DateTime.now();
-                                  DateTime normalizedToday = DateTime(
-                                    today.year,
-                                    today.month,
-                                    today.day,
-                                  );
-                                  bool isToday = isSameDate(
-                                    day,
-                                    DateTime.now(),
-                                  );
-                                  bool isSelected = isSameDate(
-                                    day,
-                                    _selectedDate,
-                                  );
-
-                                  return GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        _selectedDate = day;
-                                        widget.onDateSelected(
-                                          DateFormat('yyyy-MM-dd').format(day),
-                                        );
-                                      });
-                                    },
-
-                                    child: Stack(
-                                      alignment: Alignment.center,
-                                      children: [
-                                        Container(
-                                          alignment: Alignment.center,
-                                          width: width * 0.07,
-                                          height: width * 0.07,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color:
-                                                isSelected
-                                                    ? themeColors[6]
-                                                    : Colors.transparent,
-                                            border:
-                                                !isSelected && isToday
-                                                    ? Border.all(
-                                                      color: themeColors[6],
-                                                      width: 2,
-                                                    )
-                                                    : null,
-                                          ),
-                                          child: MouseRegion(
-                                            cursor: SystemMouseCursors.click,
+                                crossAxisCount: 7,
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                childAspectRatio: 2.5,
+                                children:
+                                    days
+                                        .map(
+                                          (day) => Center(
                                             child: Text(
-                                              '${day.day}',
+                                              day,
                                               style: TextStyle(
-                                                fontSize: dayFontSize,
                                                 fontWeight: FontWeight.bold,
-                                                color:
-                                                    isSelected
-                                                        ? Colors.white
-                                                        : isToday
-                                                        ? themeColors[6]
-                                                        : isCurrentMonth
-                                                        ? (day.compareTo(
-                                                                  normalizedToday,
-                                                                ) <
-                                                                0
-                                                            ? gray3.withAlpha(
-                                                              51,
-                                                            )
-                                                            : black)
-                                                        : gray3.withAlpha(35),
+                                                fontSize: dayFontSize,
+                                                color: gray2,
                                               ),
                                             ),
                                           ),
-                                        ),
-                                        if (_hasTaskOnDate(day))
-                                          Positioned(
-                                            bottom: width * 0.01,
-                                            child: _buildTaskIndicators(
-                                              day,
-                                              width,
+                                        )
+                                        .toList(),
+                              ),
+                              Expanded(
+                                child: GridView.builder(
+                                  padding: EdgeInsets.only(
+                                    left: width * 0.015,
+                                    top: width * 0.015,
+                                    right: width * 0.015,
+                                  ),
+                                  gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 7,
+                                        crossAxisSpacing: 0,
+                                        mainAxisSpacing: 0,
+                                      ),
+                                  itemCount: calendarDays.length,
+                                  itemBuilder: (context, index) {
+                                    final day = calendarDays[index];
+                                    final isCurrentMonth =
+                                        day.month == _currentDate.month;
+                                    DateTime today = DateTime.now();
+                                    DateTime normalizedToday = DateTime(
+                                      today.year,
+                                      today.month,
+                                      today.day,
+                                    );
+                                    bool isToday = isSameDate(
+                                      day,
+                                      DateTime.now(),
+                                    );
+                                    bool isSelected = isSameDate(
+                                      day,
+                                      _selectedDate,
+                                    );
+
+                                    return GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          _selectedDate = day;
+                                          widget.onDateSelected(
+                                            DateFormat(
+                                              'yyyy-MM-dd',
+                                            ).format(day),
+                                          );
+                                        });
+                                      },
+
+                                      child: Stack(
+                                        alignment: Alignment.center,
+                                        children: [
+                                          Container(
+                                            alignment: Alignment.center,
+                                            width: width * 0.075,
+                                            height: width * 0.075,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color:
+                                                  isSelected
+                                                      ? themeColors[6]
+                                                      : Colors.transparent,
+                                              border:
+                                                  !isSelected && isToday
+                                                      ? Border.all(
+                                                        color: themeColors[6],
+                                                        width: 2,
+                                                      )
+                                                      : Border.all(
+                                                        color: transparent,
+                                                        width: 2,
+                                                      ),
+                                            ),
+                                            child: MouseRegion(
+                                              cursor: SystemMouseCursors.click,
+                                              child: Text(
+                                                '${day.day}',
+                                                style: TextStyle(
+                                                  fontSize: dayFontSize,
+                                                  fontWeight: FontWeight.bold,
+                                                  color:
+                                                      isSelected
+                                                          ? Colors.white
+                                                          : isToday
+                                                          ? themeColors[6]
+                                                          : isCurrentMonth
+                                                          ? (day.compareTo(
+                                                                    normalizedToday,
+                                                                  ) <
+                                                                  0
+                                                              ? gray3.withAlpha(
+                                                                51,
+                                                              )
+                                                              : black)
+                                                          : gray3.withAlpha(35),
+                                                ),
+                                              ),
                                             ),
                                           ),
-                                      ],
-                                    ),
-                                  );
-                                },
+                                          if (_hasTaskOnDate(day))
+                                            Positioned(
+                                              bottom: width * 0.01,
+                                              child: _buildTaskIndicators(
+                                                day,
+                                                width,
+                                              ),
+                                            ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
+                            ],
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
               ],

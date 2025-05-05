@@ -18,7 +18,8 @@ class TaskDbHelper {
     String? reminder,
     String date,
     String time,
-    int? progress
+    int? progress,
+    int? taskGroupId
   ) async {
     final db = await DBProvider.database;
     return await db.insert(
@@ -30,6 +31,7 @@ class TaskDbHelper {
         _taskDate: date,
         _taskTime: time,
         _taskProgress: progress ?? 0,
+        _taskGroupId: taskGroupId,
       }
     );
   }
@@ -45,6 +47,7 @@ class TaskDbHelper {
         date: e[_taskDate] as String, 
         time: e[_taskTime] as String,
         progress: e[_taskProgress] as int? ?? 0,
+        task_group_id: e[_taskGroupId] as int,
       ),
     ).toList();
     return tasks;
@@ -66,6 +69,7 @@ class TaskDbHelper {
         date: e[_taskDate] as String, 
         time: e[_taskTime] as String,
         progress: e[_taskProgress] as int? ?? 0,
+        task_group_id: e[_taskGroupId] as int,
       ),
     ).toList();
     return tasks;

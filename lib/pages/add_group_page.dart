@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter/services.dart';
+import 'package:doko/models/task_group_model.dart';
+import 'package:doko/db/task_group_db_helper.dart';
 
 class AddGroupPage extends StatefulWidget {
   const AddGroupPage({super.key});
@@ -13,7 +15,6 @@ class AddGroupPageState extends State<AddGroupPage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   int _characterCount = 0;
-  final int _maxCharacters = 200;
 
   @override
   void dispose() {
@@ -29,7 +30,6 @@ class AddGroupPageState extends State<AddGroupPage> {
       body: SafeArea(
         child: Column(
           children: [
-            // Header dengan tombol back dan save yang tetap terlihat
             Container(
               margin: const EdgeInsets.only(top: 32, left: 12, right: 12),
               child: Row(
@@ -42,10 +42,11 @@ class AddGroupPageState extends State<AddGroupPage> {
                   ElevatedButton(
                     onPressed: () {
                       Navigator.pop(context, {
-                        'title': _titleController.text,
-                        'description': _descriptionController.text,
+                        'title': _titleController,
+                        'description': _descriptionController,
                       });
                     },
+
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF7E1AD1),
                       foregroundColor: Colors.white,
@@ -113,6 +114,9 @@ class AddGroupPageState extends State<AddGroupPage> {
                       padding: const EdgeInsets.only(top: 44.0),
                       child: TextField(
                         controller: _titleController,
+                        inputFormatters: [
+                          LengthLimitingTextInputFormatter(30),
+                        ],
                         textAlign: TextAlign.center,
                         decoration: const InputDecoration(
                           hintText: 'Group Title',
@@ -149,7 +153,7 @@ class AddGroupPageState extends State<AddGroupPage> {
                                 keyboardType: TextInputType.multiline,
                                 inputFormatters: [
                                   LengthLimitingTextInputFormatter(
-                                    _maxCharacters,
+                                    100,
                                   ),
                                 ],
                                 onChanged: (text) {
@@ -174,7 +178,7 @@ class AddGroupPageState extends State<AddGroupPage> {
                             child: Align(
                               alignment: Alignment.bottomRight,
                               child: Text(
-                                '$_characterCount/$_maxCharacters',
+                                '$_characterCount/200',
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: Colors.grey[600],

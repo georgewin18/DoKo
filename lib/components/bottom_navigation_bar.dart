@@ -1,4 +1,5 @@
 import 'package:doko/main.dart';
+import 'package:doko/pages/home_page.dart';
 import 'package:doko/pages/task_group_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
@@ -19,7 +20,7 @@ class BottomNavBarState extends State<BottomNavBar> {
   int _selectedIndex = 0;
 
   final List<Widget> _pages = [
-    MyHomePage(title: 'Doko'),
+    HomePage(),
     TaskGroupPage(),
   ];
 

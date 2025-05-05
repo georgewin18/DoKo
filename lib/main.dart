@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:doko/components/bottom_navigation_bar.dart';
+import 'pages/add_group_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -68,6 +68,13 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void _navigateToProjectPage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const AddGroupPage()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -115,7 +122,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: _navigateToProjectPage,
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ),

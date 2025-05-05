@@ -36,7 +36,7 @@ class DBProvider {
 
     await db.execute('''
       CREATE TABLE task (
-        id INTEGER PRIMARY KEY AUTO INCREMENT,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         desc TEXT,
         reminder TEXT NOT NULL,

@@ -1,4 +1,6 @@
 import 'package:doko/components/task_group_card.dart';
+import 'package:doko/db/db_provider.dart';
+import 'package:doko/db/task_group_db_helper.dart';
 import 'package:doko/models/task_group_model.dart';
 import 'package:doko/pages/add_group_page.dart';
 import 'package:doko/pages/detail_group_page.dart';
@@ -12,8 +14,21 @@ class TaskGroupPage extends StatefulWidget {
 }
 
 class _TaskGroupPageState extends State<TaskGroupPage> {
-  List<TaskGroup> displayedGroups = List.from(taskGroups);
+  List<TaskGroup> displayedGroups = [];
   String sortBy = 'name';
+
+  @override
+  void initState() {
+    super.initState();
+    initTaskGroups();
+  }
+
+  void initTaskGroups() async {
+    List<TaskGroup> taskGroups = await TaskGroupDBHelper.getTaskGroups();
+    setState(() {
+      displayedGroups = taskGroups;
+    });
+  }
 
   void sortTaskGroups(String criteria) {
     setState(() {
@@ -28,12 +43,6 @@ class _TaskGroupPageState extends State<TaskGroupPage> {
         );
       }
     });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    sortTaskGroups(sortBy);
   }
 
   @override
@@ -165,11 +174,17 @@ class _TaskGroupPageState extends State<TaskGroupPage> {
             child: Column(
               children: [
                 GestureDetector(
-                  onTap: () {
-                    Navigator.push(
+                  onTap: () async {
+                    final result = await Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => AddGroupPage()),
+                      MaterialPageRoute(
+                        builder: (context) => const AddGroupPage(),
+                      ),
                     );
+
+                    if (result == true) {
+                      initTaskGroups();
+                    }
                   },
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),

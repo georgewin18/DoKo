@@ -39,14 +39,30 @@ class AddGroupPageState extends State<AddGroupPage> {
                 children: [
                   IconButton(
                     icon: const Icon(LucideIcons.chevron_left),
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () => Navigator.pop(context, true),
                   ),
                   ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context, {
-                        'title': _titleController,
-                        'description': _descriptionController,
-                      });
+                    onPressed: () async {
+                      final title = _titleController.text.trim();
+                      final description = _descriptionController.text.trim();
+                      Navigator.pop(context, true);
+                      
+                      if (title.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Judul tidak boleh kosong"),
+                          ),
+                        );
+                        return;
+                      }
+
+                      final newGroup = TaskGroup(
+                        name: title,
+                        description: description,
+                        createdAt: DateTime.now().toIso8601String(),
+                      );
+
+                      await TaskGroupDBHelper.insertTaskGroup(newGroup);
                     },
 
                     style: ElevatedButton.styleFrom(
@@ -116,9 +132,7 @@ class AddGroupPageState extends State<AddGroupPage> {
                       padding: const EdgeInsets.only(top: 44.0),
                       child: TextField(
                         controller: _titleController,
-                        inputFormatters: [
-                          LengthLimitingTextInputFormatter(30),
-                        ],
+                        inputFormatters: [LengthLimitingTextInputFormatter(30)],
                         textAlign: TextAlign.center,
                         decoration: const InputDecoration(
                           hintText: 'Group Title',
@@ -156,9 +170,7 @@ class AddGroupPageState extends State<AddGroupPage> {
                                 maxLines: null,
                                 keyboardType: TextInputType.multiline,
                                 inputFormatters: [
-                                  LengthLimitingTextInputFormatter(
-                                    100,
-                                  ),
+                                  LengthLimitingTextInputFormatter(100),
                                 ],
                                 onChanged: (text) {
                                   setState(() {

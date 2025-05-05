@@ -1,4 +1,5 @@
 import 'package:doko/models/task_group_model.dart';
+import 'package:doko/pages/add_group_page.dart';
 import 'package:doko/pages/home_page.dart';
 import 'package:doko/pages/task_group_page.dart';
 import 'package:flutter/material.dart';
@@ -63,6 +64,13 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void _navigateToProjectPage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const AddGroupPage()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -110,7 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
 
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: _navigateToProjectPage,
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ),

@@ -1,4 +1,5 @@
 import 'package:doko/main.dart';
+import 'package:doko/pages/task_group_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar.dart';
@@ -19,7 +20,7 @@ class BottomNavBarState extends State<BottomNavBar> {
 
   final List<Widget> _pages = [
     MyHomePage(title: 'Doko'),
-    // GroupScreen(),
+    TaskGroupPage(),
   ];
 
   void _onItemTapped(int index) {

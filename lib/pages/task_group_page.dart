@@ -50,7 +50,7 @@ class _TaskGroupPageState extends State<TaskGroupPage> {
 
                 Center(
                   child: Text(
-                    "Your Group",
+                    "This Group",
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,

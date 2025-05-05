@@ -146,31 +146,29 @@ class AddGroupPageState extends State<AddGroupPage> {
                         children: [
                           Scrollbar(
                             thumbVisibility: true,
-                            child: Expanded(
-                              child: TextField(
-                                controller: _descriptionController,
-                                maxLines: null,
-                                keyboardType: TextInputType.multiline,
-                                inputFormatters: [
-                                  LengthLimitingTextInputFormatter(
-                                    100,
-                                  ),
-                                ],
-                                onChanged: (text) {
-                                  setState(() {
-                                    _characterCount = text.length;
-                                  });
-                                },
-                                decoration: const InputDecoration(
-                                  hintText: 'Description.....',
-                                  hintStyle: TextStyle(
-                                    fontSize: 18,
-                                    color: Colors.grey,
-                                  ),
-                                  border: InputBorder.none,
+                            child: TextField(
+                              controller: _descriptionController,
+                              maxLines: null,
+                              keyboardType: TextInputType.multiline,
+                              inputFormatters: [
+                                LengthLimitingTextInputFormatter(
+                                  100,
                                 ),
-                                style: const TextStyle(fontSize: 18),
+                              ],
+                              onChanged: (text) {
+                                setState(() {
+                                  _characterCount = text.length;
+                                });
+                              },
+                              decoration: const InputDecoration(
+                                hintText: 'Description.....',
+                                hintStyle: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.grey,
+                                ),
+                                border: InputBorder.none,
                               ),
+                              style: const TextStyle(fontSize: 18),
                             ),
                           ),
                           Padding(

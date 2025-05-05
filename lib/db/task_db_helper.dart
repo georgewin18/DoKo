@@ -59,7 +59,7 @@ class TaskDbHelper {
     final data = await db.query(
       _tableName,
       where: '$_taskGroupId = ?',
-      whereArgs: [groupId]
+      whereArgs: [groupId],
     );
     List<Task> tasks = data.map(
       (e) => Task(
@@ -82,7 +82,7 @@ class TaskDbHelper {
     String taskReminder,
     String date,
     String time,
-    int progress
+    int progress,
   ) async {
     final db = await DBProvider.database;
     return await db.update(
@@ -93,19 +93,15 @@ class TaskDbHelper {
         _taskReminder: taskReminder,
         _taskDate: date,
         _taskTime: time,
-        _taskProgress: progress
+        _taskProgress: progress,
       },
       where: '$_taskId = ?',
-      whereArgs: [id]
+      whereArgs: [id],
     );
   }
 
   Future<int> deleteTask(int id) async {
     final db = await DBProvider.database;
-    return await db.delete(
-      _tableName,
-      where: '$_taskId = ?',
-      whereArgs: [id],
-    );
+    return await db.delete(_tableName, where: '$_taskId = ?', whereArgs: [id]);
   }
 }

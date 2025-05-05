@@ -70,6 +70,26 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
       time: '07:00',
       progress: 65,
     ),
+    Task(
+      id: 6,
+      task_name: 'Tugas 6: Algoritma Genetika',
+      task_desc:
+          'Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT',
+      task_reminder: '2 days before',
+      date: '2025-05-13',
+      time: '07:00',
+      progress: 65,
+    ),
+    Task(
+      id: 7,
+      task_name: 'Tugas 6: Algoritma Genetika',
+      task_desc:
+          'Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT',
+      task_reminder: '2 days before',
+      date: '2025-05-13',
+      time: '07:00',
+      progress: 65,
+    ),
   ];
 
   // Menggunakan tanggal hari ini sebagai default
@@ -150,16 +170,14 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
           // CALENDAR - Dengan callback onDateSelected
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            child: SizedBox(
-              height: 300,
-              child: Calendar(
-                isHomepage: false,
-                onDateSelected: (date) {
-                  setState(() {
-                    selectedDate = date;
-                  });
-                },
-              ),
+            child: Calendar(
+              isHomepage: false,
+              tasks: dummyTasks,
+              onDateSelected: (date) {
+                setState(() {
+                  selectedDate = date.toString().substring(0, 10);
+                });
+              },
             ),
           ),
 
@@ -211,7 +229,7 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
                 filteredTasks.isEmpty
                     ? Center(
                       child: Text(
-                        'Tidak ada tugas untuk tanggal ${selectedDate}',
+                        'Tidak ada tugas untuk tanggal $selectedDate',
                         style: TextStyle(color: Colors.grey, fontSize: 16),
                       ),
                     )

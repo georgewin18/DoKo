@@ -10,8 +10,8 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:doko/pages/detail_group_page.dart';
 
 void main() async {
-  // sqfliteFfiInit();
-  // databaseFactory = databaseFactoryFfi;
+  sqfliteFfiInit();
+  databaseFactory = databaseFactoryFfi;
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('id_ID', null);
   runApp(MyApp());

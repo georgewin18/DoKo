@@ -9,7 +9,7 @@ class AddTaskBottomSheet extends StatefulWidget {
 }
 
 class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
-  List<String> _selectedReminders = ['1 day before'];
+  List<String> _selectedReminders = [];
 
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _notesController = TextEditingController();
@@ -47,7 +47,11 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
   }
 
   void _showReminderOptions() {
-    final options = ['1 day before', '2 days before', '3 days before'];
+    final options = [
+      '1 day before',
+      '2 days before',
+      '3 days before',
+    ]; //tdk ditampilkan
 
     showModalBottomSheet(
       context: context,
@@ -172,8 +176,16 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    _selectedReminders.join(', '),
+                    _selectedReminders.isEmpty
+                        ? 'No reminder set'
+                        : _selectedReminders.join(', '),
                     overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color:
+                          _selectedReminders.isEmpty
+                              ? Colors.grey
+                              : Colors.black,
+                    ),
                   ),
                   const Icon(Icons.chevron_right),
                 ],
@@ -207,7 +219,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
               title: TextField(
                 controller: _attachmentController,
                 decoration: const InputDecoration(
-                  hintText: 'Add Attachment...',
+                  hintText: 'Add Your Link',
                   hintStyle: TextStyle(color: Colors.grey),
                   border: InputBorder.none,
                 ),

@@ -19,34 +19,37 @@ class TaskDbHelper {
     String date,
     String time,
     int? progress,
+    int? taskGroupId
   ) async {
     final db = await DBProvider.database;
-    return await db.insert(_tableName, {
-      _taskName: taskName,
-      _taskDesc: taskDesc,
-      _taskReminder: reminder,
-      _taskDate: date,
-      _taskTime: time,
-      _taskProgress: progress ?? 0,
-    });
+    return await db.insert(
+      _tableName,
+      {
+        _taskName: taskName,
+        _taskDesc: taskDesc,
+        _taskReminder: reminder,
+        _taskDate: date,
+        _taskTime: time,
+        _taskProgress: progress ?? 0,
+        _taskGroupId: taskGroupId,
+      }
+    );
   }
 
   // Get All Task
   Future<List<Task>> getTask() async {
     final db = await DBProvider.database;
     final data = await db.query(_tableName);
-    List<Task> tasks =
-        data
-            .map(
-              (e) => Task(
-                task_name: [_taskName] as String,
-                task_reminder: e[_taskReminder] as String,
-                date: e[_taskDate] as String,
-                time: e[_taskTime] as String,
-                progress: e[_taskProgress] as int? ?? 0,
-              ),
-            )
-            .toList();
+    List<Task> tasks = data.map(
+      (e) => Task(
+        task_name: [_taskName] as String, 
+        task_reminder: e[_taskReminder] as String, 
+        date: e[_taskDate] as String, 
+        time: e[_taskTime] as String,
+        progress: e[_taskProgress] as int? ?? 0,
+        task_group_id: e[_taskGroupId] as int,
+      ),
+    ).toList();
     return tasks;
   }
 
@@ -58,19 +61,17 @@ class TaskDbHelper {
       where: '$_taskGroupId = ?',
       whereArgs: [groupId],
     );
-    List<Task> tasks =
-        data
-            .map(
-              (e) => Task(
-                task_name: e[_taskName] as String,
-                task_desc: e[_taskDesc] as String?,
-                task_reminder: e[_taskReminder] as String,
-                date: e[_taskDate] as String,
-                time: e[_taskTime] as String,
-                progress: e[_taskProgress] as int? ?? 0,
-              ),
-            )
-            .toList();
+    List<Task> tasks = data.map(
+      (e) => Task(
+        task_name: e[_taskName] as String, 
+        task_desc: e[_taskDesc] as String?,
+        task_reminder: e[_taskReminder] as String, 
+        date: e[_taskDate] as String, 
+        time: e[_taskTime] as String,
+        progress: e[_taskProgress] as int? ?? 0,
+        task_group_id: e[_taskGroupId] as int,
+      ),
+    ).toList();
     return tasks;
   }
 

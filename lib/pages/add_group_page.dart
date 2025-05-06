@@ -50,7 +50,7 @@ class AddGroupPageState extends State<AddGroupPage> {
                       if (title.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content: Text("Judul tidak boleh kosong"),
+                            content: Text("Title can't be empty!"),
                           ),
                         );
                         return;

@@ -214,7 +214,7 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
                     if (result == true) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text("Task berhasil ditambahkan"),
+                          content: Text("Task Added"),
                         ),
                       );
                       _loadTasks();

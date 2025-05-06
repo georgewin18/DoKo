@@ -1,3 +1,4 @@
+import 'package:doko/db/task_db_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'delete_confirmation_dialog.dart';
@@ -16,6 +17,7 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
   String _selectedRepeat = '1 day before';
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
+  int? taskId;
 
   final TextEditingController _notesController = TextEditingController();
   final TextEditingController _attachmentController = TextEditingController();
@@ -23,11 +25,13 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
   @override
   void initState() {
     super.initState();
+    taskId = widget.task.id;
+
     _selectedRepeat = widget.task.task_reminder;
     _progressValue = widget.task.progress / 100;
 
     _notesController.text = widget.task.task_desc ?? '';
-    _attachmentController.text = ''; // kosongkan atau sesuaikan
+    _attachmentController.text = widget.task.task_attachment ?? ''; // kosongkan atau sesuaikan
 
     // parsing tanggal & waktu
     _selectedDate = DateFormat('yyyy-MM-dd').parse(widget.task.date);
@@ -126,6 +130,44 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
     return '$date\n$hour:$minute $period';
   }
 
+  Future<bool> saveTaskUpdate() async {
+    try {
+      final updatedTaskName = widget.task.task_name;
+      final updatedTaskDesc = _notesController.text;
+      final updatedAttachment = _attachmentController.text;
+      final updatedReminder = _selectedRepeat;
+      final updatedDate = DateFormat('yyyy-MM-dd').format(_selectedDate!);
+      final updatedTime = _selectedTime!.format(context);
+      final parsedTime = TimeOfDay(
+        hour: _selectedTime!.hour,
+        minute: _selectedTime!.minute,
+      );
+
+      final hour = parsedTime.hour.toString().padLeft(2, '0');
+      final minute = parsedTime.minute.toString().padLeft(2, '0');
+      final time24H = '$hour:$minute';
+
+      final progressPercent = (_progressValue * 100).round();
+
+      await TaskDbHelper().updateTask(
+        taskId,
+        updatedTaskName,
+        updatedTaskDesc,
+        updatedAttachment,
+        updatedReminder,
+        updatedDate,
+        time24H,
+        progressPercent,
+      );
+
+      return true;
+    } catch (e) {
+      debugPrint("Error update task: $e");
+      return false;
+    }
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -158,7 +200,7 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
                 ),
                 IconButton(
                   onPressed: () {
-                    deleteConfirmationDialog(context, widget.task.task_name);
+                    deleteConfirmationDialog(context, widget.task);
                   },
                   icon: const Icon(Icons.delete_outline, color: Colors.red),
                 ),
@@ -235,7 +277,7 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
               title: TextField(
                 controller: _attachmentController,
                 decoration: const InputDecoration(
-                  hintText: 'Add Attachment...',
+                  hintText: 'Add your drive link here',
                   hintStyle: TextStyle(color: Colors.grey),
                   border: InputBorder.none,
                 ),
@@ -314,8 +356,26 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
                 const SizedBox(width: 10),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
+                    onPressed: () async {
+                      if (_selectedDate != null && _selectedTime != null) {
+                        final success = await saveTaskUpdate();
+                        debugPrint("update task: $success");
+
+                        if (success) {
+                          Navigator.pop(context, true);
+                          debugPrint("udah pop");
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text("Gagal memperbarui task")),
+                          );
+                        }
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Please select a deadline')
+                          ),
+                        );
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color.fromARGB(255, 126, 26, 209),

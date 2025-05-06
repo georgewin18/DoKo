@@ -2,6 +2,8 @@ import 'package:doko/components/calendar.dart';
 import 'package:doko/components/edit_task_bottom_sheet.dart';
 import 'package:doko/components/home_task_card.dart';
 import 'package:doko/db/task_db_helper.dart';
+import 'package:doko/db/task_group_db_helper.dart';
+import 'package:doko/models/task_group_model.dart';
 import 'package:doko/models/task_model.dart';
 import 'package:flutter/material.dart';
 
@@ -21,6 +23,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    _fetchAllGroups();
     _loadTasks();
   }
 
@@ -28,6 +31,17 @@ class _HomePageState extends State<HomePage> {
     final tasks = await TaskDbHelper().getTask();
     setState(() {
       _allTask = tasks;
+    });
+  }
+
+  Map<int?, String> groupNames = {};
+
+  Future<void> _fetchAllGroups() async {
+    final groups = await TaskGroupDBHelper.getTaskGroups();
+    setState(() {
+      groupNames = {
+        for (var group in groups) group.id: group.name,
+      };
     });
   }
 
@@ -129,7 +143,7 @@ class _HomePageState extends State<HomePage> {
                             child: Padding(
                               padding: const EdgeInsets.only(top: 32),
                               child: Text(
-                                "Tidak ada task untuk sekarang",
+                                "You don't have any task for now!",
                                 style: TextStyle(
                                   fontSize: 16,
                                   color: Colors.grey,
@@ -142,11 +156,13 @@ class _HomePageState extends State<HomePage> {
                             itemCount: filteredTasks.length,
                             itemBuilder: (context, index) {
                               final task = filteredTasks[index];
+                              final groupName = groupNames[task.task_group_id] ?? "Unknown Group";
+
                               return Padding(
                                 padding: EdgeInsets.only(bottom: 12),
                                 child: HomeTaskCard(
                                   title: task.task_name,
-                                  groupName: "Kecerdasan Buatan",
+                                  groupName: groupName,
                                   date: task.date,
                                   time: task.time,
                                   progress: (task.progress.toDouble() / 100),
@@ -166,7 +182,7 @@ class _HomePageState extends State<HomePage> {
                                       ScaffoldMessenger.of(context,).showSnackBar(
                                         SnackBar(
                                           content: Text(
-                                            (result['action'] == 'delete') ? "Task berhasil dihapus" : "Task berhasil diupdate",
+                                            (result['action'] == 'delete') ? "Task deleted" : "Task updated",
                                           ),
                                           behavior: SnackBarBehavior.floating,
                                           margin: EdgeInsets.only(

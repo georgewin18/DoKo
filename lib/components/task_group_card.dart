@@ -1,4 +1,3 @@
-import 'package:doko/models/task_group_model.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
@@ -44,7 +43,7 @@ class TaskGroupCard extends StatelessWidget {
               child: CircularPercentIndicator(
                 radius: 30.0,
                 lineWidth: 12.0,
-                percent: 0.7,
+                percent: _calculateProgress(),
                 animation: true,
                 animationDuration: 1200,
                 circularStrokeCap: CircularStrokeCap.round,
@@ -127,5 +126,15 @@ class TaskGroupCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  double _calculateProgress() {
+    final total = notStartedCount + ongoingCount + completedCount;
+    if (total == 0) {
+      return 0.0;
+    }
+
+    final progress = (ongoingCount * 0.5 + completedCount) / total;
+    return progress.clamp(0.0, 1.0);
   }
 }

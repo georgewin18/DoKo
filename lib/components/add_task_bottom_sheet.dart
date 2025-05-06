@@ -1,16 +1,20 @@
+import 'package:doko/db/task_db_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/task_model.dart';
+import 'package:flutter/services.dart';
 
 class AddTaskBottomSheet extends StatefulWidget {
-  const AddTaskBottomSheet({super.key});
+  final int? groupId;
+
+  const AddTaskBottomSheet({super.key, required this.groupId});
 
   @override
   State<AddTaskBottomSheet> createState() => _AddTaskBottomSheetState();
 }
 
 class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
-  List<String> _selectedReminders = [];
+  // List<String> _selectedReminders = [];
 
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _notesController = TextEditingController();
@@ -28,10 +32,11 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
           firstDate: DateTime(2020),
           lastDate: DateTime(2101),
         ))!;
-    if (picked != null && picked != _selectedDate)
+    if (picked != null && picked != _selectedDate) {
       setState(() {
         _selectedDate = picked;
       });
+    }
   }
 
   // memilih waktu
@@ -41,81 +46,82 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
           context: context,
           initialTime: _selectedTime ?? TimeOfDay.now(),
         ))!;
-    if (picked != null && picked != _selectedTime)
+    if (picked != null && picked != _selectedTime) {
       setState(() {
         _selectedTime = picked;
       });
+    }
   }
 
-  void _showReminderOptions() {
-    final options = [
-      '1 day before',
-      '2 days before',
-      '3 days before',
-    ]; //tdk ditampilkan
+  // void _showReminderOptions() {
+  //   final options = [
+  //     '1 day before',
+  //     '2 days before',
+  //     '3 days before',
+  //   ]; //tdk ditampilkan
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) {
-        List<String> tempSelectedReminders = List.from(_selectedReminders);
+  //   showModalBottomSheet(
+  //     context: context,
+  //     isScrollControlled: true,
+  //     shape: const RoundedRectangleBorder(
+  //       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+  //     ),
+  //     builder: (context) {
+  //       List<String> tempSelectedReminders = List.from(_selectedReminders);
 
-        return StatefulBuilder(
-          builder: (context, setModalState) {
-            return Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text(
-                    'Select Reminder(s)',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 10),
-                  ...options.map((option) {
-                    final isSelected = tempSelectedReminders.contains(option);
-                    return CheckboxListTile(
-                      title: Text(option),
-                      value: isSelected,
-                      onChanged: (bool? checked) {
-                        setModalState(() {
-                          if (checked == true &&
-                              !tempSelectedReminders.contains(option)) {
-                            tempSelectedReminders.add(option);
-                          } else if (checked == false) {
-                            tempSelectedReminders.remove(option);
-                          }
-                        });
-                      },
-                    );
-                  }).toList(),
-                  ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _selectedReminders = tempSelectedReminders;
-                      });
-                      Navigator.pop(context);
-                    },
-                    child: const Text('Done'),
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
+  //       return StatefulBuilder(
+  //         builder: (context, setModalState) {
+  //           return Padding(
+  //             padding: const EdgeInsets.all(16),
+  //             child: Column(
+  //               mainAxisSize: MainAxisSize.min,
+  //               children: [
+  //                 const Text(
+  //                   'Select Reminder(s)',
+  //                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+  //                 ),
+  //                 const SizedBox(height: 10),
+  //                 ...options.map((option) {
+  //                   final isSelected = tempSelectedReminders.contains(option);
+  //                   return CheckboxListTile(
+  //                     title: Text(option),
+  //                     value: isSelected,
+  //                     onChanged: (bool? checked) {
+  //                       setModalState(() {
+  //                         if (checked == true &&
+  //                             !tempSelectedReminders.contains(option)) {
+  //                           tempSelectedReminders.add(option);
+  //                         } else if (checked == false) {
+  //                           tempSelectedReminders.remove(option);
+  //                         }
+  //                       });
+  //                     },
+  //                   );
+  //                 }).toList(),
+  //                 ElevatedButton(
+  //                   onPressed: () {
+  //                     setState(() {
+  //                       _selectedReminders = tempSelectedReminders;
+  //                     });
+  //                     Navigator.pop(context);
+  //                   },
+  //                   child: const Text('Done'),
+  //                 ),
+  //               ],
+  //             ),
+  //           );
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
     // menampilkan tanggal dan waktu
     String getFormattedDateTime() {
       if (_selectedDate == null || _selectedTime == null) {
-        return 'Eee, dd MMM yyyy';
+        return DateFormat('EEE, dd MMM yyyy HH:mm').format(DateTime.now());
       }
       final DateFormat dateFormat = DateFormat('EEE, dd MMM yyyy');
       final String formattedDate = dateFormat.format(_selectedDate!);
@@ -166,32 +172,33 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
+              inputFormatters: [LengthLimitingTextInputFormatter(30)],
             ),
             const SizedBox(height: 16),
             //reminder
-            ListTile(
-              onTap: _showReminderOptions,
-              leading: const Icon(Icons.alarm),
-              title: const Text('Reminder'),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    _selectedReminders.isEmpty
-                        ? 'No reminder set'
-                        : _selectedReminders.join(', '),
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color:
-                          _selectedReminders.isEmpty
-                              ? Colors.grey
-                              : Colors.black,
-                    ),
-                  ),
-                  const Icon(Icons.chevron_right),
-                ],
-              ),
-            ),
+            // ListTile(
+            //   onTap: _showReminderOptions,
+            //   leading: const Icon(Icons.alarm),
+            //   title: const Text('Reminder'),
+            //   trailing: Row(
+            //     mainAxisSize: MainAxisSize.min,
+            //     children: [
+            //       Text(
+            //         _selectedReminders.isEmpty
+            //             ? 'No reminder set'
+            //             : _selectedReminders.join(', '),
+            //         overflow: TextOverflow.ellipsis,
+            //         style: TextStyle(
+            //           color:
+            //               _selectedReminders.isEmpty
+            //                   ? Colors.grey
+            //                   : Colors.black,
+            //         ),
+            //       ),
+            //       const Icon(Icons.chevron_right),
+            //     ],
+            //   ),
+            // ),
             ListTile(
               leading: Icon(Icons.calendar_today),
               title: Text('Deadline'),
@@ -212,6 +219,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                   border: InputBorder.none,
                 ),
                 style: const TextStyle(color: Colors.black),
+                inputFormatters: [LengthLimitingTextInputFormatter(100)],
               ),
             ),
             //add attachment
@@ -220,7 +228,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
               title: TextField(
                 controller: _attachmentController,
                 decoration: const InputDecoration(
-                  hintText: 'Add Your Link',
+                  hintText: 'Add your drive link here',
                   hintStyle: TextStyle(color: Colors.grey),
                   border: InputBorder.none,
                 ),
@@ -237,12 +245,12 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                 minimumSize: const Size(double.infinity, 50),
               ),
               onPressed: () {
+                //data input
                 final title = _titleController.text;
                 final notes = _notesController.text;
                 final attachment = _attachmentController.text;
-                final reminders = _selectedReminders;
 
-                Navigator.pop(context);
+                Navigator.pop(context, true);
               },
               child: const Text(
                 'Add',

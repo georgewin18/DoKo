@@ -46,7 +46,7 @@ class AddGroupPageState extends State<AddGroupPage> {
                       final title = _titleController.text.trim();
                       final description = _descriptionController.text.trim();
                       Navigator.pop(context, true);
-                      
+
                       if (title.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(

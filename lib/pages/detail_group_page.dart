@@ -1,6 +1,7 @@
 import 'package:doko/components/add_task_bottom_sheet.dart';
 import 'package:doko/components/task_card.dart';
 import 'package:doko/components/edit_task_bottom_sheet.dart';
+import 'package:doko/db/task_db_helper.dart';
 import 'package:flutter/material.dart';
 import '../models/task_model.dart';
 import '../models/task_group_model.dart';
@@ -23,91 +24,30 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
     const Color(0xFFE045B1),
   ];
 
-  List<Task> dummyTasks = [
-    Task(
-      id: 1,
-      task_name: 'Tugas 6: Algoritma Genetika',
-      task_desc: 'Menyesuaikan PPT',
-      task_reminder: '1 day before',
-      date: '2025-05-04',
-      time: '08:00',
-      progress: 30,
-      task_group_id: 1,
-    ),
-    Task(
-      id: 2,
-      task_name: 'Tugas 6: Algoritma Genetika',
-      task_desc: 'Menyesuaikan PPT',
-      task_reminder: '2 days before',
-      date: '2025-05-17',
-      time: '09:00',
-      progress: 50,
-      task_group_id: 1,
-    ),
-    Task(
-      id: 3,
-      task_name: 'Tugas 6: Algoritma Genetika',
-      task_desc: 'Menyesuaikan PPT',
-      task_reminder: '1 day before',
-      date: '2025-05-08',
-      time: '10:00',
-      progress: 20,
-      task_group_id: 1,
-    ),
-    Task(
-      id: 4,
-      task_name: 'Tugas 6: Algoritma Genetika',
-      task_desc: 'Menyesuaikan PPT',
-      task_reminder: '3 days before',
-      date: '2025-05-20',
-      time: '11:00',
-      progress: 80,
-      task_group_id: 1,
-    ),
-    Task(
-      id: 5,
-      task_name: 'Tugas 6: Algoritma Genetika',
-      task_desc:
-          'Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT',
-      task_reminder: '2 days before',
-      date: '2025-05-13',
-      time: '07:00',
-      progress: 65,
-      task_group_id: 1,
-    ),
-    Task(
-      id: 6,
-      task_name: 'Tugas 6: Algoritma Genetika',
-      task_desc:
-          'Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT',
-      task_reminder: '2 days before',
-      date: '2025-05-13',
-      time: '07:00',
-      progress: 65,
-      task_group_id: 1,
-    ),
-    Task(
-      id: 7,
-      task_name: 'Tugas 6: Algoritma Genetika',
-      task_desc:
-          'Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT',
-      task_reminder: '2 days before',
-      date: '2025-05-13',
-      time: '07:00',
-      progress: 65,
-      task_group_id: 1,
-    ),
-  ];
+  List<Task> allTasks = [];
 
   // Menggunakan tanggal hari ini sebagai default
   String selectedDate = DateTime.now().toString().substring(0, 10);
 
+  List<Task> get filteredTasks =>
+      allTasks.where((task) => task.date == selectedDate).toList();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTasks();
+  }
+
+  Future<void> _loadTasks() async {
+    final tasks = await TaskDbHelper().getTasksByGroup(widget.group.id);
+    setState(() {
+      allTasks = tasks;
+    });
+    debugPrint("berhasil reload");
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Filter tugas berdasarkan tanggal yang dipilih
-    final filteredTasks =
-        dummyTasks.where((task) => task.date == selectedDate).toList();
-
     return Scaffold(
       body: Column(
         children: [
@@ -132,7 +72,7 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     GestureDetector(
-                      onTap: () => Navigator.pop(context),
+                      onTap: () => Navigator.pop(context, true),
                       child: const Padding(
                         padding: EdgeInsets.only(top: 8),
                         child: Icon(
@@ -179,7 +119,7 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             child: Calendar(
               isHomepage: false,
-              tasks: dummyTasks,
+              tasks: allTasks,
               onDateSelected: (date) {
                 setState(() {
                   selectedDate = date.toString().substring(0, 10);
@@ -203,8 +143,8 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () {
-                    showModalBottomSheet(
+                  onTap: () async {
+                    final result = await showModalBottomSheet(
                       context: context,
                       isScrollControlled: true,
                       shape: const RoundedRectangleBorder(
@@ -212,8 +152,21 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
                           top: Radius.circular(20),
                         ),
                       ),
-                      builder: (context) => const AddTaskBottomSheet(),
+                      builder:
+                          (context) =>
+                              AddTaskBottomSheet(groupId: widget.group.id),
                     );
+
+                    debugPrint("Kalo modal sukses: $result");
+
+                    if (result == true) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Task berhasil ditambahkan"),
+                        ),
+                      );
+                      _loadTasks();
+                    }
                   },
                   child: const CircleAvatar(
                     radius: 14,
@@ -265,8 +218,8 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
                               ),
                               Expanded(
                                 child: GestureDetector(
-                                  onTap: () {
-                                    showModalBottomSheet(
+                                  onTap: () async {
+                                    final result = await showModalBottomSheet(
                                       context: context,
                                       isScrollControlled: true,
                                       shape: const RoundedRectangleBorder(
@@ -278,6 +231,28 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
                                           (context) =>
                                               EditTaskBottomSheet(task: task),
                                     );
+                                    debugPrint(
+                                      "Modal ditutup dengan result: $result",
+                                    );
+
+                                    if (result != null) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        result['action'] == 'delete'
+                                            ? const SnackBar(
+                                              content: Text(
+                                                "Task berhasil dihapus",
+                                              ),
+                                            )
+                                            : const SnackBar(
+                                              content: Text(
+                                                "Task berhasil diupdate",
+                                              ),
+                                            ),
+                                      );
+                                      await _loadTasks();
+                                    }
                                   },
                                   child: TaskCard(
                                     task: task,

@@ -94,5 +94,20 @@ class DBProvider {
           WHERE id = OLD.task_group_id;
         END;
     ''');
+
+    await db.execute('''
+      CREATE TRIGGER update_task_group_timestamp_after_task_update
+      AFTER UPDATE ON task
+      FOR EACH ROW
+      BEGIN
+          UPDATE task_group
+        SET created_at = CURRENT_TIMESTAMP
+        WHERE id = NEW.task_group_id;
+      END;
+    ''');
+
+    await db.execute('''
+      SELECT datetime('now', 'localtime');
+    ''');
   }
 }

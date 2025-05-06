@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
 class TaskGroupCard extends StatelessWidget {
@@ -24,7 +25,7 @@ class TaskGroupCard extends StatelessWidget {
     return Center(
       child: Container(
         width: 360,
-        height: 104,
+        height: 140,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(10),
@@ -59,7 +60,7 @@ class TaskGroupCard extends StatelessWidget {
                   Container(
                     margin: EdgeInsets.only(top: 12),
                     width: 260,
-                    height: 24,
+                    height: 32,
                     child: Text(
                       name,
                       style: TextStyle(
@@ -119,6 +120,16 @@ class TaskGroupCard extends StatelessWidget {
                       ),
                     ],
                   ),
+
+                  Container(
+                    width: 260,
+                    height: 40,
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      "Last Updated ${_formatDate()}",
+                      style: TextStyle(fontSize: 10, color: Colors.grey),
+                    ),
+                  )
                 ],
               ),
             ),
@@ -136,5 +147,10 @@ class TaskGroupCard extends StatelessWidget {
 
     final progress = (ongoingCount * 0.5 + completedCount) / total;
     return progress.clamp(0.0, 1.0);
+  }
+
+  String _formatDate() {
+    final date = DateFormat('d MMMM yyyy HH:mm:ss');
+    return date.format(createdAt);
   }
 }

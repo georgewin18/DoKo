@@ -40,7 +40,6 @@ class DBProvider {
         name TEXT NOT NULL,
         desc TEXT,
         attachment TEXT,
-        reminder TEXT NOT NULL,
         date TEXT NOT NULL,
         time TEXT NOT NULL,
         progress INTEGER,

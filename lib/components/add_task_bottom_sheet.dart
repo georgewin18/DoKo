@@ -1,8 +1,11 @@
+import 'package:doko/db/task_db_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class AddTaskBottomSheet extends StatefulWidget {
-  const AddTaskBottomSheet({super.key});
+  final int? groupId;
+
+  const AddTaskBottomSheet({super.key, required this.groupId});
 
   @override
   State<AddTaskBottomSheet> createState() => _AddTaskBottomSheetState();
@@ -27,10 +30,11 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
           firstDate: DateTime(2020),
           lastDate: DateTime(2101),
         ))!;
-    if (picked != null && picked != _selectedDate)
+    if (picked != null && picked != _selectedDate) {
       setState(() {
         _selectedDate = picked;
       });
+    }
   }
 
   // memilih waktu
@@ -40,10 +44,11 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
           context: context,
           initialTime: _selectedTime ?? TimeOfDay.now(),
         ))!;
-    if (picked != null && picked != _selectedTime)
+    if (picked != null && picked != _selectedTime) {
       setState(() {
         _selectedTime = picked;
       });
+    }
   }
 
   void _showReminderOptions() {
@@ -207,7 +212,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
               title: TextField(
                 controller: _attachmentController,
                 decoration: const InputDecoration(
-                  hintText: 'Add Attachment...',
+                  hintText: 'Add your drive link here',
                   hintStyle: TextStyle(color: Colors.grey),
                   border: InputBorder.none,
                 ),
@@ -223,13 +228,35 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                 ),
                 minimumSize: const Size(double.infinity, 50),
               ),
-              onPressed: () {
+              onPressed: () async {
                 //data input
-                final title = _titleController.text;
-                final notes = _notesController.text;
-                final attachment = _attachmentController.text;
+                final title = _titleController.text.trim();
+                final notes = _notesController.text.trim();
+                final attachment = _attachmentController.text.trim();
 
-                Navigator.pop(context);
+                if (title.isEmpty || _selectedDate == null || _selectedTime == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Please complete all required fields')),
+                  );
+                  return;
+                }
+
+                final formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate!);
+                final formattedTime =
+                    '${_selectedTime!.hour.toString().padLeft(2, '0')}:${_selectedTime!.minute.toString().padLeft(2, '0')}';
+
+                await TaskDbHelper().addTask(
+                  title,
+                  notes,
+                  attachment,
+                  _selectedReminders.join(', '),
+                  formattedDate,
+                  formattedTime,
+                  0,
+                  widget.groupId
+                );
+
+                Navigator.pop(context, true);
               },
               child: const Text(
                 'Add',

@@ -17,7 +17,7 @@ final List<TaskGroup> taskGroups = [
     id: 2,
     name: "Algorithms",
     description:
-        "An in-depth exploration of algorithms, focusing on their design, analysis, and optimization. Topics include sorting, searching, and graph algorithms. The course also emphasizes algorithmic complexity and performance improvements.",
+        "An in-depth exploration of algorithms, .",
     createdAt: DateTime(2024, 4, 20).toIso8601String(),
     notStartedCount: 4,
     ongoingCount: 4,

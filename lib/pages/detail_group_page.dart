@@ -25,7 +25,7 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
 
   List<Task> dummyTasks = [
     Task(
-      id: 1,
+      task_group_id: 1,
       task_name: 'Tugas 6: Algoritma Genetika',
       task_desc: 'Menyesuaikan PPT',
       task_reminder: '1 day before',
@@ -34,7 +34,7 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
       progress: 30,
     ),
     Task(
-      id: 2,
+      task_group_id: 2,
       task_name: 'Tugas 6: Algoritma Genetika',
       task_desc: 'Menyesuaikan PPT',
       task_reminder: '2 days before',
@@ -43,7 +43,7 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
       progress: 50,
     ),
     Task(
-      id: 3,
+      task_group_id: 3,
       task_name: 'Tugas 6: Algoritma Genetika',
       task_desc: 'Menyesuaikan PPT',
       task_reminder: '1 day before',
@@ -52,7 +52,7 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
       progress: 20,
     ),
     Task(
-      id: 4,
+      task_group_id: 4,
       task_name: 'Tugas 6: Algoritma Genetika',
       task_desc: 'Menyesuaikan PPT',
       task_reminder: '3 days before',
@@ -61,7 +61,7 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
       progress: 80,
     ),
     Task(
-      id: 5,
+      task_group_id: 5,
       task_name: 'Tugas 6: Algoritma Genetika',
       task_desc:
           'Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT',
@@ -71,7 +71,7 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
       progress: 65,
     ),
     Task(
-      id: 6,
+      task_group_id: 6,
       task_name: 'Tugas 6: Algoritma Genetika',
       task_desc:
           'Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT',
@@ -81,7 +81,7 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
       progress: 65,
     ),
     Task(
-      id: 7,
+      task_group_id: 7,
       task_name: 'Tugas 6: Algoritma Genetika',
       task_desc:
           'Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT Menyesuaikan PPT',

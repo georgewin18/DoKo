@@ -1,7 +1,8 @@
+import 'package:doko/models/task_model.dart';
 import 'package:flutter/material.dart';
 
-void deleteConfirmationDialog(BuildContext context, String itemName) {
-  showDialog(
+Future<bool> deleteConfirmationDialog(BuildContext context, Task task) async {
+  final result = await showDialog<bool>(
     context: context,
     builder: (BuildContext context) {
       return Dialog(
@@ -18,7 +19,7 @@ void deleteConfirmationDialog(BuildContext context, String itemName) {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: Text(
-                  'Are you sure you want to delete "$itemName" ?',
+                  'Are you sure you want to delete "${task.task_name}" ?',
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontSize: 14,
@@ -36,7 +37,7 @@ void deleteConfirmationDialog(BuildContext context, String itemName) {
                     height: 40,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.of(context).pop();
+                        Navigator.of(context).pop(false);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF7E1AD1),
@@ -59,7 +60,7 @@ void deleteConfirmationDialog(BuildContext context, String itemName) {
                     height: 40,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.of(context).pop();
+                        Navigator.of(context).pop(true);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFFF5454),
@@ -85,4 +86,6 @@ void deleteConfirmationDialog(BuildContext context, String itemName) {
       );
     },
   );
+
+  return result ?? false;
 }

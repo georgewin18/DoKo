@@ -22,6 +22,23 @@ class TaskGroupDBHelper {
     return List.generate(maps.length, (i) => TaskGroup.fromMap(maps[i]));
   }
 
+  static Future<TaskGroup?> getTaskGroupById(int? id) async {
+  final db = await DBProvider.database;
+  final maps = await db.query(
+    _tableName,
+    where: 'id = ?',
+    whereArgs: [id],
+    limit: 1,
+  );
+
+  if (maps.isNotEmpty) {
+    return TaskGroup.fromMap(maps.first);
+  } else {
+    return null;
+  }
+}
+
+
   static Future<int> updateTaskGroup(TaskGroup taskGroup) async {
     final db = await DBProvider.database;
     return await db.update(

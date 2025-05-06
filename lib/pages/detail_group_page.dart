@@ -227,29 +227,27 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
                                           top: Radius.circular(20),
                                         ),
                                       ),
-                                      builder:
-                                          (context) =>
-                                              EditTaskBottomSheet(task: task),
+                                      builder: (context) => EditTaskBottomSheet(task: task),
                                     );
                                     debugPrint(
                                       "Modal ditutup dengan result: $result",
                                     );
 
                                     if (result != null) {
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        result['action'] == 'delete'
-                                            ? const SnackBar(
-                                              content: Text(
-                                                "Task berhasil dihapus",
-                                              ),
-                                            )
-                                            : const SnackBar(
-                                              content: Text(
-                                                "Task berhasil diupdate",
-                                              ),
-                                            ),
+                                      ScaffoldMessenger.of(context,).showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            (result['action'] == 'delete') ? "Task berhasil dihapus" : "Task berhasil diupdate",
+                                          ),
+                                          behavior: SnackBarBehavior.floating,
+                                          margin: EdgeInsets.only(
+                                            bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+                                            left: 16,
+                                            right: 16,
+                                          ),
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                          duration: Duration(seconds: 2)
+                                        ),
                                       );
                                       await _loadTasks();
                                     }

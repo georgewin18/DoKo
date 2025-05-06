@@ -1,7 +1,7 @@
 class TaskGroup {
   final int? id;
-  final String name;
-  final String? description;
+  String name;
+  String? description;
   final String createdAt;
   final int notStartedCount;
   final int ongoingCount;

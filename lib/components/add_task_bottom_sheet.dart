@@ -1,7 +1,6 @@
 import 'package:doko/db/task_db_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../models/task_model.dart';
 import 'package:flutter/services.dart';
 
 class AddTaskBottomSheet extends StatefulWidget {
@@ -244,11 +243,33 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                 ),
                 minimumSize: const Size(double.infinity, 50),
               ),
-              onPressed: () {
+              onPressed: () async {
                 //data input
                 final title = _titleController.text;
                 final notes = _notesController.text;
                 final attachment = _attachmentController.text;
+
+                if (title.isEmpty || _selectedDate == null || _selectedTime == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Please complete all required fields')),
+                  );
+                  Navigator.pop(context);
+                  return;
+                }
+
+                final formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate!);
+                final formattedTime =
+                    '${_selectedTime!.hour.toString().padLeft(2, '0')}:${_selectedTime!.minute.toString().padLeft(2, '0')}';
+
+                await TaskDbHelper().addTask(
+                    title,
+                    notes,
+                    attachment,
+                    formattedDate,
+                    formattedTime,
+                    0,
+                    widget.groupId
+                );
 
                 Navigator.pop(context, true);
               },

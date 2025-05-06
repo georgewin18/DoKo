@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
       title: 'Doko',
       theme: ThemeData(useMaterial3: true),
       // home: const MyHomePage(title: 'Doko'),
-      home: const TaskGroupPage(),
+      home: const MyHomePage(title: 'Doko'),
     );
   }
 }

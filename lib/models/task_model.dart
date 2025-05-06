@@ -3,7 +3,6 @@ class Task {
   final String task_name;
   final String? task_desc;
   final String? task_attachment;
-  final String task_reminder;
   final String date;
   final String time;
   final int progress;
@@ -14,7 +13,6 @@ class Task {
     required this.task_name,
     this.task_desc,
     this.task_attachment,
-    required this.task_reminder,
     required this.date,
     required this.time,
     required this.task_group_id,
@@ -27,7 +25,6 @@ class Task {
       task_name: map['task_name'],
       task_desc: map['task_desc'],
       task_attachment: map['task_attachment'],
-      task_reminder: map['task_reminder'],
       date: map['date'] ?? '',
       time: map['time'] ?? '',
       progress: map['progress'] ?? 0,
@@ -41,7 +38,6 @@ class Task {
       'task_name': task_name,
       'task_desc': task_desc,
       'task_attachment': task_attachment,
-      'task_reminder': task_reminder,
       'date': date,
       'time': time,
       'progress': progress,

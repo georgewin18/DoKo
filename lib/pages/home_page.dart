@@ -1,6 +1,7 @@
 import 'package:doko/components/calendar.dart';
 import 'package:doko/components/edit_task_bottom_sheet.dart';
 import 'package:doko/components/home_task_card.dart';
+import 'package:doko/db/task_db_helper.dart';
 import 'package:doko/models/task_model.dart';
 import 'package:flutter/material.dart';
 
@@ -14,44 +15,25 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   DateTime _selectedDate = DateTime.now();
 
-  final List<Task> _dummyTask = [
-    Task(
-        id: 1,
-        task_name: 'Tugas 6: Algoritma Genetika',
-        task_desc: 'Menyesuaikan PPT',
-        task_reminder: '1 day before',
-        date: '2025-05-04',
-        time: '08:00',
-        progress: 30,
-        task_group_id: 1
-    ),
-    Task(
-        id: 2,
-        task_name: 'Tugas 6: Algoritma Genetika',
-        task_desc: 'Menyesuaikan PPT',
-        task_reminder: '2 days before',
-        date: '2025-05-17',
-        time: '09:00',
-        progress: 50,
-        task_group_id: 1
-    ),
-    Task(
-        id: 3,
-        task_name: 'Tugas 6: Algoritma Genetika',
-        task_desc: 'Menyesuaikan PPT',
-        task_reminder: '1 day before',
-        date: '2025-05-08',
-        time: '10:00',
-        progress: 20,
-        task_group_id: 1
-    ),
-  ];
+  List<Task> _allTask = [];
+  List<Task> filteredTasks = [];
 
-  late List<Task> filteredTasks;
+  @override
+  void initState() {
+    super.initState();
+    _loadTasks();
+  }
+
+  Future<void> _loadTasks() async {
+    final tasks = await TaskDbHelper().getTask();
+    setState(() {
+      _allTask = tasks;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    filteredTasks = _dummyTask.where((task) {
+    filteredTasks = _allTask.where((task) {
       DateTime taskDate = DateTime.parse(task.date);
       return isSameDate(taskDate, _selectedDate);
     }).toList();
@@ -100,8 +82,8 @@ class _HomePageState extends State<HomePage> {
                 ),
 
                 Container(
-                  margin: EdgeInsets.symmetric(horizontal: 4),
-                  height: 432,
+                  margin: EdgeInsets.symmetric(horizontal: 8),
+                  height: 388,
                   width: double.infinity,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
@@ -113,8 +95,12 @@ class _HomePageState extends State<HomePage> {
                         _selectedDate = DateTime.parse(date);
                       });
                     },
-                    tasks: _dummyTask,
+                    tasks: _allTask,
                   ),
+                ),
+
+                SizedBox(
+                  height: 8,
                 ),
 
                 Expanded(
@@ -127,13 +113,13 @@ class _HomePageState extends State<HomePage> {
                           "Task List",
                           style: TextStyle(
                             color: Color(0xFF7E1AD1),
-                            fontSize: 16,
+                            fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
 
                         SizedBox(
-                          height: 4,
+                          height: 8,
                         ),
 
                         Expanded(
@@ -160,11 +146,12 @@ class _HomePageState extends State<HomePage> {
                                 padding: EdgeInsets.only(bottom: 12),
                                 child: HomeTaskCard(
                                   title: task.task_name,
+                                  groupName: "Kecerdasan Buatan",
                                   date: task.date,
                                   time: task.time,
                                   progress: (task.progress.toDouble() / 100),
-                                  onTap: () {
-                                    showModalBottomSheet(
+                                  onTap: () async {
+                                    final result = await showModalBottomSheet(
                                       context: context,
                                       isScrollControlled: true,
                                       shape: const RoundedRectangleBorder(
@@ -174,6 +161,25 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                       builder: (context) => EditTaskBottomSheet(task: task),
                                     );
+
+                                    if (result != null) {
+                                      ScaffoldMessenger.of(context,).showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            (result['action'] == 'delete') ? "Task berhasil dihapus" : "Task berhasil diupdate",
+                                          ),
+                                          behavior: SnackBarBehavior.floating,
+                                          margin: EdgeInsets.only(
+                                            bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+                                            left: 16,
+                                            right: 16,
+                                          ),
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                          duration: Duration(seconds: 2)
+                                        ),
+                                      );
+                                      await _loadTasks();
+                                    }
                                   },
                                 ),
                               );

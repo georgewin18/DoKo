@@ -289,7 +289,7 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
                                       ScaffoldMessenger.of(context,).showSnackBar(
                                         SnackBar(
                                           content: Text(
-                                            (result['action'] == 'delete') ? "Task berhasil dihapus" : "Task berhasil diupdate",
+                                            (result['action'] == 'delete') ? "Task deleted" : "Task updated",
                                           ),
                                           behavior: SnackBarBehavior.floating,
                                           margin: EdgeInsets.only(

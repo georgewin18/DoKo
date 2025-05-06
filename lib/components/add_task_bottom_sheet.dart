@@ -52,69 +52,6 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
     }
   }
 
-  // void _showReminderOptions() {
-  //   final options = [
-  //     '1 day before',
-  //     '2 days before',
-  //     '3 days before',
-  //   ]; //tdk ditampilkan
-
-  //   showModalBottomSheet(
-  //     context: context,
-  //     isScrollControlled: true,
-  //     shape: const RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-  //     ),
-  //     builder: (context) {
-  //       List<String> tempSelectedReminders = List.from(_selectedReminders);
-
-  //       return StatefulBuilder(
-  //         builder: (context, setModalState) {
-  //           return Padding(
-  //             padding: const EdgeInsets.all(16),
-  //             child: Column(
-  //               mainAxisSize: MainAxisSize.min,
-  //               children: [
-  //                 const Text(
-  //                   'Select Reminder(s)',
-  //                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-  //                 ),
-  //                 const SizedBox(height: 10),
-  //                 ...options.map((option) {
-  //                   final isSelected = tempSelectedReminders.contains(option);
-  //                   return CheckboxListTile(
-  //                     title: Text(option),
-  //                     value: isSelected,
-  //                     onChanged: (bool? checked) {
-  //                       setModalState(() {
-  //                         if (checked == true &&
-  //                             !tempSelectedReminders.contains(option)) {
-  //                           tempSelectedReminders.add(option);
-  //                         } else if (checked == false) {
-  //                           tempSelectedReminders.remove(option);
-  //                         }
-  //                       });
-  //                     },
-  //                   );
-  //                 }).toList(),
-  //                 ElevatedButton(
-  //                   onPressed: () {
-  //                     setState(() {
-  //                       _selectedReminders = tempSelectedReminders;
-  //                     });
-  //                     Navigator.pop(context);
-  //                   },
-  //                   child: const Text('Done'),
-  //                 ),
-  //               ],
-  //             ),
-  //           );
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
     // menampilkan tanggal dan waktu
@@ -173,31 +110,11 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
               ),
               inputFormatters: [LengthLimitingTextInputFormatter(30)],
             ),
-            const SizedBox(height: 16),
-            //reminder
-            // ListTile(
-            //   onTap: _showReminderOptions,
-            //   leading: const Icon(Icons.alarm),
-            //   title: const Text('Reminder'),
-            //   trailing: Row(
-            //     mainAxisSize: MainAxisSize.min,
-            //     children: [
-            //       Text(
-            //         _selectedReminders.isEmpty
-            //             ? 'No reminder set'
-            //             : _selectedReminders.join(', '),
-            //         overflow: TextOverflow.ellipsis,
-            //         style: TextStyle(
-            //           color:
-            //               _selectedReminders.isEmpty
-            //                   ? Colors.grey
-            //                   : Colors.black,
-            //         ),
-            //       ),
-            //       const Icon(Icons.chevron_right),
-            //     ],
-            //   ),
-            // ),
+
+            const SizedBox(
+                height: 16
+            ),
+
             ListTile(
               leading: Icon(Icons.calendar_today),
               title: Text('Deadline'),

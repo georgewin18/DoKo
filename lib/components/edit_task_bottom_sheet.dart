@@ -27,7 +27,6 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
     super.initState();
     taskId = widget.task.id;
 
-    _selectedRepeat = widget.task.task_reminder;
     _progressValue = widget.task.progress / 100;
 
     _notesController.text = widget.task.task_desc ?? '';
@@ -42,56 +41,56 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
     );
   }
 
-  void _showRepeatOptions() {
-    final options = ['1 day before', '2 days before', '3 days before'];
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) {
-        String tempSelected = _selectedRepeat;
-        return StatefulBuilder(
-          builder: (context, setModalState) {
-            return Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text(
-                    'Select Repeat Option',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 10),
-                  ...options.map((option) {
-                    return RadioListTile<String>(
-                      title: Text(option),
-                      value: option,
-                      groupValue: tempSelected,
-                      onChanged: (value) {
-                        setModalState(() {
-                          tempSelected = value!;
-                        });
-                      },
-                    );
-                  }).toList(),
-                  ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _selectedRepeat = tempSelected;
-                      });
-                      Navigator.pop(context);
-                    },
-                    child: const Text('Done'),
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
+  // void _showRepeatOptions() {
+  //   final options = ['1 day before', '2 days before', '3 days before'];
+  //   showModalBottomSheet(
+  //     context: context,
+  //     shape: const RoundedRectangleBorder(
+  //       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+  //     ),
+  //     builder: (context) {
+  //       String tempSelected = _selectedRepeat;
+  //       return StatefulBuilder(
+  //         builder: (context, setModalState) {
+  //           return Padding(
+  //             padding: const EdgeInsets.all(16),
+  //             child: Column(
+  //               mainAxisSize: MainAxisSize.min,
+  //               children: [
+  //                 const Text(
+  //                   'Select Repeat Option',
+  //                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+  //                 ),
+  //                 const SizedBox(height: 10),
+  //                 ...options.map((option) {
+  //                   return RadioListTile<String>(
+  //                     title: Text(option),
+  //                     value: option,
+  //                     groupValue: tempSelected,
+  //                     onChanged: (value) {
+  //                       setModalState(() {
+  //                         tempSelected = value!;
+  //                       });
+  //                     },
+  //                   );
+  //                 }).toList(),
+  //                 ElevatedButton(
+  //                   onPressed: () {
+  //                     setState(() {
+  //                       _selectedRepeat = tempSelected;
+  //                     });
+  //                     Navigator.pop(context);
+  //                   },
+  //                   child: const Text('Done'),
+  //                 ),
+  //               ],
+  //             ),
+  //           );
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
 
   Future<void> _selectDate(BuildContext context) async {
     final picked = await showDatePicker(
@@ -135,9 +134,7 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
       final updatedTaskName = widget.task.task_name;
       final updatedTaskDesc = _notesController.text;
       final updatedAttachment = _attachmentController.text;
-      final updatedReminder = _selectedRepeat;
       final updatedDate = DateFormat('yyyy-MM-dd').format(_selectedDate!);
-      final updatedTime = _selectedTime!.format(context);
       final parsedTime = TimeOfDay(
         hour: _selectedTime!.hour,
         minute: _selectedTime!.minute,
@@ -154,7 +151,6 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
         updatedTaskName,
         updatedTaskDesc,
         updatedAttachment,
-        updatedReminder,
         updatedDate,
         time24H,
         progressPercent,
@@ -211,54 +207,53 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+            // const SizedBox(height: 20),
 
             // Reminder Header
-            const Row(
-              children: [
-                Icon(Icons.alarm, size: 24),
-                SizedBox(width: 8),
-                Text(
-                  'Reminder',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                ),
-              ],
-            ),
+            // const Row(
+            //   children: [
+            //     Icon(Icons.alarm, size: 24),
+            //     SizedBox(width: 8),
+            //     Text(
+            //       'Reminder',
+            //       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            //     ),
+            //   ],
+            // ),
             const SizedBox(height: 12),
 
             // Repeat
-            Padding(
-              padding: const EdgeInsets.only(left: 32.0, right: 8), // indent
-              child: ListTile(
-                contentPadding: EdgeInsets.zero,
-                title: const Text('Repeat'),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(_selectedRepeat),
-                    const Icon(Icons.chevron_right),
-                  ],
-                ),
-                onTap: _showRepeatOptions,
-              ),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.only(left: 32.0, right: 8), // indent
+            //   child: ListTile(
+            //     contentPadding: EdgeInsets.zero,
+            //     title: const Text('Repeat'),
+            //     trailing: Row(
+            //       mainAxisSize: MainAxisSize.min,
+            //       children: [
+            //         Text(_selectedRepeat),
+            //         const Icon(Icons.chevron_right),
+            //       ],
+            //     ),
+            //     onTap: _showRepeatOptions,
+            //   ),
+            // ),
 
             // Deadline
-            Padding(
-              padding: const EdgeInsets.only(left: 32.0, right: 8), // indent
-              child: ListTile(
-                contentPadding: EdgeInsets.zero,
-                title: const Text('Deadline'),
-                trailing: Text(
-                  getFormattedDateTime(),
-                  textAlign: TextAlign.right,
-                  style: const TextStyle(color: Colors.grey),
-                ),
-                onTap: () async {
-                  await _selectDate(context);
-                  await _selectTime(context);
-                },
+
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: Icon(Icons.calendar_today),
+              title: Text('Deadline'),
+              trailing: Text(
+                getFormattedDateTime(),
+                textAlign: TextAlign.right,
+                style: const TextStyle(color: Colors.grey),
               ),
+              onTap: () async {
+                await _selectDate(context);
+                await _selectTime(context);
+              },
             ),
 
             // Notes
@@ -367,7 +362,7 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
                         debugPrint("update task: $success");
 
                         if (success) {
-                          Navigator.pop(context, true);
+                          Navigator.of(context).pop({'action': 'update'});
                           debugPrint("udah pop");
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(

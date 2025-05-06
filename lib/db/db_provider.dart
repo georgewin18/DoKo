@@ -105,9 +105,5 @@ class DBProvider {
         WHERE id = NEW.task_group_id;
       END;
     ''');
-
-    await db.execute('''
-      SELECT datetime('now', 'localtime');
-    ''');
   }
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:doko/components/edit_task_bottom_sheet.dart';
 import '../models/task_model.dart';
 
 class TaskCard extends StatelessWidget {

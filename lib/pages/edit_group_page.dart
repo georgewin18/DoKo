@@ -4,26 +4,57 @@ import 'package:flutter/services.dart';
 import 'package:doko/models/task_group_model.dart';
 import 'package:doko/db/task_group_db_helper.dart';
 
-class AddGroupPage extends StatefulWidget {
-  const AddGroupPage({super.key});
+class EditGroupPage extends StatefulWidget {
+  final TaskGroup group;
+
+  const EditGroupPage({super.key, required this.group});
 
   @override
-  State<AddGroupPage> createState() => AddGroupPageState();
+  State<EditGroupPage> createState() => EditGroupPageState();
 }
 
-class AddGroupPageState extends State<AddGroupPage> {
-  final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
+class EditGroupPageState extends State<EditGroupPage> {
+  late TextEditingController _titleController;
+  late TextEditingController _descriptionController;
   int _characterCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _titleController = TextEditingController(text: widget.group.name);
+    _descriptionController = TextEditingController(
+      text: widget.group.description ?? '',
+    );
+    _characterCount = _descriptionController.text.length;
+    _titleController.addListener(_validateInput);
+  }
+  void _validateInput() {
+  final trimmedTitle = _titleController.text.trim();
+  setState(() {
+    _isSaveEnabled = trimmedTitle.isNotEmpty;
+  });
+}
 
   @override
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
-    _scrollController.dispose();
     super.dispose();
   }
+
+  void _saveChanges() async {
+    TaskGroup updatedGroup = TaskGroup(
+      id: widget.group.id,
+      name: _titleController.text.trim(),
+      description: _descriptionController.text.trim(),
+      createdAt: DateTime.now().toIso8601String(),
+    );
+    debugPrint(_titleController.text.trim());
+    debugPrint(_descriptionController.text.trim());
+    await TaskGroupDBHelper.updateTaskGroup(updatedGroup);
+  }
+
+bool _isSaveEnabled = false;
 
   @override
   Widget build(BuildContext context) {
@@ -39,48 +70,32 @@ class AddGroupPageState extends State<AddGroupPage> {
                 children: [
                   IconButton(
                     icon: const Icon(LucideIcons.chevron_left),
-                    onPressed: () => Navigator.pop(context, true),
+                    onPressed: () => Navigator.pop(context),
                   ),
                   ElevatedButton(
-                    onPressed: () async {
-                      final title = _titleController.text.trim();
-                      final description = _descriptionController.text.trim();
-                      Navigator.pop(context, true);
+  onPressed: _isSaveEnabled
+      ? () {
+          _saveChanges();
+          Navigator.pop(context, true);
+        }
+      : null, // tombol nonaktif
+  style: ElevatedButton.styleFrom(
+    backgroundColor: _isSaveEnabled ? const Color(0xFF7E1AD1) : Colors.grey,
+    foregroundColor: Colors.white,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(15),
+    ),
+    minimumSize: const Size(120, 30),
+  ),
+  child: const Text(
+    'Save',
+    style: TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.bold,
+    ),
+  ),
+),
 
-                      if (title.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text("Judul tidak boleh kosong"),
-                          ),
-                        );
-                        return;
-                      }
-
-                      final newGroup = TaskGroup(
-                        name: title,
-                        description: description,
-                        createdAt: DateTime.now().toIso8601String(),
-                      );
-
-                      await TaskGroupDBHelper.insertTaskGroup(newGroup);
-                    },
-
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF7E1AD1),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      minimumSize: const Size(120, 30),
-                    ),
-                    child: const Text(
-                      'Save',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -122,34 +137,27 @@ class AddGroupPageState extends State<AddGroupPage> {
                       ),
                       child: Column(
                         children: [
-                          Scrollbar(
-                            controller: _scrollController,
-                            thumbVisibility: true,
-                            child: SingleChildScrollView(
-                              controller: _scrollController,
-                              child: TextField(
-                                controller: _descriptionController,
-                                maxLines: null,
-                                keyboardType: TextInputType.multiline,
-                                inputFormatters: [
-                                  LengthLimitingTextInputFormatter(100),
-                                ],
-                                onChanged: (text) {
-                                  setState(() {
-                                    _characterCount = text.length;
-                                  });
-                                },
-                                decoration: const InputDecoration(
-                                  hintText: 'Description.....',
-                                  hintStyle: TextStyle(
-                                    fontSize: 18,
-                                    color: Colors.grey,
-                                  ),
-                                  border: InputBorder.none,
-                                ),
-                                style: const TextStyle(fontSize: 18),
+                          TextField(
+                            controller: _descriptionController,
+                            maxLines: null,
+                            keyboardType: TextInputType.multiline,
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(100),
+                            ],
+                            onChanged: (text) {
+                              setState(() {
+                                _characterCount = text.length;
+                              });
+                            },
+                            decoration: const InputDecoration(
+                              hintText: 'Description.....',
+                              hintStyle: TextStyle(
+                                fontSize: 18,
+                                color: Colors.grey,
                               ),
+                              border: InputBorder.none,
                             ),
+                            style: const TextStyle(fontSize: 18),
                           ),
                           Padding(
                             padding: const EdgeInsets.all(12.0),

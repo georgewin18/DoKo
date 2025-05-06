@@ -2,6 +2,8 @@ import 'package:doko/components/add_task_bottom_sheet.dart';
 import 'package:doko/components/task_card.dart';
 import 'package:doko/components/edit_task_bottom_sheet.dart';
 import 'package:doko/db/task_db_helper.dart';
+import 'package:doko/db/task_group_db_helper.dart';
+import 'package:doko/pages/edit_group_page.dart';
 import 'package:flutter/material.dart';
 import '../models/task_model.dart';
 import '../models/task_group_model.dart';
@@ -24,6 +26,7 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
     const Color(0xFFE045B1),
   ];
 
+  late TaskGroup _group;
   List<Task> allTasks = [];
 
   // Menggunakan tanggal hari ini sebagai default
@@ -35,15 +38,36 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
   @override
   void initState() {
     super.initState();
+    _group = widget.group;
     _loadTasks();
   }
 
+  Future<void> _reloadGroup() async {
+    final updatedGroup = await TaskGroupDBHelper.getTaskGroupById(_group.id);
+    if (updatedGroup != null) {
+      setState(() {
+        _group = updatedGroup;
+      });
+    }
+  }
+
   Future<void> _loadTasks() async {
-    final tasks = await TaskDbHelper().getTasksByGroup(widget.group.id);
+    final tasks = await TaskDbHelper().getTasksByGroup(_group.id);
     setState(() {
       allTasks = tasks;
     });
     debugPrint("berhasil reload");
+  }
+
+  String _truncateDescription(String description) {
+    // Ganti enter dengan spasi
+    String clean = description.replaceAll('\n', ' ');
+
+    // Potong jika lebih dari 75 karakter
+    if (clean.length > 75) {
+      return '${clean.substring(0, 75)}...';
+    }
+    return clean;
   }
 
   @override
@@ -83,21 +107,50 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
                       ),
                     ),
                     const SizedBox(height: 5),
-                    Text(
-                      widget.group.name,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Row(
+                      children: [
+                        Text(
+                          _group.name.length > 18
+                              ? '${_group.name.substring(0, 18)}...'
+                              : _group.name,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const Spacer(),
+                        GestureDetector(
+                          onTap: () async {
+                            final result = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (context) => EditGroupPage(group: _group),
+                              ),
+                            );
+
+                            debugPrint("updategroup success: $result");
+                            if (result == true) {
+                              await _reloadGroup();
+                            }
+                          },
+                          child: const Icon(
+                            Icons.edit,
+                            color: Colors.white70,
+                            size: 24,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 0),
+
                     Row(
                       children: [
                         Expanded(
                           child: Text(
-                            widget.group.description ??
-                                'No description available',
+                            _truncateDescription(
+                              _group.description ?? 'No description available',
+                            ),
                             style: const TextStyle(
                               color: Colors.white70,
                               fontSize: 14,
@@ -105,7 +158,6 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
                           ),
                         ),
                         const SizedBox(width: 8),
-                        const Icon(Icons.edit, color: Colors.white70, size: 16),
                       ],
                     ),
                   ],

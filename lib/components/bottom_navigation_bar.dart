@@ -1,4 +1,3 @@
-import 'package:doko/main.dart';
 import 'package:doko/pages/home_page.dart';
 import 'package:doko/pages/task_group_page.dart';
 import 'package:flutter/material.dart';

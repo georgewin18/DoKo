@@ -137,7 +137,6 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
       final updatedAttachment = _attachmentController.text;
       final updatedReminder = _selectedRepeat;
       final updatedDate = DateFormat('yyyy-MM-dd').format(_selectedDate!);
-      final updatedTime = _selectedTime!.format(context);
       final parsedTime = TimeOfDay(
         hour: _selectedTime!.hour,
         minute: _selectedTime!.minute,

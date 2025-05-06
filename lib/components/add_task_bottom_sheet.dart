@@ -115,7 +115,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
     // menampilkan tanggal dan waktu
     String getFormattedDateTime() {
       if (_selectedDate == null || _selectedTime == null) {
-        return 'Eee, dd MMM yyyy';
+        return DateFormat('EEE, dd MMM yyyy HH:mm').format(DateTime.now());
       }
       final DateFormat dateFormat = DateFormat('EEE, dd MMM yyyy');
       final String formattedDate = dateFormat.format(_selectedDate!);

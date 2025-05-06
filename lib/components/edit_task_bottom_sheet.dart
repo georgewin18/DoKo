@@ -199,8 +199,13 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 IconButton(
-                  onPressed: () {
-                    deleteConfirmationDialog(context, widget.task);
+                  onPressed: () async {
+                    final confirmed = await deleteConfirmationDialog(context, widget.task);
+
+                    if (confirmed) {
+                      await TaskDbHelper().deleteTask(widget.task.id);
+                      Navigator.of(context).pop({'action': 'delete'});
+                    }
                   },
                   icon: const Icon(Icons.delete_outline, color: Colors.red),
                 ),

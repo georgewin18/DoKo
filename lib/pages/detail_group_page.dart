@@ -229,9 +229,11 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
                                     );
                                     debugPrint("Modal ditutup dengan result: $result");
 
-                                    if (result == true) {
+                                    if (result != null) {
                                       ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(content: Text("Task berhasil diupdate")),
+                                        result['action'] == 'delete'
+                                          ? const SnackBar(content: Text("Task berhasil dihapus"))
+                                          : const SnackBar(content: Text("Task berhasil diupdate"))
                                       );
                                       await _loadTasks();
                                     }

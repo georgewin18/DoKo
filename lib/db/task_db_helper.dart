@@ -98,7 +98,7 @@ class TaskDbHelper {
     );
   }
 
-  Future<int> deleteTask(int id) async {
+  Future<int> deleteTask(int? id) async {
     final db = await DBProvider.database;
     return await db.delete(_tableName, where: '$_taskId = ?', whereArgs: [id]);
   }

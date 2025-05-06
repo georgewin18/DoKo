@@ -93,8 +93,8 @@ class CalendarState extends State<Calendar> {
     return Center(
       child: Container(
         padding: EdgeInsets.all(10),
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.width * 1.025,
+        width: widget.isHomepage ? MediaQuery.of(context).size.width : MediaQuery.of(context).size.width * 0.9,
+        height: widget.isHomepage ? MediaQuery.of(context).size.height : MediaQuery.of(context).size.width * 0.9,
         decoration: BoxDecoration(
           // color: themeColors[6],
           borderRadius: BorderRadius.circular(10),

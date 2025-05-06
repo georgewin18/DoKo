@@ -32,6 +32,7 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
       date: '2025-05-04',
       time: '08:00',
       progress: 30,
+      task_group_id: 1,
     ),
     Task(
       id: 2,
@@ -41,6 +42,7 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
       date: '2025-05-17',
       time: '09:00',
       progress: 50,
+      task_group_id: 1,
     ),
     Task(
       id: 3,
@@ -50,6 +52,7 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
       date: '2025-05-08',
       time: '10:00',
       progress: 20,
+      task_group_id: 1,
     ),
     Task(
       id: 4,
@@ -59,6 +62,7 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
       date: '2025-05-20',
       time: '11:00',
       progress: 80,
+      task_group_id: 1,
     ),
     Task(
       id: 5,
@@ -69,6 +73,7 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
       date: '2025-05-13',
       time: '07:00',
       progress: 65,
+      task_group_id: 1,
     ),
     Task(
       id: 6,
@@ -79,6 +84,7 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
       date: '2025-05-13',
       time: '07:00',
       progress: 65,
+      task_group_id: 1,
     ),
     Task(
       id: 7,
@@ -89,6 +95,7 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
       date: '2025-05-13',
       time: '07:00',
       progress: 65,
+      task_group_id: 1,
     ),
   ];
 

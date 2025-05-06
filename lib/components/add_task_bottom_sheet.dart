@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../models/task_model.dart';
 
 class AddTaskBottomSheet extends StatefulWidget {
   const AddTaskBottomSheet({super.key});
@@ -236,10 +237,10 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                 minimumSize: const Size(double.infinity, 50),
               ),
               onPressed: () {
-                //data input
                 final title = _titleController.text;
                 final notes = _notesController.text;
                 final attachment = _attachmentController.text;
+                final reminders = _selectedReminders;
 
                 Navigator.pop(context);
               },

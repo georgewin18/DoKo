@@ -41,57 +41,6 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
     );
   }
 
-  // void _showRepeatOptions() {
-  //   final options = ['1 day before', '2 days before', '3 days before'];
-  //   showModalBottomSheet(
-  //     context: context,
-  //     shape: const RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-  //     ),
-  //     builder: (context) {
-  //       String tempSelected = _selectedRepeat;
-  //       return StatefulBuilder(
-  //         builder: (context, setModalState) {
-  //           return Padding(
-  //             padding: const EdgeInsets.all(16),
-  //             child: Column(
-  //               mainAxisSize: MainAxisSize.min,
-  //               children: [
-  //                 const Text(
-  //                   'Select Repeat Option',
-  //                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-  //                 ),
-  //                 const SizedBox(height: 10),
-  //                 ...options.map((option) {
-  //                   return RadioListTile<String>(
-  //                     title: Text(option),
-  //                     value: option,
-  //                     groupValue: tempSelected,
-  //                     onChanged: (value) {
-  //                       setModalState(() {
-  //                         tempSelected = value!;
-  //                       });
-  //                     },
-  //                   );
-  //                 }).toList(),
-  //                 ElevatedButton(
-  //                   onPressed: () {
-  //                     setState(() {
-  //                       _selectedRepeat = tempSelected;
-  //                     });
-  //                     Navigator.pop(context);
-  //                   },
-  //                   child: const Text('Done'),
-  //                 ),
-  //               ],
-  //             ),
-  //           );
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
-
   Future<void> _selectDate(BuildContext context) async {
     final picked = await showDatePicker(
       context: context,
@@ -120,9 +69,9 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
 
   String getFormattedDateTime() {
     if (_selectedDate == null || _selectedTime == null) {
-      return 'Eee, dd MMM yyyy\nHH:mm AM';
+      return 'EEE, dd MMM yyyy\nHH:mm AM';
     }
-    final date = DateFormat('Eee, dd MMM yyyy').format(_selectedDate!);
+    final date = DateFormat('EEE, dd MMM yyyy').format(_selectedDate!);
     final hour = _selectedTime!.hourOfPeriod.toString().padLeft(2, '0');
     final minute = _selectedTime!.minute.toString().padLeft(2, '0');
     final period = _selectedTime!.period == DayPeriod.am ? 'AM' : 'PM';
@@ -207,39 +156,8 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
                 ),
               ],
             ),
-            // const SizedBox(height: 20),
 
-            // Reminder Header
-            // const Row(
-            //   children: [
-            //     Icon(Icons.alarm, size: 24),
-            //     SizedBox(width: 8),
-            //     Text(
-            //       'Reminder',
-            //       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            //     ),
-            //   ],
-            // ),
             const SizedBox(height: 12),
-
-            // Repeat
-            // Padding(
-            //   padding: const EdgeInsets.only(left: 32.0, right: 8), // indent
-            //   child: ListTile(
-            //     contentPadding: EdgeInsets.zero,
-            //     title: const Text('Repeat'),
-            //     trailing: Row(
-            //       mainAxisSize: MainAxisSize.min,
-            //       children: [
-            //         Text(_selectedRepeat),
-            //         const Icon(Icons.chevron_right),
-            //       ],
-            //     ),
-            //     onTap: _showRepeatOptions,
-            //   ),
-            // ),
-
-            // Deadline
 
             ListTile(
               contentPadding: EdgeInsets.zero,

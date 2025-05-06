@@ -14,12 +14,14 @@ class AddGroupPage extends StatefulWidget {
 class AddGroupPageState extends State<AddGroupPage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   int _characterCount = 0;
 
   @override
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -37,34 +39,30 @@ class AddGroupPageState extends State<AddGroupPage> {
                 children: [
                   IconButton(
                     icon: const Icon(LucideIcons.chevron_left),
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () => Navigator.pop(context, true),
                   ),
                   ElevatedButton(
                     onPressed: () async {
                       final title = _titleController.text.trim();
                       final description = _descriptionController.text.trim();
-
+                      Navigator.pop(context, true);
+                      
                       if (title.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content: Text('Title cannot be empty'),
+                            content: Text("Judul tidak boleh kosong"),
                           ),
                         );
                         return;
                       }
 
-                      final taskGroup = TaskGroup(
+                      final newGroup = TaskGroup(
                         name: title,
                         description: description,
                         createdAt: DateTime.now().toIso8601String(),
                       );
 
-                      await TaskGroupDBHelper.insertTaskGroup(taskGroup);
-
-                      Navigator.pop(
-                        context,
-                        true,
-                      );
+                      await TaskGroupDBHelper.insertTaskGroup(newGroup);
                     },
 
                     style: ElevatedButton.styleFrom(
@@ -163,28 +161,32 @@ class AddGroupPageState extends State<AddGroupPage> {
                       child: Column(
                         children: [
                           Scrollbar(
+                            controller: _scrollController,
                             thumbVisibility: true,
-                            child: TextField(
-                              controller: _descriptionController,
-                              maxLines: null,
-                              keyboardType: TextInputType.multiline,
-                              inputFormatters: [
-                                LengthLimitingTextInputFormatter(100),
-                              ],
-                              onChanged: (text) {
-                                setState(() {
-                                  _characterCount = text.length;
-                                });
-                              },
-                              decoration: const InputDecoration(
-                                hintText: 'Description.....',
-                                hintStyle: TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.grey,
+                            child: SingleChildScrollView(
+                              controller: _scrollController,
+                              child: TextField(
+                                controller: _descriptionController,
+                                maxLines: null,
+                                keyboardType: TextInputType.multiline,
+                                inputFormatters: [
+                                  LengthLimitingTextInputFormatter(100),
+                                ],
+                                onChanged: (text) {
+                                  setState(() {
+                                    _characterCount = text.length;
+                                  });
+                                },
+                                decoration: const InputDecoration(
+                                  hintText: 'Description.....',
+                                  hintStyle: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.grey,
+                                  ),
+                                  border: InputBorder.none,
                                 ),
-                                border: InputBorder.none,
+                                style: const TextStyle(fontSize: 18),
                               ),
-                              style: const TextStyle(fontSize: 18),
                             ),
                           ),
                           Padding(
@@ -192,7 +194,7 @@ class AddGroupPageState extends State<AddGroupPage> {
                             child: Align(
                               alignment: Alignment.bottomRight,
                               child: Text(
-                                '$_characterCount/200',
+                                '$_characterCount/100',
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: Colors.grey[600],

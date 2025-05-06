@@ -1,223 +1,198 @@
+import 'package:doko/components/calendar.dart';
+import 'package:doko/components/edit_task_bottom_sheet.dart';
+import 'package:doko/components/home_task_card.dart';
+import 'package:doko/models/task_model.dart';
 import 'package:flutter/material.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  DateTime _selectedDate = DateTime.now();
+
+  final List<Task> _dummyTask = [
+    Task(
+        id: 1,
+        task_name: 'Tugas 6: Algoritma Genetika',
+        task_desc: 'Menyesuaikan PPT',
+        task_reminder: '1 day before',
+        date: '2025-05-04',
+        time: '08:00',
+        progress: 30,
+        task_group_id: 1
+    ),
+    Task(
+        id: 2,
+        task_name: 'Tugas 6: Algoritma Genetika',
+        task_desc: 'Menyesuaikan PPT',
+        task_reminder: '2 days before',
+        date: '2025-05-17',
+        time: '09:00',
+        progress: 50,
+        task_group_id: 1
+    ),
+    Task(
+        id: 3,
+        task_name: 'Tugas 6: Algoritma Genetika',
+        task_desc: 'Menyesuaikan PPT',
+        task_reminder: '1 day before',
+        date: '2025-05-08',
+        time: '10:00',
+        progress: 20,
+        task_group_id: 1
+    ),
+  ];
+
+  late List<Task> filteredTasks;
+
+  @override
   Widget build(BuildContext context) {
+    filteredTasks = _dummyTask.where((task) {
+      DateTime taskDate = DateTime.parse(task.date);
+      return isSameDate(taskDate, _selectedDate);
+    }).toList();
+
     return Scaffold(
-      backgroundColor: Color(0xFF7A1FA2),
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16.0,
-                vertical: 12.0,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
+      body: Stack(
+        children: [
+          Container(
+            height: 276,
+            color: Color(0xFF7E1AD1),
+          ),
+
+          Container(
+            margin: EdgeInsets.only(top: 60),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
+                    children: [
                       Text(
-                        "Hello, John!",
+                        "Hello!",
                         style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
                       ),
-                      SizedBox(height: 4),
+
                       Text(
-                        "Welcome Back To Doko",
-                        style: TextStyle(color: Colors.white70, fontSize: 14),
-                      ),
+                        "Manage your task with DoKo",
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      )
                     ],
                   ),
-                  Icon(Icons.notifications_none, color: Colors.white),
-                ],
-              ),
-            ),
+                ),
 
-            // Toggle
-            SizedBox(height: 10),
-            Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  buildToggle("Day"),
-                  buildToggle("Week"),
-                  buildToggle("Month", isActive: true),
-                ],
-              ),
-            ),
-            SizedBox(height: 12),
+                SizedBox(
+                  height: 8,
+                ),
 
-            // Main Content
-            Expanded(
-              child: Container(
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(24),
-                    topRight: Radius.circular(24),
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 4),
+                  height: 432,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Calendar(
+                    isHomepage: true,
+                    onDateSelected: (date) {
+                      setState(() {
+                        _selectedDate = DateTime.parse(date);
+                      });
+                    },
+                    tasks: _dummyTask,
                   ),
                 ),
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0,
-                        vertical: 12.0,
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: const [
-                              Icon(Icons.arrow_back_ios, size: 16),
-                              Text(
-                                "April",
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Icon(Icons.arrow_forward_ios, size: 16),
-                            ],
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            "2025",
-                            style: TextStyle(fontSize: 14, color: Colors.grey),
-                          ),
-                          SizedBox(height: 12),
-                          buildCalendar(),
-                        ],
-                      ),
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16.0,
-                        vertical: 8.0,
-                      ),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "Activity List",
+
+                Expanded(
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Task List",
                           style: TextStyle(
+                            color: Color(0xFF7E1AD1),
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                      ),
+
+                        SizedBox(
+                          height: 4,
+                        ),
+
+                        Expanded(
+                          child: filteredTasks.isEmpty
+                            ? Align(
+                            alignment: Alignment.topCenter,
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 32),
+                              child: Text(
+                                "Tidak ada task untuk sekarang",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ),
+                          )
+                            : ListView.builder(
+                            padding: EdgeInsets.zero,
+                            itemCount: filteredTasks.length,
+                            itemBuilder: (context, index) {
+                              final task = filteredTasks[index];
+                              return Padding(
+                                padding: EdgeInsets.only(bottom: 12),
+                                child: HomeTaskCard(
+                                  title: task.task_name,
+                                  date: task.date,
+                                  time: task.time,
+                                  progress: (task.progress.toDouble() / 100),
+                                  onTap: () {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.vertical(
+                                          top: Radius.circular(20),
+                                        ),
+                                      ),
+                                      builder: (context) => EditTaskBottomSheet(task: task),
+                                    );
+                                  },
+                                ),
+                              );
+                            }
+                          ),
+                        )
+                      ]
                     ),
-                    Expanded(
-                      child: ListView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        itemCount: 3,
-                        itemBuilder: (context, index) => buildActivityCard(),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                  ),
+                )
+              ],
             ),
-          ],
-        ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Color(0xFF7A1FA2),
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white70,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.grid_view), label: "Group"),
+          )
         ],
       ),
     );
   }
 
-  Widget buildToggle(String label, {bool isActive = false}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-        decoration: BoxDecoration(
-          color: isActive ? Colors.white : Colors.transparent,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.white),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: isActive ? Color(0xFF7A1FA2) : Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget buildCalendar() {
-    return Column(
-      children: List.generate(5, (row) {
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: List.generate(7, (col) {
-            int day = row * 7 + col + 1;
-            if (day > 30) return Expanded(child: Container());
-            return Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: day == 17 ? Color(0xFF7A1FA2) : Colors.transparent,
-                    shape: BoxShape.circle,
-                  ),
-                  padding: const EdgeInsets.all(8),
-                  child: Center(
-                    child: Text(
-                      '$day',
-                      style: TextStyle(
-                        color: day == 17 ? Colors.white : Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            );
-          }),
-        );
-      }),
-    );
-  }
-
-  Widget buildActivityCard() {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      child: ListTile(
-        title: const Text(
-          "Meeting in the centre",
-          style: TextStyle(
-            color: Color(0xFF7A1FA2),
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        subtitle: const Text("Today, 9.00 AM"),
-        trailing: const Text(
-          "in 2 hours",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
-    );
+  bool isSameDate(DateTime a, DateTime b) {
+    return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 }

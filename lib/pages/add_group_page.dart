@@ -46,7 +46,7 @@ class AddGroupPageState extends State<AddGroupPage> {
                       final title = _titleController.text.trim();
                       final description = _descriptionController.text.trim();
                       Navigator.pop(context, true);
-                      
+
                       if (title.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
@@ -90,44 +90,6 @@ class AddGroupPageState extends State<AddGroupPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Center(
-                      child: Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          Container(
-                            width: 200,
-                            height: 200,
-                            margin: const EdgeInsets.only(top: 28),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFCFB1E7),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          Positioned(
-                            right: -10,
-                            bottom: -10,
-                            child: Container(
-                              width: 40,
-                              height: 40,
-                              decoration: const BoxDecoration(
-                                color: Color(0xFF7E1AD1),
-                                shape: BoxShape.circle,
-                              ),
-                              child: IconButton(
-                                icon: const Icon(
-                                  LucideIcons.pencil,
-                                  color: Colors.white,
-                                  size: 24,
-                                ),
-                                onPressed: () {
-                                  // Tombol edit gambar
-                                },
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                     Padding(
                       padding: const EdgeInsets.only(top: 44.0),
                       child: TextField(

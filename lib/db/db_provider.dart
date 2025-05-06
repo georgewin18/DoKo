@@ -100,7 +100,7 @@ class DBProvider {
       FOR EACH ROW
       BEGIN
           UPDATE task_group
-        SET created_at = CURRENT_TIMESTAMP
+        SET created_at = datetime('now', '+7 hours')
         WHERE id = NEW.task_group_id;
       END;
     ''');

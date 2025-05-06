@@ -30,7 +30,7 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
   String selectedDate = DateTime.now().toString().substring(0, 10);
 
   List<Task> get filteredTasks =>
-    allTasks.where((task) => task.date == selectedDate).toList();
+      allTasks.where((task) => task.date == selectedDate).toList();
 
   @override
   void initState() {
@@ -152,16 +152,18 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
                           top: Radius.circular(20),
                         ),
                       ),
-                      builder: (context) => AddTaskBottomSheet(
-                        groupId: widget.group.id,
-                      ),
+                      builder:
+                          (context) =>
+                              AddTaskBottomSheet(groupId: widget.group.id),
                     );
 
                     debugPrint("Kalo modal sukses: $result");
 
                     if (result == true) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Task berhasil ditambahkan")),
+                        const SnackBar(
+                          content: Text("Task berhasil ditambahkan"),
+                        ),
                       );
                       _loadTasks();
                     }
@@ -225,15 +227,29 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
                                           top: Radius.circular(20),
                                         ),
                                       ),
-                                      builder: (context) => EditTaskBottomSheet(task: task),
+                                      builder:
+                                          (context) =>
+                                              EditTaskBottomSheet(task: task),
                                     );
-                                    debugPrint("Modal ditutup dengan result: $result");
+                                    debugPrint(
+                                      "Modal ditutup dengan result: $result",
+                                    );
 
                                     if (result != null) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
                                         result['action'] == 'delete'
-                                          ? const SnackBar(content: Text("Task berhasil dihapus"))
-                                          : const SnackBar(content: Text("Task berhasil diupdate"))
+                                            ? const SnackBar(
+                                              content: Text(
+                                                "Task berhasil dihapus",
+                                              ),
+                                            )
+                                            : const SnackBar(
+                                              content: Text(
+                                                "Task berhasil diupdate",
+                                              ),
+                                            ),
                                       );
                                       await _loadTasks();
                                     }

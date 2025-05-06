@@ -141,7 +141,7 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
               children: [
                 Text(
                   widget.task.task_name,
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 IconButton(
                   onPressed: () async {

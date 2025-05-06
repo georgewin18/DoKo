@@ -27,13 +27,15 @@ class EditGroupPageState extends State<EditGroupPage> {
     );
     _characterCount = _descriptionController.text.length;
     _titleController.addListener(_validateInput);
+    _descriptionController.addListener(_validateInput);
   }
+
   void _validateInput() {
-  final trimmedTitle = _titleController.text.trim();
-  setState(() {
-    _isSaveEnabled = trimmedTitle.isNotEmpty;
-  });
-}
+    final trimmedTitle = _titleController.text.trim();
+    setState(() {
+      _isSaveEnabled = trimmedTitle.isNotEmpty;
+    });
+  }
 
   @override
   void dispose() {
@@ -54,7 +56,7 @@ class EditGroupPageState extends State<EditGroupPage> {
     await TaskGroupDBHelper.updateTaskGroup(updatedGroup);
   }
 
-bool _isSaveEnabled = false;
+  bool _isSaveEnabled = false;
 
   @override
   Widget build(BuildContext context) {
@@ -73,29 +75,32 @@ bool _isSaveEnabled = false;
                     onPressed: () => Navigator.pop(context),
                   ),
                   ElevatedButton(
-  onPressed: _isSaveEnabled
-      ? () {
-          _saveChanges();
-          Navigator.pop(context, true);
-        }
-      : null, // tombol nonaktif
-  style: ElevatedButton.styleFrom(
-    backgroundColor: _isSaveEnabled ? const Color(0xFF7E1AD1) : Colors.grey,
-    foregroundColor: Colors.white,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(15),
-    ),
-    minimumSize: const Size(120, 30),
-  ),
-  child: const Text(
-    'Save',
-    style: TextStyle(
-      fontSize: 16,
-      fontWeight: FontWeight.bold,
-    ),
-  ),
-),
-
+                    onPressed:
+                        _isSaveEnabled
+                            ? () {
+                              _saveChanges();
+                              Navigator.pop(context, true);
+                            }
+                            : null, // tombol nonaktif
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                          _isSaveEnabled
+                              ? const Color(0xFF7E1AD1)
+                              : Colors.grey,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      minimumSize: const Size(120, 30),
+                    ),
+                    child: const Text(
+                      'Save',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),

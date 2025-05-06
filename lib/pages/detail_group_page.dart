@@ -77,7 +77,7 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
         children: [
           // HEADER
           Container(
-            height: 185,
+            height: 200,
             width: double.infinity,
             decoration: const BoxDecoration(
               gradient: LinearGradient(

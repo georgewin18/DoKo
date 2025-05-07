@@ -1,13 +1,13 @@
-import 'package:doko/components/add_task_bottom_sheet.dart';
-import 'package:doko/components/task_card.dart';
-import 'package:doko/components/edit_task_bottom_sheet.dart';
-import 'package:doko/db/task_db_helper.dart';
-import 'package:doko/db/task_group_db_helper.dart';
-import 'package:doko/pages/edit_group_page.dart';
+import 'package:app/components/add_task_bottom_sheet.dart';
+import 'package:app/components/task_card.dart';
+import 'package:app/components/edit_task_bottom_sheet.dart';
+import 'package:app/db/task_db_helper.dart';
+import 'package:app/db/task_group_db_helper.dart';
+import 'package:app/pages/edit_group_page.dart';
 import 'package:flutter/material.dart';
 import '../models/task_model.dart';
 import '../models/task_group_model.dart';
-import 'package:doko/components/calendar.dart';
+import 'package:app/components/calendar.dart';
 
 class DetailGroupPage extends StatefulWidget {
   final TaskGroup group;
@@ -56,7 +56,6 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
     setState(() {
       allTasks = tasks;
     });
-    debugPrint("berhasil reload");
   }
 
   String _truncateDescription(String description) {
@@ -149,7 +148,6 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
                               ),
                             );
 
-                            debugPrint("updategroup success: $result");
                             if (result == true) {
                               await _reloadGroup();
                             }
@@ -227,8 +225,6 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
                           (context) =>
                               AddTaskBottomSheet(groupId: widget.group.id),
                     );
-
-                    debugPrint("Kalo modal sukses: $result");
 
                     if (result == true) {
                       ScaffoldMessenger.of(context).showSnackBar(

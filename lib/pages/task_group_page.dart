@@ -254,43 +254,38 @@ class _TaskGroupPageState extends State<TaskGroupPage> {
               SizedBox(height: 16),
 
               Expanded(
-                child: ListView.separated(
-                  padding: EdgeInsets.zero,
-                  itemCount: displayedGroups.length,
-                  itemBuilder: (context, index) {
-                    final group = displayedGroups[index];
-                    return GestureDetector(
-                      onTap: () async {
-                        final result = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => DetailGroupPage(group: group),
-                          ),
-                        );
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: ListView.separated(
+                    padding: EdgeInsets.zero,
+                    itemCount: displayedGroups.length,
+                    itemBuilder: (context, index) {
+                      final group = displayedGroups[index];
+                      return GestureDetector(
+                        onTap: () async {
+                          final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DetailGroupPage(group: group),
+                            ),
+                          );
 
-                        if (result == true) {
-                          initTaskGroups();
-                        }
-                      },
-                      child: TaskGroupCard(
-                        name: group.name,
-                        description: group.description ?? '',
-                        notStartedCount: group.notStartedCount,
-                        ongoingCount: group.ongoingCount,
-                        completedCount: group.completedCount,
-                        createdAt: DateTime.parse(group.createdAt),
-                      ),
-                    );
-                    // return TaskGroupCard(
-                    //   name: group.name,
-                    //   description: group.description ?? '',
-                    //   notStartedCount: group.notStartedCount,
-                    //   ongoingCount: group.ongoingCount,
-                    //   completedCount: group.completedCount,
-                    //   createdAt: DateTime.parse(group.createdAt),
-                    // );
-                  },
-                  separatorBuilder: (context, index) => SizedBox(height: 16),
+                          if (result == true) {
+                            initTaskGroups();
+                          }
+                        },
+                        child: TaskGroupCard(
+                          name: group.name,
+                          description: group.description ?? '',
+                          notStartedCount: group.notStartedCount,
+                          ongoingCount: group.ongoingCount,
+                          completedCount: group.completedCount,
+                          createdAt: DateTime.parse(group.createdAt),
+                        ),
+                      );
+                    },
+                    separatorBuilder: (context, index) => SizedBox(height: 16),
+                  ),
                 ),
               ),
             ],

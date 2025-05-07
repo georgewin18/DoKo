@@ -24,7 +24,7 @@ class TaskGroupCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-        width: 360,
+        width: double.infinity,
         height: 140,
         decoration: BoxDecoration(
           color: Colors.white,
@@ -92,9 +92,9 @@ class TaskGroupCard extends StatelessWidget {
                           ),
                         ],
                       ),
-
-                      SizedBox(width: 12),
-
+                      SizedBox(
+                        width: 12,
+                      ),
                       Row(
                         children: [
                           Icon(Icons.circle, size: 8, color: Colors.yellow),
@@ -105,9 +105,9 @@ class TaskGroupCard extends StatelessWidget {
                           ),
                         ],
                       ),
-
-                      SizedBox(width: 12),
-
+                      SizedBox(
+                        width: 12,
+                      ),
                       Row(
                         children: [
                           Icon(Icons.circle, size: 8, color: Colors.green),

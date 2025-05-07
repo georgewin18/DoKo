@@ -1,8 +1,8 @@
-import 'package:doko/components/task_group_card.dart';
-import 'package:doko/db/task_group_db_helper.dart';
-import 'package:doko/models/task_group_model.dart';
-import 'package:doko/pages/add_group_page.dart';
-import 'package:doko/pages/detail_group_page.dart';
+import 'package:app/components/task_group_card.dart';
+import 'package:app/db/task_group_db_helper.dart';
+import 'package:app/models/task_group_model.dart';
+import 'package:app/pages/add_group_page.dart';
+import 'package:app/pages/detail_group_page.dart';
 import 'package:flutter/material.dart';
 
 class TaskGroupPage extends StatefulWidget {
@@ -254,7 +254,21 @@ class _TaskGroupPageState extends State<TaskGroupPage> {
               SizedBox(height: 16),
 
               Expanded(
-                child: Padding(
+                child: displayedGroups.isEmpty
+                  ? Align(
+                  alignment: Alignment.topCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 32),
+                    child: Text(
+                      "You don't have any group, create one now!",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ),
+                )
+                  : Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16),
                   child: ListView.separated(
                     padding: EdgeInsets.zero,

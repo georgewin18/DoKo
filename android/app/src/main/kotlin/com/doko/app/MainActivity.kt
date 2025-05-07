@@ -1,4 +1,4 @@
-package com.example.doko
+package com.doko.app
 
 import io.flutter.embedding.android.FlutterActivity
 

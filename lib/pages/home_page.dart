@@ -1,10 +1,9 @@
-import 'package:doko/components/calendar.dart';
-import 'package:doko/components/edit_task_bottom_sheet.dart';
-import 'package:doko/components/home_task_card.dart';
-import 'package:doko/db/task_db_helper.dart';
-import 'package:doko/db/task_group_db_helper.dart';
-import 'package:doko/models/task_group_model.dart';
-import 'package:doko/models/task_model.dart';
+import 'package:app/components/calendar.dart';
+import 'package:app/components/edit_task_bottom_sheet.dart';
+import 'package:app/components/home_task_card.dart';
+import 'package:app/db/task_db_helper.dart';
+import 'package:app/db/task_group_db_helper.dart';
+import 'package:app/models/task_model.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {

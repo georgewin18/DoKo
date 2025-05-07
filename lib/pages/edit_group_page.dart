@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter/services.dart';
-import 'package:doko/models/task_group_model.dart';
-import 'package:doko/db/task_group_db_helper.dart';
+import 'package:app/models/task_group_model.dart';
+import 'package:app/db/task_group_db_helper.dart';
 
 class EditGroupPage extends StatefulWidget {
   final TaskGroup group;
@@ -51,8 +51,6 @@ class EditGroupPageState extends State<EditGroupPage> {
       description: _descriptionController.text.trim(),
       createdAt: DateTime.now().toIso8601String(),
     );
-    debugPrint(_titleController.text.trim());
-    debugPrint(_descriptionController.text.trim());
     await TaskGroupDBHelper.updateTaskGroup(updatedGroup);
   }
 

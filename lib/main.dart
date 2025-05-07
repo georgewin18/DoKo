@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:doko/components/bottom_navigation_bar.dart';
+import 'package:app/components/bottom_navigation_bar.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter/services.dart';
 

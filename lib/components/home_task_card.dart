@@ -54,7 +54,7 @@ class HomeTaskCard extends StatelessWidget {
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF7E1AD1),
-                      fontSize: 16,
+                      fontSize: 14,
                     ),
                   ),
 
@@ -63,7 +63,7 @@ class HomeTaskCard extends StatelessWidget {
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.grey,
-                      fontSize: 12
+                      fontSize: 11
                     ),
                   )
                 ],
@@ -73,7 +73,7 @@ class HomeTaskCard extends StatelessWidget {
                 groupName,
                 style: TextStyle(
                   color: Colors.black,
-                  fontSize: 12,
+                  fontSize: 11,
                   fontWeight: FontWeight.bold,
                 ),
               ),

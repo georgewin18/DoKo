@@ -1,5 +1,5 @@
 import 'db_provider.dart';
-import 'package:doko/models/task_group_model.dart';
+import 'package:app/models/task_group_model.dart';
 
 class TaskGroupDBHelper {
   static const String _tableName = 'task_group';

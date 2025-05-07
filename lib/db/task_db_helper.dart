@@ -1,5 +1,5 @@
+import 'package:app/models/task_model.dart';
 import 'db_provider.dart';
-import 'package:doko/models/task_model.dart';
 
 class TaskDbHelper {
   static const String _tableName = 'task';

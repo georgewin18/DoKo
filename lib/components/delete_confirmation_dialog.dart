@@ -1,4 +1,4 @@
-import 'package:doko/models/task_model.dart';
+import 'package:app/models/task_model.dart';
 import 'package:flutter/material.dart';
 
 Future<bool> deleteConfirmationDialog(BuildContext context, Task task) async {

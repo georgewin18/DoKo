@@ -1,8 +1,8 @@
-import 'package:doko/constants/colors.dart';
+import 'package:app/constants/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:doko/models/task_model.dart';
+import 'package:app/models/task_model.dart';
 
 final class Calendar extends StatefulWidget {
   const Calendar({

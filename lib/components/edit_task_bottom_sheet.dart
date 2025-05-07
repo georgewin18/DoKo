@@ -1,4 +1,4 @@
-import 'package:doko/db/task_db_helper.dart';
+import 'package:app/db/task_db_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'delete_confirmation_dialog.dart';
@@ -277,11 +277,8 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
                     onPressed: () async {
                       if (_selectedDate != null && _selectedTime != null) {
                         final success = await saveTaskUpdate();
-                        debugPrint("update task: $success");
-
                         if (success) {
                           Navigator.of(context).pop({'action': 'update'});
-                          debugPrint("udah pop");
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text("Gagal memperbarui task")),

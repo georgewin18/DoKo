@@ -1,4 +1,5 @@
 import 'package:doko/components/task_group_card.dart';
+import 'package:doko/constants/colors.dart';
 import 'package:doko/db/task_group_db_helper.dart';
 import 'package:doko/models/task_group_model.dart';
 import 'package:doko/pages/add_group_page.dart';
@@ -21,8 +22,22 @@ class _TaskGroupPageState extends State<TaskGroupPage> {
   @override
   void initState() {
     super.initState();
-    initTaskGroups();
+    // initTaskGroups();
+    displayedGroups = dummyGroup;
   }
+
+  final dummyGroup = [
+    TaskGroup(
+      id: 1,
+      name: "Kelompok Tugas Harian Okay",
+      description:
+          "Grup ini digunakan untuk mencatat tugas harian oke oke gas oke okaokoakoakoakoksaya.",
+      createdAt: DateTime.now().toIso8601String(),
+      notStartedCount: 2,
+      ongoingCount: 1,
+      completedCount: 0,
+    ),
+  ];
 
   void initTaskGroups() async {
     taskGroups = await TaskGroupDBHelper.getTaskGroups();
@@ -54,11 +69,12 @@ class _TaskGroupPageState extends State<TaskGroupPage> {
       return;
     }
 
-    final filtered = taskGroups.where((group) {
-      final nameLower = group.name.toLowerCase();
-      final queryLower = query.toLowerCase();
-      return nameLower.contains(queryLower);
-    }).toList();
+    final filtered =
+        taskGroups.where((group) {
+          final nameLower = group.name.toLowerCase();
+          final queryLower = query.toLowerCase();
+          return nameLower.contains(queryLower);
+        }).toList();
 
     setState(() {
       displayedGroups = filtered;
@@ -104,9 +120,9 @@ class _TaskGroupPageState extends State<TaskGroupPage> {
                         controller: _searchController,
                         onChanged: searchGroups,
                         decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.search, color: Colors.white),
+                          prefixIcon: Icon(Icons.search, color: gray3),
                           filled: true,
-                          fillColor: Color(0xFFD9D9D9),
+                          fillColor: white,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                             borderSide: BorderSide.none,
@@ -115,8 +131,8 @@ class _TaskGroupPageState extends State<TaskGroupPage> {
                           contentPadding: EdgeInsets.symmetric(vertical: 4),
                         ),
                         style: TextStyle(
-                            color: Color(0xFF7E1AD1),
-                            fontWeight: FontWeight.w500
+                          color: Color(0xFF7E1AD1),
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ),
@@ -129,7 +145,10 @@ class _TaskGroupPageState extends State<TaskGroupPage> {
                             padding: EdgeInsets.only(top: 2),
                             child: Text(
                               "Sort by:",
-                              style: TextStyle(color: Colors.white, fontSize: 12),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                              ),
                             ),
                           ),
 
@@ -142,17 +161,17 @@ class _TaskGroupPageState extends State<TaskGroupPage> {
                               height: 20,
                               decoration: BoxDecoration(
                                 color:
-                                sortBy == 'name'
-                                    ? Color(0xFFBF8DE8)
-                                    : Color(0xFF7E1AD1),
+                                    sortBy == 'name'
+                                        ? Color(0xFFBF8DE8)
+                                        : Color(0xFF7E1AD1),
                                 borderRadius: BorderRadius.circular(10),
                                 border:
-                                sortBy != 'name'
-                                    ? Border.all(
-                                  color: Color(0xFFBF8DE8),
-                                  width: 1,
-                                )
-                                    : null,
+                                    sortBy != 'name'
+                                        ? Border.all(
+                                          color: Color(0xFFBF8DE8),
+                                          width: 1,
+                                        )
+                                        : null,
                               ),
                               child: Center(
                                 child: Text(
@@ -173,17 +192,17 @@ class _TaskGroupPageState extends State<TaskGroupPage> {
                               height: 20,
                               decoration: BoxDecoration(
                                 color:
-                                sortBy == 'date'
-                                    ? Color(0xFFBF8DE8)
-                                    : Color(0xFF7E1AD1),
+                                    sortBy == 'date'
+                                        ? Color(0xFFBF8DE8)
+                                        : Color(0xFF7E1AD1),
                                 borderRadius: BorderRadius.circular(10),
                                 border:
-                                sortBy != 'date'
-                                    ? Border.all(
-                                  color: Color(0xFFBF8DE8),
-                                  width: 1,
-                                )
-                                    : null,
+                                    sortBy != 'date'
+                                        ? Border.all(
+                                          color: Color(0xFFBF8DE8),
+                                          width: 1,
+                                        )
+                                        : null,
                               ),
                               child: Center(
                                 child: Text(
@@ -213,7 +232,9 @@ class _TaskGroupPageState extends State<TaskGroupPage> {
                       onTap: () async {
                         final result = await Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => AddGroupPage()),
+                          MaterialPageRoute(
+                            builder: (context) => AddGroupPage(),
+                          ),
                         );
 
                         if (result == true) {
@@ -221,7 +242,10 @@ class _TaskGroupPageState extends State<TaskGroupPage> {
                         }
                       },
                       child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
                         decoration: BoxDecoration(
                           color: Color(0xFF7E1AD1),
                           borderRadius: BorderRadius.circular(10),
@@ -241,7 +265,10 @@ class _TaskGroupPageState extends State<TaskGroupPage> {
 
                             Text(
                               "Create New Group",
-                              style: TextStyle(color: Colors.white, fontSize: 16),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
                             ),
                           ],
                         ),
@@ -296,7 +323,7 @@ class _TaskGroupPageState extends State<TaskGroupPage> {
             ],
           );
         },
-      )
+      ),
     );
   }
 }

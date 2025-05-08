@@ -31,7 +31,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
           firstDate: DateTime(2020),
           lastDate: DateTime(2101),
         ))!;
-    if (picked != null && picked != _selectedDate) {
+    if (picked != _selectedDate) {
       setState(() {
         _selectedDate = picked;
       });
@@ -45,7 +45,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
           context: context,
           initialTime: _selectedTime ?? TimeOfDay.now(),
         ))!;
-    if (picked != null && picked != _selectedTime) {
+    if (picked != _selectedTime) {
       setState(() {
         _selectedTime = picked;
       });
@@ -57,13 +57,13 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
     // menampilkan tanggal dan waktu
     String getFormattedDateTime() {
       if (_selectedDate == null || _selectedTime == null) {
-        return DateFormat('EEE, dd MMM yyyy HH:mm').format(DateTime.now());
+        return DateFormat('EEE, dd-MMM-yyyy\nHH:mm').format(DateTime.now());
       }
-      final DateFormat dateFormat = DateFormat('EEE, dd MMM yyyy');
+      final DateFormat dateFormat = DateFormat('EEE, dd-MMM-yyyy');
       final String formattedDate = dateFormat.format(_selectedDate!);
       final String formattedTime =
           '${_selectedTime!.hour.toString().padLeft(2, '0')}:${_selectedTime!.minute.toString().padLeft(2, '0')}';
-      return '$formattedDate $formattedTime';
+      return '$formattedDate\n$formattedTime';
     }
 
     return Padding(
@@ -111,9 +111,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
               inputFormatters: [LengthLimitingTextInputFormatter(30)],
             ),
 
-            const SizedBox(
-                height: 16
-            ),
+            const SizedBox(height: 16),
 
             ListTile(
               leading: Icon(Icons.calendar_today),
@@ -122,7 +120,10 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                 await _selectDate(context);
                 await _selectTime(context);
               },
-              trailing: Text(getFormattedDateTime()),
+              trailing: Text(
+                getFormattedDateTime(),
+                textAlign: TextAlign.right,
+              ),
             ),
             //add notes
             ListTile(
@@ -166,26 +167,32 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                 final notes = _notesController.text;
                 final attachment = _attachmentController.text;
 
-                if (title.isEmpty || _selectedDate == null || _selectedTime == null) {
+                if (title.isEmpty ||
+                    _selectedDate == null ||
+                    _selectedTime == null) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Please complete all required fields')),
+                    const SnackBar(
+                      content: Text('Please complete all required fields'),
+                    ),
                   );
                   Navigator.pop(context);
                   return;
                 }
 
-                final formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate!);
+                final formattedDate = DateFormat(
+                  'dd-MM-yyyy',
+                ).format(_selectedDate!);
                 final formattedTime =
                     '${_selectedTime!.hour.toString().padLeft(2, '0')}:${_selectedTime!.minute.toString().padLeft(2, '0')}';
 
                 await TaskDbHelper().addTask(
-                    title,
-                    notes,
-                    attachment,
-                    formattedDate,
-                    formattedTime,
-                    0,
-                    widget.groupId
+                  title,
+                  notes,
+                  attachment,
+                  formattedDate,
+                  formattedTime,
+                  0,
+                  widget.groupId,
                 );
 
                 Navigator.pop(context, true);

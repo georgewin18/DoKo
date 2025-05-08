@@ -2,4 +2,5 @@ build
 .dart_tool
 lib/main.dart
 pubspec.lock
+flutter-plugins
 flutter-plugins-dependencies

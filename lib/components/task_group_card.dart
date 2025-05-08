@@ -67,6 +67,7 @@ class TaskGroupCard extends StatelessWidget {
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF7E1AD1),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ),
@@ -76,7 +77,12 @@ class TaskGroupCard extends StatelessWidget {
                     height: 40,
                     child: Text(
                       description,
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      maxLines: 2,
                     ),
                   ),
 
@@ -129,7 +135,7 @@ class TaskGroupCard extends StatelessWidget {
                       "Last Updated ${_formatDate()}",
                       style: TextStyle(fontSize: 10, color: Colors.grey),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -150,7 +156,7 @@ class TaskGroupCard extends StatelessWidget {
   }
 
   String _formatDate() {
-    final date = DateFormat('d MMMM yyyy HH:mm:ss');
+    final date = DateFormat('dd-MMMM-yyyy HH:mm:ss');
     return date.format(createdAt);
   }
 }

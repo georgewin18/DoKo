@@ -88,13 +88,38 @@ class CalendarState extends State<Calendar> {
     return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 
+  double length(String length) {
+    double a = MediaQuery.of(context).size.width;
+    double b = a;
+    double c = MediaQuery.of(context).size.height;
+    double result = 1;
+    if (length == 'width') {
+      if (a > 400) {
+        a *= 0.9;
+      } else {
+        a *= 1;
+      }
+      result = a;
+    }
+
+    if (length == 'height') {
+      if (c > 680) {
+        b *= 1.065;
+      } else {
+        b *= 0.8;
+      }
+      result = b;
+    }
+    return result;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Container(
         padding: EdgeInsets.all(10),
-        width: widget.isHomepage ? MediaQuery.of(context).size.width : MediaQuery.of(context).size.width * 0.9,
-        height: widget.isHomepage ? MediaQuery.of(context).size.height : MediaQuery.of(context).size.width * 0.9,
+        width: length("width"),
+        height: length("height"),
         decoration: BoxDecoration(
           // color: themeColors[6],
           borderRadius: BorderRadius.circular(10),

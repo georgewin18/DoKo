@@ -14,13 +14,13 @@ class TaskDbHelper {
 
   Task _fromMapToTask(Map<String, Object?> e) => Task(
     id: e[_taskId] as int,
-    task_name: e[_taskName] as String,
-    task_desc: e[_taskDesc] as String?,
-    task_attachment: e[_taskAttachment] as String?,
+    taskName: e[_taskName] as String,
+    taskDesc: e[_taskDesc] as String?,
+    taskAttachment: e[_taskAttachment] as String?,
     date: e[_taskDate] as String,
     time: e[_taskTime] as String,
     progress: e[_taskProgress] as int? ?? 0,
-    task_group_id: e[_taskGroupId] as int,
+    taskGroupId: e[_taskGroupId] as int,
   );
 
   Future<int> addTask(
@@ -30,21 +30,18 @@ class TaskDbHelper {
     String date,
     String time,
     int? progress,
-    int? taskGroupId
+    int? taskGroupId,
   ) async {
     final db = await DBProvider.database;
-    return await db.insert(
-      _tableName,
-      {
-        _taskName: taskName,
-        _taskDesc: taskDesc,
-        _taskAttachment: taskAttachment,
-        _taskDate: date,
-        _taskTime: time,
-        _taskProgress: progress ?? 0,
-        _taskGroupId: taskGroupId,
-      }
-    );
+    return await db.insert(_tableName, {
+      _taskName: taskName,
+      _taskDesc: taskDesc,
+      _taskAttachment: taskAttachment,
+      _taskDate: date,
+      _taskTime: time,
+      _taskProgress: progress ?? 0,
+      _taskGroupId: taskGroupId,
+    });
   }
 
   // Get All Task

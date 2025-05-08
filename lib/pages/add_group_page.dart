@@ -15,7 +15,8 @@ class AddGroupPageState extends State<AddGroupPage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  int _characterCount = 0;
+  int _characterCount1 = 0;
+  int _characterCount2 = 0;
 
   @override
   void dispose() {
@@ -96,6 +97,7 @@ class AddGroupPageState extends State<AddGroupPage> {
                         controller: _titleController,
                         inputFormatters: [LengthLimitingTextInputFormatter(30)],
                         textAlign: TextAlign.center,
+                        keyboardType: TextInputType.multiline,
                         decoration: const InputDecoration(
                           hintText: 'Group Title',
                           hintStyle: TextStyle(
@@ -105,9 +107,27 @@ class AddGroupPageState extends State<AddGroupPage> {
                           ),
                           border: InputBorder.none,
                         ),
+                        onChanged: (text) {
+                          setState(() {
+                            _characterCount1 = text.length;
+                          });
+                        },
                         style: const TextStyle(
                           fontSize: 30,
                           fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Align(
+                        alignment: Alignment.bottomRight,
+                        child: Text(
+                          '$_characterCount1/30',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey[600],
+                          ),
                         ),
                       ),
                     ),
@@ -136,7 +156,7 @@ class AddGroupPageState extends State<AddGroupPage> {
                                 ],
                                 onChanged: (text) {
                                   setState(() {
-                                    _characterCount = text.length;
+                                    _characterCount2 = text.length;
                                   });
                                 },
                                 decoration: const InputDecoration(
@@ -156,7 +176,7 @@ class AddGroupPageState extends State<AddGroupPage> {
                             child: Align(
                               alignment: Alignment.bottomRight,
                               child: Text(
-                                '$_characterCount/100',
+                                '$_characterCount2/100',
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: Colors.grey[600],

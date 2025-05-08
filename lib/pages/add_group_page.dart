@@ -97,6 +97,7 @@ class AddGroupPageState extends State<AddGroupPage> {
                         controller: _titleController,
                         inputFormatters: [LengthLimitingTextInputFormatter(30)],
                         textAlign: TextAlign.center,
+                        maxLines: null,
                         keyboardType: TextInputType.multiline,
                         decoration: const InputDecoration(
                           hintText: 'Group Title',

@@ -116,16 +116,16 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
     debugPrint("reload succeed");
   }
 
-  String _truncateDescription(String description) {
-    // Ganti enter dengan spasi
-    String clean = description.replaceAll('\n', ' ');
+  // String _truncateDescription(String description) {
+  //   // Ganti enter dengan spasi
+  //   String clean = description.replaceAll('\n', ' ');
 
-    // Potong jika lebih dari 75 karakter
-    if (clean.length > 75) {
-      return '${clean.substring(0, 75)}...';
-    }
-    return clean;
-  }
+  //   // Potong jika lebih dari 75 karakter
+  //   if (clean.length > 75) {
+  //     return '${clean.substring(0, 75)}...';
+  //   }
+  //   return clean;
+  // }
 
   @override
   Widget build(BuildContext context) {

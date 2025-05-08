@@ -40,63 +40,11 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
   List<Task> get filteredTasks =>
       allTasks.where((task) => task.date == selectedDate).toList();
 
-  final dummyTasks = [
-    Task(
-      id: 1,
-      taskGroupId: 1,
-      taskName: "Belajar Flutter",
-      taskDesc: "Pelajari cara menggunakan widget Stateful dan Stateless.",
-      date: DateTime.now().toString().substring(0, 10),
-      time: "08:00",
-    ),
-    Task(
-      id: 2,
-      taskGroupId: 1,
-      taskName: "Kerjakan tugas kuliah",
-      taskDesc: "Tugas Struktur Data dan Algoritma dikumpulkan minggu ini.",
-      date: DateTime.now().toString().substring(0, 10),
-      time: "10:30",
-    ),
-    Task(
-      id: 3,
-      taskGroupId: 1,
-      taskName: "Bersih-bersih kamar",
-      taskDesc: "Bersihkan lantai dan meja belajar.",
-      date: DateTime.now().toString().substring(0, 10),
-      time: "15:00",
-    ),
-    Task(
-      id: 4,
-      taskGroupId: 1,
-      taskName: "Bersih-bersih kamar",
-      taskDesc: "Bersihkan lantai dan meja belajar.",
-      date: DateTime.now().toString().substring(0, 10),
-      time: "13:00",
-    ),
-    Task(
-      id: 5,
-      taskGroupId: 1,
-      taskName: "Bersih-bersih kamar",
-      taskDesc: "Bersihkan lantai dan meja belajar.",
-      date: DateTime.now().toString().substring(0, 10),
-      time: "16:00",
-    ),
-    Task(
-      id: 6,
-      taskGroupId: 1,
-      taskName: "Bersih-bersih kamar",
-      taskDesc: "Bersihkan lantai dan meja belajar.",
-      date: DateTime.now().toString().substring(0, 10),
-      time: "17:00",
-    ),
-  ];
-
   @override
   void initState() {
     super.initState();
     _group = widget.group;
-    // _loadTasks();
-    allTasks = dummyTasks;
+    _loadTasks();
   }
 
   Future<void> _reloadGroup() async {
@@ -115,17 +63,6 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
     });
     debugPrint("reload succeed");
   }
-
-  // String _truncateDescription(String description) {
-  //   // Ganti enter dengan spasi
-  //   String clean = description.replaceAll('\n', ' ');
-
-  //   // Potong jika lebih dari 75 karakter
-  //   if (clean.length > 75) {
-  //     return '${clean.substring(0, 75)}...';
-  //   }
-  //   return clean;
-  // }
 
   @override
   Widget build(BuildContext context) {

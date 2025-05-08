@@ -22,22 +22,8 @@ class _TaskGroupPageState extends State<TaskGroupPage> {
   @override
   void initState() {
     super.initState();
-    // initTaskGroups();
-    displayedGroups = dummyGroup;
+    initTaskGroups();
   }
-
-  final dummyGroup = [
-    TaskGroup(
-      id: 1,
-      name: "Kelompok Tugas Harian Okay",
-      description:
-          "Grup ini digunakan untuk mencatat tugas harian oke oke gas oke okaokoakoakoakoksaya.",
-      createdAt: DateTime.now().toIso8601String(),
-      notStartedCount: 2,
-      ongoingCount: 1,
-      completedCount: 0,
-    ),
-  ];
 
   void initTaskGroups() async {
     taskGroups = await TaskGroupDBHelper.getTaskGroups();

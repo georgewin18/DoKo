@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/percent_indicator.dart';
@@ -25,7 +26,7 @@ class TaskGroupCard extends StatelessWidget {
     return Center(
       child: Container(
         width: double.infinity,
-        height: 140,
+        height: 136,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(10),
@@ -52,84 +53,97 @@ class TaskGroupCard extends StatelessWidget {
               ),
             ),
 
-            Container(
-              padding: EdgeInsets.only(left: 8),
+            Expanded(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Container(
-                    margin: EdgeInsets.only(top: 12),
-                    width: 260,
-                    height: 32,
-                    child: Text(
-                      name,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF7E1AD1),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: Container(
+                      margin: EdgeInsets.only(top: 12, bottom: 4),
+                      width: double.infinity,
+                      child: AutoSizeText(
+                        name,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF7E1AD1),
+                        ),
+                        maxLines: 1,
                       ),
                     ),
                   ),
 
-                  SizedBox(
-                    width: 260,
-                    height: 40,
-                    child: Text(
-                      description,
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(16, 0, 16, 4),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 40,
+                      child: Text(
+                        description,
+                        style: TextStyle(fontSize: 12, color: Colors.grey),
+                        maxLines: 2,
+                        overflow: TextOverflow.clip,
+                      ),
                     ),
                   ),
 
-                  Row(
-                    children: [
-                      Row(
-                        children: [
-                          Icon(Icons.circle, size: 8, color: Colors.red),
-                          SizedBox(width: 4),
-                          Text(
-                            "${notStartedCount.toString()} Not Started",
-                            style: TextStyle(fontSize: 10, color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        width: 12,
-                      ),
-                      Row(
-                        children: [
-                          Icon(Icons.circle, size: 8, color: Colors.yellow),
-                          SizedBox(width: 4),
-                          Text(
-                            "${ongoingCount.toString()} On Going",
-                            style: TextStyle(fontSize: 10, color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        width: 12,
-                      ),
-                      Row(
-                        children: [
-                          Icon(Icons.circle, size: 8, color: Colors.green),
-                          SizedBox(width: 4),
-                          Text(
-                            "${completedCount.toString()} Completed",
-                            style: TextStyle(fontSize: 10, color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                    ],
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.circle, size: 8, color: Colors.red),
+                            SizedBox(width: 4),
+                            Text(
+                              "${notStartedCount.toString()} Not Started",
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Icon(Icons.circle, size: 8, color: Colors.yellow),
+                            SizedBox(width: 4),
+                            Text(
+                              "${ongoingCount.toString()} On Going",
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Icon(Icons.circle, size: 8, color: Colors.green),
+                            SizedBox(width: 4),
+                            Text(
+                              "${completedCount.toString()} Completed",
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
 
                   Container(
-                    width: 260,
-                    height: 40,
+                    margin: EdgeInsets.fromLTRB(0,6,16,0),
                     alignment: Alignment.centerRight,
                     child: Text(
                       "Last Updated ${_formatDate()}",
                       style: TextStyle(fontSize: 10, color: Colors.grey),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),

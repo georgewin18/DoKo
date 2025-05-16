@@ -10,11 +10,13 @@ final class Calendar extends StatefulWidget {
     required this.isHomepage,
     required this.onDateSelected,
     this.tasks = const [],
+    this.selectedDate,
   });
 
   final bool isHomepage;
   final List<Task> tasks;
   final ValueChanged<String> onDateSelected;
+  final DateTime? selectedDate;
 
   @override
   CalendarState createState() => CalendarState();
@@ -29,6 +31,14 @@ class CalendarState extends State<Calendar> {
   @override
   void initState() {
     super.initState();
+    _selectedDate = widget.selectedDate ?? DateTime.now();
+
+    final now = DateTime.now();
+    final differeceInMonths = (_selectedDate.year - now.year) * 12 + (_selectedDate.month - now.month);
+    currentIndex = 12 + differeceInMonths;
+    _currentDate = DateTime(now.year, now.month + differeceInMonths);
+
+    pageController = PageController(initialPage: currentIndex);
   }
 
   List<DateTime> _generateCalendarDays(DateTime date) {

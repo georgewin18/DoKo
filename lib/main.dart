@@ -1,17 +1,17 @@
-import 'package:doko/models/task_group_model.dart';
-import 'package:doko/pages/add_group_page.dart';
-import 'package:doko/pages/home_page.dart';
-import 'package:doko/pages/task_group_page.dart';
 import 'package:flutter/material.dart';
-import 'package:doko/components/calendar.dart';
-import 'package:doko/components/bottom_navigation_bar.dart';
-import 'package:doko/pages/add_task.dart';
+import 'package:app/components/bottom_navigation_bar.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:doko/pages/detail_group_page.dart';
+import 'package:flutter/services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();  
   await initializeDateFormatting('id_ID', null);
+
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown
+  ]);
+
   runApp(MyApp());
 }  
 

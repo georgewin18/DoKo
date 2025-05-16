@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class HomeTaskCard extends StatelessWidget {
   final String title;
+  final String groupName;
   final String date;
   final String time;
   final double progress;
@@ -9,6 +10,7 @@ class HomeTaskCard extends StatelessWidget {
 
   const HomeTaskCard({
     required this.title,
+    required this.groupName,
     required this.date,
     required this.time,
     required this.progress,
@@ -25,6 +27,12 @@ class HomeTaskCard extends StatelessWidget {
     }
   }
 
+  bool isToday(String dateString) {
+    final today = DateTime.now();
+    final todayStr = "${today.year.toString().padLeft(4, '0')}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}";
+    return dateString == todayStr;
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -38,20 +46,34 @@ class HomeTaskCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                title,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.deepPurple,
-                  fontSize: 16,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF7E1AD1),
+                      fontSize: 14,
+                    ),
+                  ),
+
+                  Text(
+                    "${isToday(date) ? 'Today' : date}, $time",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey,
+                      fontSize: 11
+                    ),
+                  )
+                ],
               ),
 
               Text(
-                "$date, $time",
+                groupName,
                 style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 12,
+                  color: Colors.black,
+                  fontSize: 11,
                   fontWeight: FontWeight.bold,
                 ),
               ),

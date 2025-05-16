@@ -1,5 +1,5 @@
+import 'package:app/models/task_model.dart';
 import 'db_provider.dart';
-import 'package:doko/models/task_model.dart';
 
 class TaskDbHelper {
   static const String _tableName = 'task';
@@ -7,7 +7,6 @@ class TaskDbHelper {
   static const String _taskName = 'name';
   static const String _taskDesc = 'desc';
   static const String _taskAttachment = 'attachment';
-  static const String _taskReminder = 'reminder';
   static const String _taskDate = 'date';
   static const String _taskTime = 'time';
   static const String _taskProgress = 'progress';
@@ -18,7 +17,6 @@ class TaskDbHelper {
     task_name: e[_taskName] as String,
     task_desc: e[_taskDesc] as String?,
     task_attachment: e[_taskAttachment] as String?,
-    task_reminder: e[_taskReminder] as String,
     date: e[_taskDate] as String,
     time: e[_taskTime] as String,
     progress: e[_taskProgress] as int? ?? 0,
@@ -29,7 +27,6 @@ class TaskDbHelper {
     String taskName,
     String? taskDesc,
     String? taskAttachment,
-    String? reminder,
     String date,
     String time,
     int? progress,
@@ -42,7 +39,6 @@ class TaskDbHelper {
         _taskName: taskName,
         _taskDesc: taskDesc,
         _taskAttachment: taskAttachment,
-        _taskReminder: reminder,
         _taskDate: date,
         _taskTime: time,
         _taskProgress: progress ?? 0,
@@ -76,7 +72,6 @@ class TaskDbHelper {
     String taskName,
     String? taskDesc,
     String? taskAttachment,
-    String taskReminder,
     String date,
     String time,
     int progress,
@@ -88,7 +83,6 @@ class TaskDbHelper {
         _taskName: taskName,
         _taskDesc: taskDesc,
         _taskAttachment: taskAttachment,
-        _taskReminder: taskReminder,
         _taskDate: date,
         _taskTime: time,
         _taskProgress: progress,

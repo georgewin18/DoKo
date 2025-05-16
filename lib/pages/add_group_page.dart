@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter/services.dart';
-import 'package:doko/models/task_group_model.dart';
-import 'package:doko/db/task_group_db_helper.dart';
+import 'package:app/models/task_group_model.dart';
+import 'package:app/db/task_group_db_helper.dart';
 
 class AddGroupPage extends StatefulWidget {
   const AddGroupPage({super.key});
@@ -50,7 +50,7 @@ class AddGroupPageState extends State<AddGroupPage> {
                       if (title.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content: Text("Judul tidak boleh kosong"),
+                            content: Text("Title can't be empty!"),
                           ),
                         );
                         return;

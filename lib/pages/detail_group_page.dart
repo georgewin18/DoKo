@@ -1,13 +1,13 @@
-import 'package:doko/components/add_task_bottom_sheet.dart';
-import 'package:doko/components/task_card.dart';
-import 'package:doko/components/edit_task_bottom_sheet.dart';
-import 'package:doko/db/task_db_helper.dart';
-import 'package:doko/db/task_group_db_helper.dart';
-import 'package:doko/pages/edit_group_page.dart';
+import 'package:app/components/add_task_bottom_sheet.dart';
+import 'package:app/components/task_card.dart';
+import 'package:app/components/edit_task_bottom_sheet.dart';
+import 'package:app/db/task_db_helper.dart';
+import 'package:app/db/task_group_db_helper.dart';
+import 'package:app/pages/edit_group_page.dart';
 import 'package:flutter/material.dart';
 import '../models/task_model.dart';
 import '../models/task_group_model.dart';
-import 'package:doko/components/calendar.dart';
+import 'package:app/components/calendar.dart';
 
 class DetailGroupPage extends StatefulWidget {
   final TaskGroup group;
@@ -56,7 +56,6 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
     setState(() {
       allTasks = tasks;
     });
-    debugPrint("berhasil reload");
   }
 
   String _truncateDescription(String description) {
@@ -70,6 +69,25 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
     return clean;
   }
 
+  List<Task> getSortedTasks(List<Task> tasks) {
+    final List<Task> sortedTasks = List.from(tasks);
+    sortedTasks.sort((a, b) {
+      final timeA = TimeOfDay(
+        hour: int.parse(a.time.split(':')[0]),
+        minute: int.parse(a.time.split(':')[1]),
+      );
+      final timeB = TimeOfDay(
+        hour: int.parse(b.time.split(':')[0]),
+        minute: int.parse(b.time.split(':')[1]),
+      );
+
+      return timeA.hour.compareTo(timeB.hour) != 0
+          ? timeA.hour.compareTo(timeB.hour)
+          : timeA.minute.compareTo(timeB.minute);
+    });
+    return sortedTasks;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,7 +95,7 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
         children: [
           // HEADER
           Container(
-            height: 185,
+            height: 200,
             width: double.infinity,
             decoration: const BoxDecoration(
               gradient: LinearGradient(
@@ -130,7 +148,6 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
                               ),
                             );
 
-                            debugPrint("updategroup success: $result");
                             if (result == true) {
                               await _reloadGroup();
                             }
@@ -209,13 +226,9 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
                               AddTaskBottomSheet(groupId: widget.group.id),
                     );
 
-                    debugPrint("Kalo modal sukses: $result");
-
                     if (result == true) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Task berhasil ditambahkan"),
-                        ),
+                        const SnackBar(content: Text("Task Added")),
                       );
                       _loadTasks();
                     }
@@ -241,84 +254,96 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
                 filteredTasks.isEmpty
                     ? Center(
                       child: Text(
-                        'Tidak ada tugas untuk tanggal $selectedDate',
+                        'No Task For $selectedDate',
                         style: TextStyle(color: Colors.grey, fontSize: 16),
                       ),
                     )
-                    : ListView.builder(
-                      padding: const EdgeInsets.only(top: 15),
-                      itemCount: filteredTasks.length,
-                      itemBuilder: (context, index) {
-                        final task = filteredTasks[index];
-                        final color = cardColors[index % cardColors.length];
+                    : (() {
+                      final sortedTasks = getSortedTasks(filteredTasks);
 
-                        return Padding(
-                          padding: const EdgeInsets.fromLTRB(30, 0, 30, 5),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                width: 60,
-                                padding: const EdgeInsets.only(top: 10),
-                                child: Text(
-                                  task.time,
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
+                      return ListView.builder(
+                        padding: const EdgeInsets.only(top: 15),
+                        itemCount: sortedTasks.length,
+                        itemBuilder: (context, index) {
+                          final task = sortedTasks[index];
+                          final color = cardColors[index % cardColors.length];
+
+                          return Padding(
+                            padding: const EdgeInsets.fromLTRB(30, 0, 30, 5),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  width: 60,
+                                  padding: const EdgeInsets.only(top: 10),
+                                  child: Text(
+                                    task.time,
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Expanded(
-                                child: GestureDetector(
-                                  onTap: () async {
-                                    final result = await showModalBottomSheet(
-                                      context: context,
-                                      isScrollControlled: true,
-                                      shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.vertical(
-                                          top: Radius.circular(20),
+                                Expanded(
+                                  child: GestureDetector(
+                                    onTap: () async {
+                                      final result = await showModalBottomSheet(
+                                        context: context,
+                                        isScrollControlled: true,
+                                        shape: const RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.vertical(
+                                            top: Radius.circular(20),
+                                          ),
                                         ),
-                                      ),
-                                      builder:
-                                          (context) =>
-                                              EditTaskBottomSheet(task: task),
-                                    );
-                                    debugPrint(
-                                      "Modal ditutup dengan result: $result",
-                                    );
-
-                                    if (result != null) {
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        result['action'] == 'delete'
-                                            ? const SnackBar(
-                                              content: Text(
-                                                "Task berhasil dihapus",
-                                              ),
-                                            )
-                                            : const SnackBar(
-                                              content: Text(
-                                                "Task berhasil diupdate",
-                                              ),
-                                            ),
+                                        builder:
+                                            (context) =>
+                                                EditTaskBottomSheet(task: task),
                                       );
-                                      await _loadTasks();
-                                    }
-                                  },
-                                  child: TaskCard(
-                                    task: task,
-                                    title: task.task_name,
-                                    description: task.task_desc ?? '',
-                                    color: color,
+
+                                      if (result != null) {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              (result['action'] == 'delete')
+                                                  ? "Task deleted"
+                                                  : "Task updated",
+                                            ),
+                                            behavior: SnackBarBehavior.floating,
+                                            margin: EdgeInsets.only(
+                                              bottom:
+                                                  MediaQuery.of(
+                                                    context,
+                                                  ).viewInsets.bottom +
+                                                  20,
+                                              left: 16,
+                                              right: 16,
+                                            ),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                            ),
+                                            duration: Duration(seconds: 2),
+                                          ),
+                                        );
+                                        await _loadTasks();
+                                      }
+                                    },
+                                    child: TaskCard(
+                                      task: task,
+                                      title: task.task_name,
+                                      description: task.task_desc ?? '',
+                                      color: color,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    })(),
           ),
         ],
       ),

@@ -40,7 +40,6 @@ class DBProvider {
         name TEXT NOT NULL,
         desc TEXT,
         attachment TEXT,
-        reminder TEXT NOT NULL,
         date TEXT NOT NULL,
         time TEXT NOT NULL,
         progress INTEGER,
@@ -93,6 +92,17 @@ class DBProvider {
             completed_count = completed_count - CASE WHEN OLD.progress = 100 THEN 1 ELSE 0 END
           WHERE id = OLD.task_group_id;
         END;
+    ''');
+
+    await db.execute('''
+      CREATE TRIGGER update_task_group_timestamp_after_task_update
+      AFTER UPDATE ON task
+      FOR EACH ROW
+      BEGIN
+          UPDATE task_group
+        SET created_at = datetime('now', '+7 hours')
+        WHERE id = NEW.task_group_id;
+      END;
     ''');
   }
 }

@@ -1,4 +1,4 @@
-name: doko
+name: app
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -41,9 +41,12 @@ dependencies:
   intl: ^0.18.1
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.13.1
+  change_app_package_name: ^1.4.0
   flutter_test:
     sdk: flutter
-
+  
+ 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
@@ -51,6 +54,10 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
 
+flutter_icons:
+  android: true
+  image_path: "assets/logo/playstore.png" 
+ 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
@@ -77,7 +84,7 @@ flutter:
   # in this "flutter" section. Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
-  # example:
+  # doko:
   # fonts:
   #   - family: Schyler
   #     fonts:

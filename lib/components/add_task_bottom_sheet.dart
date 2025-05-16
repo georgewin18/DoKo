@@ -3,10 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 
+// THIS FILE PROBABLY UNUSED ANYMORE
+
 class AddTaskBottomSheet extends StatefulWidget {
   final int? groupId;
+  final String selectedDateOnCalendar;
 
-  const AddTaskBottomSheet({super.key, required this.groupId});
+  const AddTaskBottomSheet({
+    super.key,
+    required this.groupId,
+    required this.selectedDateOnCalendar
+  });
 
   @override
   State<AddTaskBottomSheet> createState() => _AddTaskBottomSheetState();
@@ -20,23 +27,24 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
   final TextEditingController _attachmentController = TextEditingController();
 
   DateTime? _selectedDate;
-  TimeOfDay? _selectedTime;
+  late TimeOfDay _selectedTime;
+  late String formattedDate;
 
   // memilih tanggal
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime picked =
-        (await showDatePicker(
-          context: context,
-          initialDate: _selectedDate ?? DateTime.now(),
-          firstDate: DateTime(2020),
-          lastDate: DateTime(2101),
-        ))!;
-    if (picked != null && picked != _selectedDate) {
-      setState(() {
-        _selectedDate = picked;
-      });
-    }
-  }
+  // Future<void> _selectDate(BuildContext context) async {
+  //   final DateTime picked =
+  //       (await showDatePicker(
+  //         context: context,
+  //         initialDate: _selectedDate ?? DateTime.now(),
+  //         firstDate: DateTime(2020),
+  //         lastDate: DateTime(2101),
+  //       ))!;
+  //   if (picked != _selectedDate) {
+  //     setState(() {
+  //       _selectedDate = picked;
+  //     });
+  //   }
+  // }
 
   // memilih waktu
   Future<void> _selectTime(BuildContext context) async {
@@ -45,7 +53,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
           context: context,
           initialTime: _selectedTime ?? TimeOfDay.now(),
         ))!;
-    if (picked != null && picked != _selectedTime) {
+    if (picked != _selectedTime) {
       setState(() {
         _selectedTime = picked;
       });
@@ -53,17 +61,31 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    DateTime parsedDate = DateTime.parse(widget.selectedDateOnCalendar);
+    formattedDate = DateFormat('EEE, dd MMM yyyy').format(parsedDate);
+    _selectedTime = TimeOfDay(hour: 0, minute: 0);
+  }
+
+  @override
   Widget build(BuildContext context) {
     // menampilkan tanggal dan waktu
-    String getFormattedDateTime() {
-      if (_selectedDate == null || _selectedTime == null) {
-        return DateFormat('EEE, dd MMM yyyy HH:mm').format(DateTime.now());
-      }
-      final DateFormat dateFormat = DateFormat('EEE, dd MMM yyyy');
-      final String formattedDate = dateFormat.format(_selectedDate!);
-      final String formattedTime =
-          '${_selectedTime!.hour.toString().padLeft(2, '0')}:${_selectedTime!.minute.toString().padLeft(2, '0')}';
-      return '$formattedDate $formattedTime';
+    // String getFormattedDateTime() {
+    //   if (_selectedDate == null || _selectedTime == null) {
+    //     return DateFormat('EEE, dd MMM yyyy HH:mm').format(DateTime.now());
+    //   }
+    //   final DateFormat dateFormat = DateFormat('EEE, dd MMM yyyy');
+    //   final String formattedDate = dateFormat.format(_selectedDate!);
+    //   final String formattedTime =
+    //       '${_selectedTime!.hour.toString().padLeft(2, '0')}:${_selectedTime!.minute.toString().padLeft(2, '0')}';
+    //   return '$formattedDate $formattedTime';
+    // }
+
+    String getFormattedTime(TimeOfDay time) {
+      final hour = time.hour.toString().padLeft(2, '0');
+      final minute = time.minute.toString().padLeft(2, '0');
+      return '$hour:$minute';
     }
 
     return Padding(
@@ -118,12 +140,30 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
             ListTile(
               leading: Icon(Icons.calendar_today),
               title: Text('Deadline'),
+            ),
+
+            ListTile(
+              title: Text('Date'),
+              trailing: Text(formattedDate),
+            ),
+
+            ListTile(
+              title: Text('Time'),
               onTap: () async {
-                await _selectDate(context);
                 await _selectTime(context);
               },
-              trailing: Text(getFormattedDateTime()),
+              trailing: Text(getFormattedTime(_selectedTime)),
             ),
+
+            // ListTile(
+            //   leading: Icon(Icons.calendar_today),
+            //   title: Text('Deadline'),
+            //   onTap: () async {
+            //     await _selectDate(context);
+            //     await _selectTime(context);
+            //   },
+            //   trailing: Text(getFormattedDateTime()),
+            // ),
             //add notes
             ListTile(
               leading: const Icon(Icons.note),

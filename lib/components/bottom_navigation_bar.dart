@@ -1,5 +1,6 @@
-import 'package:app/pages/home_page.dart';
-import 'package:app/pages/task_group_page.dart';
+import 'package:doko/pages/focus_mode_page.dart';
+import 'package:doko/pages/home_page.dart';
+import 'package:doko/pages/task_group_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar.dart';
@@ -18,6 +19,7 @@ class BottomNavBarState extends State<BottomNavBar> {
   final List<Widget> _pages = [
     HomePage(),
     TaskGroupPage(),
+    FocusModePage()
   ];
 
   void _onItemTapped(int index) {
@@ -58,6 +60,17 @@ class BottomNavBarState extends State<BottomNavBar> {
                         : Colors.white,
               ),
               label: 'Group',
+              labelStyle: TextStyle(color: Colors.white), // Label tetap putih
+            ),
+            CurvedNavigationBarItem(
+              child: Icon(
+                LucideIcons.timer_reset,
+                color:
+                    _selectedIndex == 1
+                        ? const Color(0xFF4D107F)
+                        : Colors.white,
+              ),
+              label: 'Focus',
               labelStyle: TextStyle(color: Colors.white), // Label tetap putih
             ),
           ],

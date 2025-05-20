@@ -18,6 +18,7 @@ class _TaskGroupPageState extends State<TaskGroupPage> {
   List<TaskGroup> displayedGroups = [];
   final TextEditingController _searchController = TextEditingController();
   String sortBy = 'name';
+  bool isAscending = true;
 
   @override
   void initState() {
@@ -36,14 +37,29 @@ class _TaskGroupPageState extends State<TaskGroupPage> {
     setState(() {
       sortBy = criteria;
       if (criteria == 'name') {
-        displayedGroups.sort((a, b) => a.name.compareTo(b.name));
+        displayedGroups.sort(
+          (a, b) =>
+              isAscending ? a.name.compareTo(b.name) : b.name.compareTo(a.name),
+        );
       } else if (criteria == 'date') {
         displayedGroups.sort(
-          (a, b) => DateTime.parse(
-            b.createdAt,
-          ).compareTo(DateTime.parse(a.createdAt)),
+          (a, b) =>
+              isAscending
+                  ? DateTime.parse(
+                    a.createdAt,
+                  ).compareTo(DateTime.parse(b.createdAt))
+                  : DateTime.parse(
+                    b.createdAt,
+                  ).compareTo(DateTime.parse(a.createdAt)),
         );
       }
+    });
+  }
+
+  void toggleSortOrder() {
+    setState(() {
+      isAscending = !isAscending;
+      sortTaskGroups(sortBy);
     });
   }
 
@@ -127,77 +143,101 @@ class _TaskGroupPageState extends State<TaskGroupPage> {
                       margin: EdgeInsets.only(top: 12),
                       child: Row(
                         children: [
-                          Padding(
-                            padding: EdgeInsets.only(top: 2),
-                            child: Text(
-                              "Sort by:",
-                              style: TextStyle(
+                          Expanded(
+                            child: Row(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(top: 2),
+                                  child: Text(
+                                    "Sort by:",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: 12),
+
+                                GestureDetector(
+                                  onTap: () => sortTaskGroups('name'),
+                                  child: Container(
+                                    width: 60,
+                                    height: 20,
+                                    decoration: BoxDecoration(
+                                      color:
+                                          sortBy == 'name'
+                                              ? Color(0xFFBF8DE8)
+                                              : Color(0xFF7E1AD1),
+                                      borderRadius: BorderRadius.circular(10),
+                                      border:
+                                          sortBy != 'name'
+                                              ? Border.all(
+                                                color: Color(0xFFBF8DE8),
+                                                width: 1,
+                                              )
+                                              : null,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "Name",
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: 12),
+                                GestureDetector(
+                                  onTap: () => sortTaskGroups('date'),
+                                  child: Container(
+                                    width: 60,
+                                    height: 20,
+                                    decoration: BoxDecoration(
+                                      color:
+                                          sortBy == 'date'
+                                              ? Color(0xFFBF8DE8)
+                                              : Color(0xFF7E1AD1),
+                                      borderRadius: BorderRadius.circular(10),
+                                      border:
+                                          sortBy != 'date'
+                                              ? Border.all(
+                                                color: Color(0xFFBF8DE8),
+                                                width: 1,
+                                              )
+                                              : null,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "Date",
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          GestureDetector(
+                            onTap: toggleSortOrder,
+                            child: Container(
+                              width: 20,
+                              height: 20,
+                              decoration: BoxDecoration(
+                                color: Color(0xFFBF8DE8),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                isAscending
+                                    ? Icons.arrow_upward
+                                    : Icons.arrow_downward,
                                 color: Colors.white,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ),
-
-                          SizedBox(width: 12),
-
-                          GestureDetector(
-                            onTap: () => sortTaskGroups('name'),
-                            child: Container(
-                              width: 60,
-                              height: 20,
-                              decoration: BoxDecoration(
-                                color:
-                                    sortBy == 'name'
-                                        ? Color(0xFFBF8DE8)
-                                        : Color(0xFF7E1AD1),
-                                borderRadius: BorderRadius.circular(10),
-                                border:
-                                    sortBy != 'name'
-                                        ? Border.all(
-                                          color: Color(0xFFBF8DE8),
-                                          width: 1,
-                                        )
-                                        : null,
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "Name",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 12),
-                          GestureDetector(
-                            onTap: () => sortTaskGroups('date'),
-                            child: Container(
-                              width: 60,
-                              height: 20,
-                              decoration: BoxDecoration(
-                                color:
-                                    sortBy == 'date'
-                                        ? Color(0xFFBF8DE8)
-                                        : Color(0xFF7E1AD1),
-                                borderRadius: BorderRadius.circular(10),
-                                border:
-                                    sortBy != 'date'
-                                        ? Border.all(
-                                          color: Color(0xFFBF8DE8),
-                                          width: 1,
-                                        )
-                                        : null,
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "Date",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.white,
-                                  ),
-                                ),
+                                size: 18,
                               ),
                             ),
                           ),

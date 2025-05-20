@@ -1,6 +1,6 @@
-import 'package:doko/pages/focus_mode_page.dart';
-import 'package:doko/pages/home_page.dart';
-import 'package:doko/pages/task_group_page.dart';
+import 'package:app/pages/focus_mode_page.dart';
+import 'package:app/pages/home_page.dart';
+import 'package:app/pages/task_group_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar.dart';
@@ -16,11 +16,7 @@ class BottomNavBar extends StatefulWidget {
 class BottomNavBarState extends State<BottomNavBar> {
   int _selectedIndex = 0;
 
-  final List<Widget> _pages = [
-    HomePage(),
-    TaskGroupPage(),
-    FocusModePage()
-  ];
+  final List<Widget> _pages = [HomePage(), TaskGroupPage(), FocusModePage()];
 
   void _onItemTapped(int index) {
     setState(() {
@@ -66,7 +62,7 @@ class BottomNavBarState extends State<BottomNavBar> {
               child: Icon(
                 LucideIcons.timer_reset,
                 color:
-                    _selectedIndex == 1
+                    _selectedIndex == 2
                         ? const Color(0xFF4D107F)
                         : Colors.white,
               ),

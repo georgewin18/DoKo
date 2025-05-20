@@ -12,7 +12,7 @@ class AddTaskBottomSheet extends StatefulWidget {
   const AddTaskBottomSheet({
     super.key,
     required this.groupId,
-    required this.selectedDateOnCalendar
+    required this.selectedDateOnCalendar,
   });
 
   @override
@@ -31,20 +31,20 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
   late String formattedDate;
 
   // memilih tanggal
-  // Future<void> _selectDate(BuildContext context) async {
-  //   final DateTime picked =
-  //       (await showDatePicker(
-  //         context: context,
-  //         initialDate: _selectedDate ?? DateTime.now(),
-  //         firstDate: DateTime(2020),
-  //         lastDate: DateTime(2101),
-  //       ))!;
-  //   if (picked != _selectedDate) {
-  //     setState(() {
-  //       _selectedDate = picked;
-  //     });
-  //   }
-  // }
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime picked =
+        (await showDatePicker(
+          context: context,
+          initialDate: _selectedDate ?? DateTime.now(),
+          firstDate: DateTime(2020),
+          lastDate: DateTime(2101),
+        ))!;
+    if (picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+      });
+    }
+  }
 
   // memilih waktu
   Future<void> _selectTime(BuildContext context) async {
@@ -71,21 +71,15 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
   @override
   Widget build(BuildContext context) {
     // menampilkan tanggal dan waktu
-    // String getFormattedDateTime() {
-    //   if (_selectedDate == null || _selectedTime == null) {
-    //     return DateFormat('EEE, dd MMM yyyy HH:mm').format(DateTime.now());
-    //   }
-    //   final DateFormat dateFormat = DateFormat('EEE, dd MMM yyyy');
-    //   final String formattedDate = dateFormat.format(_selectedDate!);
-    //   final String formattedTime =
-    //       '${_selectedTime!.hour.toString().padLeft(2, '0')}:${_selectedTime!.minute.toString().padLeft(2, '0')}';
-    //   return '$formattedDate $formattedTime';
-    // }
-
-    String getFormattedTime(TimeOfDay time) {
-      final hour = time.hour.toString().padLeft(2, '0');
-      final minute = time.minute.toString().padLeft(2, '0');
-      return '$hour:$minute';
+    String getFormattedDateTime() {
+      if (_selectedDate == null || _selectedTime == null) {
+        return DateFormat('EEE, dd MMM yyyy HH:mm').format(DateTime.now());
+      }
+      final DateFormat dateFormat = DateFormat('EEE, dd MMM yyyy');
+      final String formattedDate = dateFormat.format(_selectedDate!);
+      final String formattedTime =
+          '${_selectedTime!.hour.toString().padLeft(2, '0')}:${_selectedTime!.minute.toString().padLeft(2, '0')}';
+      return '$formattedDate\n$formattedTime';
     }
 
     return Padding(
@@ -133,26 +127,24 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
               inputFormatters: [LengthLimitingTextInputFormatter(30)],
             ),
 
-            const SizedBox(
-                height: 16
-            ),
+            const SizedBox(height: 16),
 
             ListTile(
               leading: Icon(Icons.calendar_today),
               title: Text('Deadline'),
             ),
 
-            ListTile(
-              title: Text('Date'),
-              trailing: Text(formattedDate),
-            ),
+            ListTile(title: Text('Date'), trailing: Text(formattedDate)),
 
             ListTile(
               title: Text('Time'),
               onTap: () async {
                 await _selectTime(context);
               },
-              trailing: Text(getFormattedTime(_selectedTime)),
+              trailing: Text(
+                getFormattedDateTime(),
+                textAlign: TextAlign.right,
+              ),
             ),
 
             // ListTile(
@@ -206,26 +198,32 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                 final notes = _notesController.text;
                 final attachment = _attachmentController.text;
 
-                if (title.isEmpty || _selectedDate == null || _selectedTime == null) {
+                if (title.isEmpty ||
+                    _selectedDate == null ||
+                    _selectedTime == null) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Please complete all required fields')),
+                    const SnackBar(
+                      content: Text('Please complete all required fields'),
+                    ),
                   );
                   Navigator.pop(context);
                   return;
                 }
 
-                final formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate!);
+                final formattedDate = DateFormat(
+                  'yyyy-MM-dd',
+                ).format(_selectedDate!);
                 final formattedTime =
                     '${_selectedTime!.hour.toString().padLeft(2, '0')}:${_selectedTime!.minute.toString().padLeft(2, '0')}';
 
                 await TaskDbHelper().addTask(
-                    title,
-                    notes,
-                    attachment,
-                    formattedDate,
-                    formattedTime,
-                    0,
-                    widget.groupId
+                  title,
+                  notes,
+                  attachment,
+                  formattedDate,
+                  formattedTime,
+                  0,
+                  widget.groupId,
                 );
 
                 Navigator.pop(context, true);

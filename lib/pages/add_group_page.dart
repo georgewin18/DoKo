@@ -15,7 +15,8 @@ class AddGroupPageState extends State<AddGroupPage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  int _characterCount = 0;
+  int _characterCount1 = 0;
+  int _characterCount2 = 0;
 
   @override
   void dispose() {
@@ -91,28 +92,59 @@ class AddGroupPageState extends State<AddGroupPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(top: 44.0),
-                      child: TextField(
-                        controller: _titleController,
-                        inputFormatters: [LengthLimitingTextInputFormatter(30)],
-                        textAlign: TextAlign.center,
-                        decoration: const InputDecoration(
-                          hintText: 'Group Title',
-                          hintStyle: TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey,
+                      padding: const EdgeInsets.only(
+                        left: 24,
+                        right: 24,
+                        top: 44.0,
+                      ),
+                      child: Column(
+                        children: [
+                          TextField(
+                            controller: _titleController,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.deny(RegExp(r'\n')),
+                              LengthLimitingTextInputFormatter(30),
+                            ],
+                            textAlign: TextAlign.center,
+                            maxLines: null,
+                            decoration: const InputDecoration(
+                              hintText: 'Group Title',
+                              hintStyle: TextStyle(
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey,
+                              ),
+                              border: InputBorder.none,
+                            ),
+                            onChanged: (text) {
+                              setState(() {
+                                _characterCount1 = text.length;
+                              });
+                            },
+                            style: const TextStyle(
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                          border: InputBorder.none,
-                        ),
-                        style: const TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                        ),
+                          Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Align(
+                              alignment: Alignment.bottomRight,
+                              child: Text(
+                                '$_characterCount1/30',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
+
                     const Padding(
-                      padding: EdgeInsets.only(top: 12, left: 24, right: 24),
+                      padding: EdgeInsets.only(left: 24, right: 24),
                       child: Divider(color: Color(0xFF7E1AD1), thickness: 1),
                     ),
                     Padding(
@@ -129,14 +161,17 @@ class AddGroupPageState extends State<AddGroupPage> {
                               controller: _scrollController,
                               child: TextField(
                                 controller: _descriptionController,
-                                maxLines: null,
+                                maxLines: 4,
                                 keyboardType: TextInputType.multiline,
                                 inputFormatters: [
+                                  FilteringTextInputFormatter.deny(
+                                    RegExp(r'\n'),
+                                  ),
                                   LengthLimitingTextInputFormatter(100),
                                 ],
                                 onChanged: (text) {
                                   setState(() {
-                                    _characterCount = text.length;
+                                    _characterCount2 = text.length;
                                   });
                                 },
                                 decoration: const InputDecoration(
@@ -156,7 +191,7 @@ class AddGroupPageState extends State<AddGroupPage> {
                             child: Align(
                               alignment: Alignment.bottomRight,
                               child: Text(
-                                '$_characterCount/100',
+                                '$_characterCount2/100',
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: Colors.grey[600],

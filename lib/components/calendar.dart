@@ -1,4 +1,5 @@
 import 'package:app/constants/colors.dart';
+import 'package:app/constants/length.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -34,7 +35,9 @@ class CalendarState extends State<Calendar> {
     _selectedDate = widget.selectedDate ?? DateTime.now();
 
     final now = DateTime.now();
-    final differeceInMonths = (_selectedDate.year - now.year) * 12 + (_selectedDate.month - now.month);
+    final differeceInMonths =
+        (_selectedDate.year - now.year) * 12 +
+        (_selectedDate.month - now.month);
     currentIndex = 12 + differeceInMonths;
     _currentDate = DateTime(now.year, now.month + differeceInMonths);
 
@@ -103,8 +106,8 @@ class CalendarState extends State<Calendar> {
     return Center(
       child: Container(
         padding: EdgeInsets.all(10),
-        width: widget.isHomepage ? MediaQuery.of(context).size.width : MediaQuery.of(context).size.width * 0.9,
-        height: widget.isHomepage ? MediaQuery.of(context).size.height : MediaQuery.of(context).size.width * 0.9,
+        width: Length(input: "calendar", context: context).width(),
+        height: Length(input: "calendar", context: context).height(),
         decoration: BoxDecoration(
           // color: themeColors[6],
           borderRadius: BorderRadius.circular(10),
@@ -113,7 +116,7 @@ class CalendarState extends State<Calendar> {
           builder: (context, constraints) {
             double width = constraints.maxWidth;
             double height = constraints.maxHeight;
-            double dayFontSize = width * 0.045;
+            double dayFontSize = width * 0.035;
             double monthFontSize = width * 0.07;
             double yearFontSize = width * 0.04;
 
@@ -284,9 +287,8 @@ class CalendarState extends State<Calendar> {
                                         alignment: Alignment.center,
                                         children: [
                                           Container(
+                                            margin: EdgeInsets.all(5),
                                             alignment: Alignment.center,
-                                            width: width * 0.075,
-                                            height: width * 0.075,
                                             decoration: BoxDecoration(
                                               shape: BoxShape.circle,
                                               color:
@@ -310,7 +312,7 @@ class CalendarState extends State<Calendar> {
                                                 '${day.day}',
                                                 style: TextStyle(
                                                   fontSize: dayFontSize,
-                                                  fontWeight: FontWeight.bold,
+                                                  fontWeight: FontWeight.w500,
                                                   color:
                                                       isSelected
                                                           ? Colors.white

@@ -137,7 +137,7 @@ class TaskGroupCard extends StatelessWidget {
                   ),
 
                   Container(
-                    margin: EdgeInsets.fromLTRB(0,6,16,0),
+                    margin: EdgeInsets.fromLTRB(0, 6, 16, 0),
                     alignment: Alignment.centerRight,
                     child: Text(
                       "Last Updated ${_formatDate()}",

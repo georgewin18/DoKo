@@ -12,15 +12,6 @@ enum TaskStatus {
   priority, // Purple - statusColor[6]
 }
 
-const eventColors = [
-  Color(0xffFF0000),
-  Color(0xff00A7FA),
-  Color(0xffFFC000),
-  Color(0xffAF6E4D),
-  Color(0xffBE28BE),
-  Color(0xff2BE13C),
-];
-
 const themeColors = [
   Color(0xffFF5555),
   Color(0xff663300),

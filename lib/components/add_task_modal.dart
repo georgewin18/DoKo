@@ -179,7 +179,6 @@ class _AddTaskModalState extends State<AddTaskModal> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Title can\'t be empty!')),
                   );
-                  Navigator.pop(context);
                   return;
                 }
 

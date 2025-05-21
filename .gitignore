@@ -2,7 +2,6 @@ build
 .dart_tool
 android/app/build.gradle.kts
 android/app/my-release-key.jks
-lib/main.dart
 pubspec.lock
 .flutter-plugins
 .flutter-plugins-dependencies

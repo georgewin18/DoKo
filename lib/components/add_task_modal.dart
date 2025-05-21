@@ -10,7 +10,7 @@ class AddTaskModal extends StatefulWidget {
   const AddTaskModal({
     super.key,
     required this.groupId,
-    required this.selectedDateOnCalendar
+    required this.selectedDateOnCalendar,
   });
 
   @override
@@ -26,12 +26,11 @@ class _AddTaskModalState extends State<AddTaskModal> {
   late DateTime parsedDate;
   late String formattedDate;
 
+  bool isValidDriveLink = true;
+
   Future<void> _selectTime(BuildContext context) async {
     final TimeOfDay picked =
-    (await showTimePicker(
-      context: context,
-      initialTime: selectedTime,
-    ))!;
+        (await showTimePicker(context: context, initialTime: selectedTime))!;
     if (picked != selectedTime) {
       setState(() {
         selectedTime = picked;
@@ -78,9 +77,7 @@ class _AddTaskModalState extends State<AddTaskModal> {
               ),
             ),
 
-            const SizedBox(
-              height: 16
-            ),
+            const SizedBox(height: 16),
 
             TextField(
               controller: _titleController,
@@ -101,9 +98,7 @@ class _AddTaskModalState extends State<AddTaskModal> {
               inputFormatters: [LengthLimitingTextInputFormatter(30)],
             ),
 
-            const SizedBox(
-              height: 16
-            ),
+            const SizedBox(height: 16),
 
             ListTile(
               leading: Icon(Icons.calendar_today),
@@ -115,10 +110,7 @@ class _AddTaskModalState extends State<AddTaskModal> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ListTile(
-                    title: Text('Date'),
-                    trailing: Text(formattedDate),
-                  ),
+                  ListTile(title: Text('Date'), trailing: Text(formattedDate)),
 
                   ListTile(
                     title: Text('Time'),
@@ -127,7 +119,7 @@ class _AddTaskModalState extends State<AddTaskModal> {
                     },
                     trailing: Text(getFormattedTime(selectedTime)),
                   ),
-                ]
+                ],
               ),
             ),
 
@@ -149,18 +141,31 @@ class _AddTaskModalState extends State<AddTaskModal> {
               leading: const Icon(Icons.attach_file),
               title: TextField(
                 controller: _attachmentController,
-                decoration: const InputDecoration(
+                onChanged: (value) {
+                  final regex = RegExp(
+                    r'^(https?:\/\/)?([\w\-]+\.)*[\w\-]+\.com(\/.*)?$',
+                    caseSensitive: false,
+                  );
+                  setState(() {
+                    isValidDriveLink = value.isEmpty || regex.hasMatch(value);
+                  });
+                },
+                decoration: InputDecoration(
                   hintText: 'Add your drive link here',
                   hintStyle: TextStyle(color: Colors.grey),
                   border: InputBorder.none,
                 ),
-                style: const TextStyle(color: Colors.black),
+                style: TextStyle(
+                  color: isValidDriveLink ? Colors.blue : Colors.red,
+                  decoration:
+                      isValidDriveLink
+                          ? TextDecoration.underline
+                          : TextDecoration.none,
+                ),
               ),
             ),
 
-            const SizedBox(
-              height: 20
-            ),
+            const SizedBox(height: 20),
 
             ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -175,6 +180,11 @@ class _AddTaskModalState extends State<AddTaskModal> {
                 final notes = _notesController.text;
                 final attachment = _attachmentController.text;
 
+                final driveLinkRegex = RegExp(
+                  r'^(https?:\/\/)?([\w\-]+\.)+com(\/.*)?$',
+                  caseSensitive: false,
+                );
+
                 if (title.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Title can\'t be empty!')),
@@ -183,8 +193,19 @@ class _AddTaskModalState extends State<AddTaskModal> {
                   return;
                 }
 
-                final deadlineDate = DateFormat('yyyy-MM-dd').format(parsedDate);
-                final deadlineTime = '${selectedTime.hour.toString().padLeft(2, '0')}:${selectedTime.minute.toString().padLeft(2, '0')}';
+                if (attachment.isNotEmpty &&
+                    !driveLinkRegex.hasMatch(attachment)) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Invalid Google Drive link!')),
+                  );
+                  return;
+                }
+
+                final deadlineDate = DateFormat(
+                  'yyyy-MM-dd',
+                ).format(parsedDate);
+                final deadlineTime =
+                    '${selectedTime.hour.toString().padLeft(2, '0')}:${selectedTime.minute.toString().padLeft(2, '0')}';
 
                 await TaskDbHelper().addTask(
                   title,
@@ -193,7 +214,7 @@ class _AddTaskModalState extends State<AddTaskModal> {
                   deadlineDate,
                   deadlineTime,
                   0,
-                  widget.groupId
+                  widget.groupId,
                 );
 
                 Navigator.pop(context, true);
@@ -208,10 +229,8 @@ class _AddTaskModalState extends State<AddTaskModal> {
               ),
             ),
 
-            const SizedBox(
-              height: 20
-            ),
-          ]
+            const SizedBox(height: 20),
+          ],
         ),
       ),
     );

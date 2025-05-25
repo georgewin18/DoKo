@@ -50,48 +50,49 @@ class DBProvider {
 
     await db.execute('''
       CREATE TRIGGER update_taskgroup_count_after_insert
-        AFTER INSERT ON task
-        BEGIN
-          UPDATE task_group
-          SET 
-            not_started_count = not_started_count + CASE WHEN NEW.progress = 0 THEN 1 ELSE 0 END,
-            ongoing_count = ongoing_count + CASE WHEN NEW.progress > 0 AND NEW.progress < 100 THEN 1 ELSE 0 END,
-            completed_count = completed_count + CASE WHEN NEW.progress = 100 THEN 1 ELSE 0 END
-          WHERE id = NEW.task_group_id;
-        END;
+      AFTER INSERT ON task
+      BEGIN
+        UPDATE task_group
+        SET 
+          not_started_count = not_started_count + CASE WHEN NEW.progress = 0 THEN 1 ELSE 0 END,
+          ongoing_count = ongoing_count + CASE WHEN NEW.progress > 0 AND NEW.progress < 100 THEN 1 ELSE 0 END,
+          completed_count = completed_count + CASE WHEN NEW.progress = 100 THEN 1 ELSE 0 END
+        WHERE id = NEW.task_group_id;
+      END;
     ''');
 
     await db.execute('''
       CREATE TRIGGER update_taskgroup_count_after_update
-        AFTER UPDATE OF progress ON task
-        BEGIN
-          UPDATE task_group
-          SET 
-            not_started_count = not_started_count - CASE WHEN OLD.progress = 0 THEN 1 ELSE 0 END,
-            ongoing_count = ongoing_count - CASE WHEN OLD.progress > 0 AND OLD.progress < 100 THEN 1 ELSE 0 END,
-            completed_count = completed_count - CASE WHEN OLD.progress = 100 THEN 1 ELSE 0 END
-          WHERE id = OLD.task_group_id;
+      AFTER UPDATE OF progress ON task
+      WHEN OLD.progress != NEW.progress
+      BEGIN
+        UPDATE task_group
+        SET 
+          not_started_count = not_started_count - CASE WHEN OLD.progress = 0 THEN 1 ELSE 0 END,
+          ongoing_count = ongoing_count - CASE WHEN OLD.progress > 0 AND OLD.progress < 100 THEN 1 ELSE 0 END,
+          completed_count = completed_count - CASE WHEN OLD.progress = 100 THEN 1 ELSE 0 END
+        WHERE id = OLD.task_group_id;
 
-          UPDATE task_group
-          SET 
-            not_started_count = not_started_count + CASE WHEN NEW.progress = 0 THEN 1 ELSE 0 END,
-            ongoing_count = ongoing_count + CASE WHEN NEW.progress > 0 AND NEW.progress < 100 THEN 1 ELSE 0 END,
-            completed_count = completed_count + CASE WHEN NEW.progress = 100 THEN 1 ELSE 0 END
-          WHERE id = NEW.task_group_id;
-        END;
+        UPDATE task_group
+        SET 
+          not_started_count = not_started_count + CASE WHEN NEW.progress = 0 THEN 1 ELSE 0 END,
+          ongoing_count = ongoing_count + CASE WHEN NEW.progress > 0 AND NEW.progress < 100 THEN 1 ELSE 0 END,
+          completed_count = completed_count + CASE WHEN NEW.progress = 100 THEN 1 ELSE 0 END
+        WHERE id = NEW.task_group_id;
+      END;
     ''');
 
     await db.execute('''
       CREATE TRIGGER update_taskgroup_count_after_delete
-        AFTER DELETE ON task
-        BEGIN
-          UPDATE task_group
-          SET 
-            not_started_count = not_started_count - CASE WHEN OLD.progress = 0 THEN 1 ELSE 0 END,
-            ongoing_count = ongoing_count - CASE WHEN OLD.progress > 0 AND OLD.progress < 100 THEN 1 ELSE 0 END,
-            completed_count = completed_count - CASE WHEN OLD.progress = 100 THEN 1 ELSE 0 END
-          WHERE id = OLD.task_group_id;
-        END;
+      AFTER DELETE ON task
+      BEGIN
+        UPDATE task_group
+        SET 
+          not_started_count = not_started_count - CASE WHEN OLD.progress = 0 THEN 1 ELSE 0 END,
+          ongoing_count = ongoing_count - CASE WHEN OLD.progress > 0 AND OLD.progress < 100 THEN 1 ELSE 0 END,
+          completed_count = completed_count - CASE WHEN OLD.progress = 100 THEN 1 ELSE 0 END
+        WHERE id = OLD.task_group_id;
+      END;
     ''');
 
     await db.execute('''

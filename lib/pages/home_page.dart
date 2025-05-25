@@ -4,7 +4,9 @@ import 'package:app/components/home_task_card.dart';
 import 'package:app/db/task_db_helper.dart';
 import 'package:app/db/task_group_db_helper.dart';
 import 'package:app/models/task_model.dart';
+import 'package:app/pages/notification_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_lucide/flutter_lucide.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -38,25 +40,41 @@ class _HomePageState extends State<HomePage> {
   Future<void> _fetchAllGroups() async {
     final groups = await TaskGroupDBHelper.getTaskGroups();
     setState(() {
-      groupNames = {
-        for (var group in groups) group.id: group.name,
-      };
+      groupNames = {for (var group in groups) group.id: group.name};
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    filteredTasks = _allTask.where((task) {
-      DateTime taskDate = DateTime.parse(task.date);
-      return isSameDate(taskDate, _selectedDate);
-    }).toList();
+    filteredTasks =
+        _allTask.where((task) {
+          DateTime taskDate = DateTime.parse(task.date);
+          return isSameDate(taskDate, _selectedDate);
+        }).toList();
 
     return Scaffold(
       body: Stack(
         children: [
-          Container(
-            height: 276,
-            color: Color(0xFF7E1AD1),
+          Container(height: 276, color: Color(0xFF7E1AD1)),
+          Positioned(
+            right: 16,
+            top: 50,
+            child: FloatingActionButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Notification_Page()),
+                );
+              },
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              highlightElevation: 0,
+              splashColor: Colors.transparent, 
+              shape: CircleBorder(
+                side: BorderSide.none, 
+              ),
+              child: Icon(LucideIcons.bell, color: Colors.white),
+            ),
           ),
 
           Container(
@@ -85,21 +103,17 @@ class _HomePageState extends State<HomePage> {
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),
-
-                SizedBox(
-                  height: 8,
-                ),
-
+                SizedBox(height: 8),
                 Container(
                   margin: EdgeInsets.symmetric(horizontal: 8),
                   height: 388,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                   child: Calendar(
                     isHomepage: true,
@@ -112,9 +126,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
 
-                SizedBox(
-                  height: 8,
-                ),
+                SizedBox(height: 8),
 
                 Expanded(
                   child: Container(
@@ -131,83 +143,110 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
 
-                        SizedBox(
-                          height: 8,
-                        ),
+                        SizedBox(height: 8),
 
                         Expanded(
-                          child: filteredTasks.isEmpty
-                            ? Align(
-                            alignment: Alignment.topCenter,
-                            child: Padding(
-                              padding: const EdgeInsets.only(top: 32),
-                              child: Text(
-                                "You don't have any task for now!",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ),
-                          )
-                            : ListView.builder(
-                            padding: EdgeInsets.zero,
-                            itemCount: filteredTasks.length,
-                            itemBuilder: (context, index) {
-                              final task = filteredTasks[index];
-                              final groupName = groupNames[task.task_group_id] ?? "Unknown Group";
-
-                              return Padding(
-                                padding: EdgeInsets.only(bottom: 12),
-                                child: HomeTaskCard(
-                                  title: task.task_name,
-                                  groupName: groupName,
-                                  date: task.date,
-                                  time: task.time,
-                                  progress: (task.progress.toDouble() / 100),
-                                  onTap: () async {
-                                    final result = await showModalBottomSheet(
-                                      context: context,
-                                      isScrollControlled: true,
-                                      shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.vertical(
-                                          top: Radius.circular(20),
+                          child:
+                              filteredTasks.isEmpty
+                                  ? Align(
+                                    alignment: Alignment.topCenter,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(top: 32),
+                                      child: Text(
+                                        "You don't have any task for now!",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.grey,
                                         ),
                                       ),
-                                      builder: (context) => EditTaskBottomSheet(task: task),
-                                    );
+                                    ),
+                                  )
+                                  : ListView.builder(
+                                    padding: EdgeInsets.zero,
+                                    itemCount: filteredTasks.length,
+                                    itemBuilder: (context, index) {
+                                      final task = filteredTasks[index];
+                                      final groupName =
+                                          groupNames[task.task_group_id] ??
+                                          "Unknown Group";
 
-                                    if (result != null) {
-                                      ScaffoldMessenger.of(context,).showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            (result['action'] == 'delete') ? "Task deleted" : "Task updated",
-                                          ),
-                                          behavior: SnackBarBehavior.floating,
-                                          margin: EdgeInsets.only(
-                                            bottom: MediaQuery.of(context).viewInsets.bottom + 20,
-                                            left: 16,
-                                            right: 16,
-                                          ),
-                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                          duration: Duration(seconds: 2)
+                                      return Padding(
+                                        padding: EdgeInsets.only(bottom: 12),
+                                        child: HomeTaskCard(
+                                          title: task.task_name,
+                                          groupName: groupName,
+                                          date: task.date,
+                                          time: task.time,
+                                          progress:
+                                              (task.progress.toDouble() / 100),
+                                          onTap: () async {
+                                            final result = await showModalBottomSheet(
+                                              context: context,
+                                              isScrollControlled: true,
+                                              shape:
+                                                  const RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.vertical(
+                                                          top: Radius.circular(
+                                                            20,
+                                                          ),
+                                                        ),
+                                                  ),
+                                              builder:
+                                                  (context) =>
+                                                      EditTaskBottomSheet(
+                                                        task: task,
+                                                      ),
+                                            );
+
+                                            if (result != null) {
+                                              ScaffoldMessenger.of(
+                                                context,
+                                              ).showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                    (result['action'] ==
+                                                            'delete')
+                                                        ? "Task deleted"
+                                                        : "Task updated",
+                                                  ),
+                                                  behavior:
+                                                      SnackBarBehavior.floating,
+                                                  margin: EdgeInsets.only(
+                                                    bottom:
+                                                        MediaQuery.of(
+                                                          context,
+                                                        ).viewInsets.bottom +
+                                                        20,
+                                                    left: 16,
+                                                    right: 16,
+                                                  ),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          12,
+                                                        ),
+                                                  ),
+                                                  duration: Duration(
+                                                    seconds: 2,
+                                                  ),
+                                                ),
+                                              );
+                                              await _loadTasks();
+                                            }
+                                          },
                                         ),
                                       );
-                                      await _loadTasks();
-                                    }
-                                  },
-                                ),
-                              );
-                            }
-                          ),
-                        )
-                      ]
+                                    },
+                                  ),
+                        ),
+                      ],
                     ),
                   ),
-                )
+                ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );

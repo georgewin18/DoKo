@@ -7,6 +7,7 @@ class Task {
   final String time;
   final int progress;
   final int task_group_id;
+  final String? link;
 
   Task({
     this.id,
@@ -17,6 +18,7 @@ class Task {
     required this.time,
     required this.task_group_id,
     this.progress = 0,
+    this.link,
   });
 
   factory Task.fromMap(Map<String, dynamic> map) {

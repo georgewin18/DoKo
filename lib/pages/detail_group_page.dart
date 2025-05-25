@@ -284,8 +284,6 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
                     child: Divider(color: Colors.grey, thickness: 1, height: 1),
                   ),
 
-                  const SizedBox(height: 16),
-
                   if (filteredTasks.isEmpty)
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 30),

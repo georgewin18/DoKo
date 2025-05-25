@@ -56,7 +56,7 @@ class BottomNavBarState extends State<BottomNavBar> {
                 color:
                     _selectedIndex == 1
                         ? const Color(0xFF4D107F)
-                        : Colors.white,
+                        : Colors.white, 
               ),
               label: 'Group',
               labelStyle: TextStyle(color: Colors.white), // Label tetap putih

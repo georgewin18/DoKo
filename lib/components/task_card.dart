@@ -1,6 +1,4 @@
-import 'package:app/constants/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import '../models/task_model.dart';
 

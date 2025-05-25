@@ -19,8 +19,18 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
   TimeOfDay? _selectedTime;
   int? taskId;
 
+  final TextEditingController _titleController = TextEditingController();
   final TextEditingController _notesController = TextEditingController();
   final TextEditingController _attachmentController = TextEditingController();
+
+  late String _initialTitle;
+  late String _initialDesc;
+  late String _initialAttachment;
+  late double _initialProgress;
+  late DateTime _initialDate;
+  late TimeOfDay _initialTime;
+
+  bool _hasChanged = false;
 
   @override
   void initState() {
@@ -29,6 +39,7 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
 
     _progressValue = widget.task.progress / 100;
 
+    _titleController.text = widget.task.task_name;
     _notesController.text = widget.task.task_desc ?? '';
     _attachmentController.text =
         widget.task.task_attachment ?? ''; // kosongkan atau sesuaikan
@@ -40,6 +51,17 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
       hour: int.parse(timeParts[0]),
       minute: int.parse(timeParts[1]),
     );
+
+    _initialTitle = widget.task.task_name;
+    _initialDesc = widget.task.task_desc ?? '';
+    _initialAttachment = widget.task.task_attachment ?? '';
+    _initialProgress = _progressValue;
+    _initialDate = _selectedDate!;
+    _initialTime = _selectedTime!;
+
+    _titleController.addListener(_checkForChanges);
+    _notesController.addListener(_checkForChanges);
+    _attachmentController.addListener(_checkForChanges);
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -81,7 +103,7 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
 
   Future<bool> saveTaskUpdate() async {
     try {
-      final updatedTaskName = widget.task.task_name;
+      final updatedTaskName = _titleController.text;
       final updatedTaskDesc = _notesController.text;
       final updatedAttachment = _attachmentController.text;
       final updatedDate = DateFormat('yyyy-MM-dd').format(_selectedDate!);
@@ -113,6 +135,23 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
     }
   }
 
+  void _checkForChanges() {
+    final titleChanged = _titleController.text != _initialTitle;
+    final descChanged = _notesController.text != _initialDesc;
+    final attachmentChanged = _attachmentController.text != _initialAttachment;
+    final progressChanged = _progressValue != _initialProgress;
+    final dateChanged = _selectedDate != _initialDate;
+    final timeChanged = _selectedTime != _initialTime;
+
+    final changed = titleChanged || descChanged || attachmentChanged || progressChanged || dateChanged || timeChanged;
+
+    if (_hasChanged != changed) {
+      setState(() {
+        _hasChanged = changed;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -137,11 +176,19 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
             ),
             const SizedBox(height: 16),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  widget.task.task_name,
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                Expanded(
+                  child: TextField(
+                    controller: _titleController,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Task Title'
+                    ),
+                  ),
                 ),
                 IconButton(
                   onPressed: () async {
@@ -174,6 +221,7 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
               onTap: () async {
                 await _selectDate(context);
                 await _selectTime(context);
+                _checkForChanges();
               },
             ),
 
@@ -237,6 +285,7 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
                         setState(() {
                           _progressValue = value;
                         });
+                        _checkForChanges();
                       },
                     ),
                   ),
@@ -266,7 +315,7 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
                       minimumSize: const Size(double.infinity, 50),
                     ),
                     child: const Text(
-                      'Discard',
+                      'Cancel',
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -277,24 +326,28 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
                 const SizedBox(width: 10),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () async {
-                      if (_selectedDate != null && _selectedTime != null) {
-                        final success = await saveTaskUpdate();
-                        if (success) {
-                          Navigator.of(context).pop({'action': 'update'});
+                    onPressed: _hasChanged
+                      ? () async {
+                        if (_selectedDate != null && _selectedTime != null) {
+                          final success = await saveTaskUpdate();
+                          if (success) {
+                            Navigator.of(context).pop({'action': 'update'});
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text("Gagal memperbarui task")),
+                            );
+                          }
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text("Gagal memperbarui task")),
+                            SnackBar(content: Text('Please select a deadline')),
                           );
                         }
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Please select a deadline')),
-                        );
                       }
-                    },
+                    : null,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 126, 26, 209),
+                      backgroundColor: _hasChanged
+                        ? const Color.fromARGB(255, 126, 26, 209)
+                        : Colors.grey,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),

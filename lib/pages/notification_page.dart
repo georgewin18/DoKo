@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:app/components/notification_card.dart';
+import 'package:flutter_lucide/flutter_lucide.dart';
 
 class Notification_Page extends StatelessWidget {
   const Notification_Page({Key? key}) : super(key: key);
@@ -14,14 +15,20 @@ class Notification_Page extends StatelessWidget {
           Container(
             width: double.infinity,
             height: 129,
-            color: const Color(0xFF6031A1),
+            color: const Color(0xFF7E1AD1),
             padding: const EdgeInsets.only(top: 48, left: 16, right: 16),
             child: Row(
               
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Icon(Icons.arrow_back, color: Colors.white),
-                const SizedBox(width: 16),
+                GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: const Icon(
+                    LucideIcons.chevron_left, 
+                    color: Colors.white,
+                    size: 24, 
+                  ),
+                ),
                 Expanded(
                   child: Center(
                     child: Text(

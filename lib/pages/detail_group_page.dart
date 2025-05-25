@@ -291,17 +291,14 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
                       child: Divider(color: Colors.grey, thickness: 1, height: 1),
                     ),
 
-                    const SizedBox(height: 16),
-
-                    if (filteredTasks.isEmpty)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 30),
-                        child: Center(
-                          child: Text(
-                            'There is no task on\n$selectedDate',
-                            style: TextStyle(color: Colors.grey, fontSize: 16),
-                            textAlign: TextAlign.center,
-                          ),
+                  if (filteredTasks.isEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 30),
+                      child: Center(
+                        child: Text(
+                          'There is no task on\n$selectedDate',
+                          style: TextStyle(color: Colors.grey, fontSize: 16),
+                          textAlign: TextAlign.center,
                         ),
                       )
                     else
@@ -313,32 +310,21 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
                           final task = filteredTasks[index];
                           final color = cardColors[index % cardColors.length];
 
-                          return Padding(
-                            padding: const EdgeInsets.fromLTRB(30, 0, 30, 5),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  width: 60,
-                                  padding: const EdgeInsets.only(top: 10),
-                                  child: Text(
-                                    task.time,
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: GestureDetector(
-                                    onTap: () async {
-                                      final result = await showModalBottomSheet(
-                                        context: context,
-                                        isScrollControlled: true,
-                                        shape: const RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.vertical(
-                                            top: Radius.circular(20),
-                                          ),
+                        return Padding(
+                          padding: const EdgeInsets.fromLTRB(30, 0, 30, 5),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    final result = await showModalBottomSheet(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.vertical(
+                                          top: Radius.circular(20),
                                         ),
                                         builder:
                                             (context) =>

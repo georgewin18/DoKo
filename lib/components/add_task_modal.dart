@@ -3,59 +3,38 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 
-// THIS FILE PROBABLY UNUSED ANYMORE
-
-class AddTaskBottomSheet extends StatefulWidget {
+class AddTaskModal extends StatefulWidget {
   final int? groupId;
   final String selectedDateOnCalendar;
 
-  const AddTaskBottomSheet({
+  const AddTaskModal({
     super.key,
     required this.groupId,
-    required this.selectedDateOnCalendar,
+    required this.selectedDateOnCalendar
   });
 
   @override
-  State<AddTaskBottomSheet> createState() => _AddTaskBottomSheetState();
+  State<AddTaskModal> createState() => _AddTaskModalState();
 }
 
-class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
-  // List<String> _selectedReminders = [];
-
+class _AddTaskModalState extends State<AddTaskModal> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _notesController = TextEditingController();
   final TextEditingController _attachmentController = TextEditingController();
 
-  DateTime? _selectedDate;
-  late TimeOfDay _selectedTime;
+  late TimeOfDay selectedTime;
+  late DateTime parsedDate;
   late String formattedDate;
 
-  // memilih tanggal
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime picked =
-        (await showDatePicker(
-          context: context,
-          initialDate: _selectedDate ?? DateTime.now(),
-          firstDate: DateTime(2020),
-          lastDate: DateTime(2101),
-        ))!;
-    if (picked != _selectedDate) {
-      setState(() {
-        _selectedDate = picked;
-      });
-    }
-  }
-
-  // memilih waktu
   Future<void> _selectTime(BuildContext context) async {
     final TimeOfDay picked =
-        (await showTimePicker(
-          context: context,
-          initialTime: _selectedTime ?? TimeOfDay.now(),
-        ))!;
-    if (picked != _selectedTime) {
+    (await showTimePicker(
+      context: context,
+      initialTime: selectedTime,
+    ))!;
+    if (picked != selectedTime) {
       setState(() {
-        _selectedTime = picked;
+        selectedTime = picked;
       });
     }
   }
@@ -63,23 +42,17 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
   @override
   void initState() {
     super.initState();
-    DateTime parsedDate = DateTime.parse(widget.selectedDateOnCalendar);
+    parsedDate = DateTime.parse(widget.selectedDateOnCalendar);
     formattedDate = DateFormat('EEE, dd MMM yyyy').format(parsedDate);
-    _selectedTime = TimeOfDay(hour: 0, minute: 0);
+    selectedTime = TimeOfDay(hour: 23, minute: 59);
   }
 
   @override
   Widget build(BuildContext context) {
-    // menampilkan tanggal dan waktu
-    String getFormattedDateTime() {
-      if (_selectedDate == null || _selectedTime == null) {
-        return DateFormat('EEE, dd MMM yyyy HH:mm').format(DateTime.now());
-      }
-      final DateFormat dateFormat = DateFormat('EEE, dd MMM yyyy');
-      final String formattedDate = dateFormat.format(_selectedDate!);
-      final String formattedTime =
-          '${_selectedTime!.hour.toString().padLeft(2, '0')}:${_selectedTime!.minute.toString().padLeft(2, '0')}';
-      return '$formattedDate\n$formattedTime';
+    String getFormattedTime(TimeOfDay time) {
+      final hour = time.hour.toString().padLeft(2, '0');
+      final minute = time.minute.toString().padLeft(2, '0');
+      return '$hour:$minute';
     }
 
     return Padding(
@@ -104,16 +77,18 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                 ),
               ),
             ),
-            const SizedBox(height: 16),
-            //add title
+
+            const SizedBox(
+              height: 16
+            ),
+
             TextField(
               controller: _titleController,
               decoration: const InputDecoration(
-                hintText: 'Add Title...',
+                hintText: 'Add Title... (required)',
                 hintStyle: TextStyle(
                   color: Color.fromARGB(255, 169, 169, 169),
                   fontWeight: FontWeight.bold,
-                  fontSize: 20.0,
                   height: 1.5,
                 ),
                 border: InputBorder.none,
@@ -121,42 +96,41 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
               ),
               style: const TextStyle(
                 color: Colors.black,
-                fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
               inputFormatters: [LengthLimitingTextInputFormatter(30)],
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(
+              height: 16
+            ),
 
             ListTile(
               leading: Icon(Icons.calendar_today),
               title: Text('Deadline'),
             ),
 
-            ListTile(title: Text('Date'), trailing: Text(formattedDate)),
+            Container(
+              padding: EdgeInsets.only(left: 42),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ListTile(
+                    title: Text('Date'),
+                    trailing: Text(formattedDate),
+                  ),
 
-            ListTile(
-              title: Text('Time'),
-              onTap: () async {
-                await _selectTime(context);
-              },
-              trailing: Text(
-                getFormattedDateTime(),
-                textAlign: TextAlign.right,
+                  ListTile(
+                    title: Text('Time'),
+                    onTap: () async {
+                      await _selectTime(context);
+                    },
+                    trailing: Text(getFormattedTime(selectedTime)),
+                  ),
+                ]
               ),
             ),
 
-            // ListTile(
-            //   leading: Icon(Icons.calendar_today),
-            //   title: Text('Deadline'),
-            //   onTap: () async {
-            //     await _selectDate(context);
-            //     await _selectTime(context);
-            //   },
-            //   trailing: Text(getFormattedDateTime()),
-            // ),
-            //add notes
             ListTile(
               leading: const Icon(Icons.note),
               title: TextField(
@@ -170,7 +144,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                 inputFormatters: [LengthLimitingTextInputFormatter(100)],
               ),
             ),
-            //add attachment
+
             ListTile(
               leading: const Icon(Icons.attach_file),
               title: TextField(
@@ -183,7 +157,11 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                 style: const TextStyle(color: Colors.black),
               ),
             ),
-            const SizedBox(height: 20),
+
+            const SizedBox(
+              height: 20
+            ),
+
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color.fromARGB(255, 126, 26, 209),
@@ -193,37 +171,29 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                 minimumSize: const Size(double.infinity, 50),
               ),
               onPressed: () async {
-                //data input
                 final title = _titleController.text;
                 final notes = _notesController.text;
                 final attachment = _attachmentController.text;
 
-                if (title.isEmpty ||
-                    _selectedDate == null ||
-                    _selectedTime == null) {
+                if (title.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Please complete all required fields'),
-                    ),
+                    const SnackBar(content: Text('Title can\'t be empty!')),
                   );
                   Navigator.pop(context);
                   return;
                 }
 
-                final formattedDate = DateFormat(
-                  'yyyy-MM-dd',
-                ).format(_selectedDate!);
-                final formattedTime =
-                    '${_selectedTime!.hour.toString().padLeft(2, '0')}:${_selectedTime!.minute.toString().padLeft(2, '0')}';
+                final deadlineDate = DateFormat('yyyy-MM-dd').format(parsedDate);
+                final deadlineTime = '${selectedTime.hour.toString().padLeft(2, '0')}:${selectedTime.minute.toString().padLeft(2, '0')}';
 
                 await TaskDbHelper().addTask(
                   title,
                   notes,
                   attachment,
-                  formattedDate,
-                  formattedTime,
+                  deadlineDate,
+                  deadlineTime,
                   0,
-                  widget.groupId,
+                  widget.groupId
                 );
 
                 Navigator.pop(context, true);
@@ -237,8 +207,11 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                 ),
               ),
             ),
-            const SizedBox(height: 20),
-          ],
+
+            const SizedBox(
+              height: 20
+            ),
+          ]
         ),
       ),
     );

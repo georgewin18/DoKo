@@ -16,7 +16,8 @@ class EditGroupPage extends StatefulWidget {
 class EditGroupPageState extends State<EditGroupPage> {
   late TextEditingController _titleController;
   late TextEditingController _descriptionController;
-  int _characterCount = 0;
+  int _characterCount1 = 0;
+  int _characterCount2 = 0;
 
   @override
   void initState() {
@@ -25,15 +26,20 @@ class EditGroupPageState extends State<EditGroupPage> {
     _descriptionController = TextEditingController(
       text: widget.group.description ?? '',
     );
-    _characterCount = _descriptionController.text.length;
+    _characterCount1 = _titleController.text.length;
+    _characterCount2 = _descriptionController.text.length;
     _titleController.addListener(_validateInput);
     _descriptionController.addListener(_validateInput);
   }
 
   void _validateInput() {
     final trimmedTitle = _titleController.text.trim();
+    final trimmedDescription = _descriptionController.text;
+
     setState(() {
       _isSaveEnabled = trimmedTitle.isNotEmpty;
+      _characterCount1 = trimmedTitle.length;
+      _characterCount2 = trimmedDescription.length;
     });
   }
 
@@ -109,28 +115,54 @@ class EditGroupPageState extends State<EditGroupPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(top: 44.0),
-                      child: TextField(
-                        controller: _titleController,
-                        inputFormatters: [LengthLimitingTextInputFormatter(30)],
-                        textAlign: TextAlign.center,
-                        decoration: const InputDecoration(
-                          hintText: 'Group Title',
-                          hintStyle: TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey,
+                      padding: const EdgeInsets.only(
+                        left: 24,
+                        right: 24,
+                        top: 44.0,
+                      ),
+                      child: Column(
+                        children: [
+                          TextField(
+                            controller: _titleController,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.deny(RegExp(r'\n')),
+                              LengthLimitingTextInputFormatter(30),
+                            ],
+                            textAlign: TextAlign.center,
+                            maxLines: null,
+                            decoration: const InputDecoration(
+                              hintText: 'Group Title',
+                              hintStyle: TextStyle(
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey,
+                              ),
+                              border: InputBorder.none,
+                            ),
+                            onChanged: null,
+                            style: const TextStyle(
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                          border: InputBorder.none,
-                        ),
-                        style: const TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                        ),
+                          Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Align(
+                              alignment: Alignment.bottomRight,
+                              child: Text(
+                                '$_characterCount1/30',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     const Padding(
-                      padding: EdgeInsets.only(top: 12, left: 24, right: 24),
+                      padding: EdgeInsets.only(left: 24, right: 24),
                       child: Divider(color: Color(0xFF7E1AD1), thickness: 1),
                     ),
                     Padding(
@@ -142,16 +174,12 @@ class EditGroupPageState extends State<EditGroupPage> {
                         children: [
                           TextField(
                             controller: _descriptionController,
-                            maxLines: null,
+                            maxLines: 4,
                             keyboardType: TextInputType.multiline,
                             inputFormatters: [
-                              LengthLimitingTextInputFormatter(100),
+                              LengthLimitingTextInputFormatter(200),
                             ],
-                            onChanged: (text) {
-                              setState(() {
-                                _characterCount = text.length;
-                              });
-                            },
+                            onChanged: null,
                             decoration: const InputDecoration(
                               hintText: 'Description.....',
                               hintStyle: TextStyle(
@@ -167,7 +195,7 @@ class EditGroupPageState extends State<EditGroupPage> {
                             child: Align(
                               alignment: Alignment.bottomRight,
                               child: Text(
-                                '$_characterCount/100',
+                                '$_characterCount2/200',
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: Colors.grey[600],

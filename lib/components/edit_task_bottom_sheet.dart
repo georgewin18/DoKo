@@ -14,7 +14,7 @@ class EditTaskBottomSheet extends StatefulWidget {
 
 class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
   double _progressValue = 0.0;
-  String _selectedRepeat = '1 day before';
+  // String _selectedRepeat = '1 day before';
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
   int? taskId;
@@ -30,7 +30,8 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
     _progressValue = widget.task.progress / 100;
 
     _notesController.text = widget.task.task_desc ?? '';
-    _attachmentController.text = widget.task.task_attachment ?? ''; // kosongkan atau sesuaikan
+    _attachmentController.text =
+        widget.task.task_attachment ?? ''; // kosongkan atau sesuaikan
 
     // parsing tanggal & waktu
     _selectedDate = DateFormat('yyyy-MM-dd').parse(widget.task.date);
@@ -110,7 +111,6 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
       debugPrint("Error update task: $e");
       return false;
     }
-
   }
 
   @override
@@ -145,7 +145,10 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
                 ),
                 IconButton(
                   onPressed: () async {
-                    final confirmed = await deleteConfirmationDialog(context, widget.task);
+                    final confirmed = await deleteTaskConfirmationDialog(
+                      context,
+                      widget.task,
+                    );
 
                     if (confirmed) {
                       await TaskDbHelper().deleteTask(widget.task.id);
@@ -221,7 +224,7 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
                   child: SliderTheme(
                     data: SliderTheme.of(context).copyWith(
                       activeTrackColor: Colors.green,
-                      inactiveTrackColor: Colors.green.withOpacity(0.2),
+                      inactiveTrackColor: Colors.green.withAlpha(51),
                       thumbColor: Colors.green,
                       trackHeight: 4,
                     ),
@@ -286,9 +289,7 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
                         }
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Please select a deadline')
-                          ),
+                          SnackBar(content: Text('Please select a deadline')),
                         );
                       }
                     },

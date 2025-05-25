@@ -1,0 +1,4 @@
+// ISI SEMUA HAL BERKAITAN DENGAN JARGON,
+// NAMA APP DISINI
+
+const title = 'Doko';

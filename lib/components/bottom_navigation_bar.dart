@@ -19,11 +19,7 @@ class BottomNavBar extends StatefulWidget {
 class BottomNavBarState extends State<BottomNavBar> {
   int _selectedIndex = 0;
 
-  final List<Widget> _pages = [
-    HomePage(),
-    TaskGroupPage(),
-    FocusModePage()
-  ];
+  final List<Widget> _pages = [HomePage(), TaskGroupPage(), FocusModePage()];
 
   void _onItemTapped(int index) {
     setState(() {

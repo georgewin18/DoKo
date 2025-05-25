@@ -92,9 +92,9 @@ class TaskCard extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               // Tombol icon link
-              if (task.link != null && task.link!.isNotEmpty)
+              if (task.attachment != null && task.attachment!.isNotEmpty)
                 InkWell(
-                  onTap: () => _launchURL(task.link!),
+                  onTap: () => _launchURL(task.attachment!),
                   child: const Icon(
                     LucideIcons.link,
                     size: 16,

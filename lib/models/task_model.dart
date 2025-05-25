@@ -7,7 +7,7 @@ class Task {
   final String time;
   final int progress;
   final int task_group_id;
-  final String? link;
+  final String? attachment;
 
   Task({
     this.id,
@@ -18,7 +18,7 @@ class Task {
     required this.time,
     required this.task_group_id,
     this.progress = 0,
-    this.link,
+    this.attachment,
   });
 
   factory Task.fromMap(Map<String, dynamic> map) {
@@ -31,6 +31,7 @@ class Task {
       time: map['time'] ?? '',
       progress: map['progress'] ?? 0,
       task_group_id: map['task_group_id'],
+      attachment: map['task_attachment'],
     );
   }
 

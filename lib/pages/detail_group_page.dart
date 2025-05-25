@@ -159,7 +159,10 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
                           ),
                         ],
                       ),
+                        ],
+                      ),
                     ),
+
 
                     const SizedBox(width: 8),
                     Builder(
@@ -286,6 +289,19 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
                       ),
                     ),
 
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 30),
+                      child: Divider(color: Colors.grey, thickness: 1, height: 1),
+                    ),
+
+                  if (filteredTasks.isEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 30),
+                      child: Center(
+                        child: Text(
+                          'There is no task on\n$selectedDate',
+                          style: TextStyle(color: Colors.grey, fontSize: 16),
+                          textAlign: TextAlign.center,
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 30),
                     child: Divider(color: Colors.grey, thickness: 1, height: 1),
@@ -311,6 +327,26 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
                           final task = filteredTasks[index];
                           final color = cardColors[index % cardColors.length];
 
+                        return Padding(
+                          padding: const EdgeInsets.fromLTRB(30, 0, 30, 5),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    final result = await showModalBottomSheet(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.vertical(
+                                          top: Radius.circular(20),
+                                        ),
+                                        builder:
+                                            (context) =>
+                                            EditTaskBottomSheet(task: task),
+                                      );
                         return Padding(
                           padding: const EdgeInsets.fromLTRB(30, 0, 30, 5),
                           child: Row(

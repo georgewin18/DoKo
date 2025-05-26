@@ -70,7 +70,6 @@ class TaskCard extends StatelessWidget {
           ),
 
           SizedBox(height: 4),
-
           // Description with icon
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,

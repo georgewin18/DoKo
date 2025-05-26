@@ -63,7 +63,7 @@ class _HomePageState extends State<HomePage> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Notification_Page()),
+                  MaterialPageRoute(builder: (context) => NotificationPage()),
                 );
               },
               backgroundColor: Colors.transparent,

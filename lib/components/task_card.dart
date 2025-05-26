@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../models/task_model.dart';
 
 class TaskCard extends StatelessWidget {
@@ -15,6 +16,15 @@ class TaskCard extends StatelessWidget {
     required this.color,
     super.key,
   });
+
+  void _launchURL(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,38 +68,43 @@ class TaskCard extends StatelessWidget {
               ),
             ],
           ),
-          
+
           SizedBox(height: 4),
-          
           // Description with icon
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                child: description.isNotEmpty
-                    ? Text(
-                        description,
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.grey[600],
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      )
-                    : SizedBox.shrink(),
+                child:
+                    description.isNotEmpty
+                        ? Text(
+                          description,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.grey[600],
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        )
+                        : SizedBox.shrink(),
               ),
-              SizedBox(width: 8),
-              Icon(
-                LucideIcons.link,
-                size: 16,
-                color: Color(0xff7E1AD1),
-              ),
+              const SizedBox(width: 8),
+              // Tombol icon link
+              if (task.attachment != null && task.attachment!.isNotEmpty)
+                InkWell(
+                  onTap: () => _launchURL(task.attachment!),
+                  child: const Icon(
+                    LucideIcons.link,
+                    size: 16,
+                    color: Color(0xff7E1AD1),
+                  ),
+                ),
             ],
           ),
-          
+
           SizedBox(height: 8),
-          
+
           // Progress bar
           Row(
             children: [
@@ -111,10 +126,7 @@ class TaskCard extends StatelessWidget {
                           ),
                         ),
                       ),
-                      Expanded(
-                        flex: 100 - task.progress,
-                        child: Container(),
-                      ),
+                      Expanded(flex: 100 - task.progress, child: Container()),
                     ],
                   ),
                 ),

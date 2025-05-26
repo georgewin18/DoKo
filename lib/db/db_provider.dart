@@ -49,6 +49,21 @@ class DBProvider {
     ''');
 
     await db.execute('''
+      CREATE TABLE notification (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        task_id INTEGER NOT NULL,
+        title TEXT NOT NULL,
+        body TEXT NOT NULL,
+        scheduled_time TEXT NOT NULL,
+        notification_type text NOT NULL,
+        is_delivered INTEGER DEFAULT 0
+        is_read INTEGER DEFAULT 0,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY (task_id) REFERENCES task(id) ON DELETE CASCADE
+      )
+    ''');
+
+    await db.execute('''
       CREATE TRIGGER update_taskgroup_count_after_insert
       AFTER INSERT ON task
       BEGIN

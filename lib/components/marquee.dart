@@ -1,3 +1,4 @@
+import 'package:app/constants/colors.dart';
 import 'package:flutter/material.dart';
 
 class Marquee extends StatefulWidget {
@@ -32,8 +33,10 @@ class _MarqueeState extends State<Marquee> with SingleTickerProviderStateMixin {
   late Animation<double> _animation;
   double _textExtent = 0.0;
   double _containerExtent = 0.0;
-  bool _isAtStart = true;
+  bool _isAtStart = false;
   bool _isAnimating = false;
+  bool _isPaused = false;
+  bool _isManuallyPaused = false;
 
   @override
   void initState() {
@@ -44,7 +47,6 @@ class _MarqueeState extends State<Marquee> with SingleTickerProviderStateMixin {
   }
 
   Future<void> _start() async {
-    _isAnimating = false;
     await Future.delayed(Duration.zero);
     _isAnimating = true;
 
@@ -64,15 +66,22 @@ class _MarqueeState extends State<Marquee> with SingleTickerProviderStateMixin {
       _isAtStart = true;
 
       while (_isAnimating && mounted) {
+        while (_isPaused && _isAnimating) {
+          await Future.delayed(const Duration(milliseconds: 100));
+        }
+
+        if (!_isAnimating || !mounted) break;
+
         if (_isAtStart) {
           await Future.delayed(widget.startDelay);
-          if (!_isAnimating) break;
+          if (_isPaused || !_isAnimating) continue;
           await _controller.forward();
         } else {
           await Future.delayed(widget.endDelay);
-          if (!_isAnimating) break;
+          if (_isPaused || !_isAnimating) continue;
           await _controller.reverse();
         }
+
         _isAtStart = !_isAtStart;
       }
     } else {
@@ -82,21 +91,24 @@ class _MarqueeState extends State<Marquee> with SingleTickerProviderStateMixin {
   }
 
   Future<void> _calculateTextExtent() async {
+    final constraints = context.findRenderObject() as RenderBox?;
+    final maxWidth = constraints?.constraints.maxWidth ?? double.infinity;
     final textPainter = TextPainter(
       text: TextSpan(text: widget.text, style: widget.style),
       textDirection: TextDirection.ltr,
-      maxLines: widget.direction == Axis.vertical ? widget.maxLines : 1,
+      maxLines: widget.direction == Axis.vertical ? null : 1,
     );
 
-    final maxWidth = context.size?.width ?? double.infinity;
-
-    textPainter.layout(maxWidth: maxWidth);
+    textPainter.layout(
+      maxWidth:
+          widget.direction == Axis.horizontal ? double.infinity : maxWidth,
+    );
 
     setState(() {
       _textExtent =
           widget.direction == Axis.horizontal
               ? textPainter.width + widget.gap
-              : textPainter.height + widget.gap * 0.5;
+              : textPainter.height + (textPainter.height * 0.805);
     });
   }
 
@@ -104,7 +116,8 @@ class _MarqueeState extends State<Marquee> with SingleTickerProviderStateMixin {
   void didUpdateWidget(covariant Marquee oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    if (oldWidget.text != widget.text) {
+    if (oldWidget.text != widget.text ||
+        oldWidget.direction != widget.direction) {
       _isAnimating = false;
       _controller.reset();
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -131,9 +144,9 @@ class _MarqueeState extends State<Marquee> with SingleTickerProviderStateMixin {
                 : constraints.maxHeight;
 
         final textWidget = Text(
-          widget.text,
+          widget.direction == Axis.horizontal ? " ${widget.text}" : widget.text,
           style: widget.style,
-          maxLines: widget.direction == Axis.vertical ? widget.maxLines : 1,
+          maxLines: widget.direction == Axis.vertical ? null : 1,
           overflow: TextOverflow.visible,
         );
 
@@ -142,43 +155,73 @@ class _MarqueeState extends State<Marquee> with SingleTickerProviderStateMixin {
                 ? LinearGradient(
                   begin: Alignment.centerLeft,
                   end: Alignment.centerRight,
-                  colors: const [
-                    Colors.white,
-                    Colors.white,
-                    Colors.transparent,
-                  ],
-                  stops: const [0.0, 0.85, 1.0],
+                  colors: [transparent, white, white, transparent],
+                  stops: const [-1.0, 0.01, 0.85, 1.0],
                 )
                 : LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: const [
-                    Colors.white,
-                    Colors.white,
-                    Colors.transparent,
-                    Colors.transparent,
-                  ],
-                  stops: const [0.0, 0.5, 0.8, 1.0],
+                  colors: [transparent, white, white, transparent],
+                  stops: const [-1.0, 0.1, 0.45, 1.0],
                 );
 
-        return ClipRect(
-          child: ShaderMask(
-            shaderCallback:
-                (bounds) => gradient.createShader(
-                  Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-                ),
-            blendMode: BlendMode.dstIn,
-            child: SingleChildScrollView(
-              controller: _scrollController,
-              scrollDirection: widget.direction,
-              physics: const NeverScrollableScrollPhysics(),
-              child:
-                  widget.direction == Axis.horizontal
-                      ? Row(children: [textWidget, SizedBox(width: widget.gap)])
-                      : Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [textWidget, SizedBox(height: widget.gap)],
-                      ),
+        return GestureDetector(
+          onTap: () {
+            setState(() {
+              _isManuallyPaused = !_isManuallyPaused;
+              _isPaused = _isManuallyPaused;
+            });
+
+            if (!_isPaused && _isAtStart && !_controller.isAnimating) {
+              _controller.forward().then((_) {
+                if (mounted && !_isPaused && _isAnimating) {
+                  setState(() => _isAtStart = false);
+                }
+              });
+            }
+          },
+          onTapDown: (_) {
+            setState(() {
+              if (!_isManuallyPaused) {
+                _isPaused = true;
+              }
+            });
+          },
+          onTapUp: (_) {
+            setState(() {
+              if (!_isManuallyPaused) {
+                _isPaused = false;
+              }
+            });
+          },
+          onTapCancel: () {
+            setState(() {
+              if (!_isManuallyPaused) {
+                _isPaused = false;
+              }
+            });
+          },
+          child: ClipRect(
+            child: ShaderMask(
+              shaderCallback:
+                  (bounds) => gradient.createShader(
+                    Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                  ),
+              blendMode: BlendMode.dstIn,
+              child: SingleChildScrollView(
+                controller: _scrollController,
+                scrollDirection: widget.direction,
+                physics: const NeverScrollableScrollPhysics(),
+                child:
+                    widget.direction == Axis.horizontal
+                        ? Row(
+                          children: [textWidget, SizedBox(width: widget.gap)],
+                        )
+                        : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [textWidget, SizedBox(height: widget.gap)],
+                        ),
+              ),
             ),
           ),
         );

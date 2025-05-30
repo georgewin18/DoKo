@@ -56,7 +56,7 @@ class DBProvider {
         body TEXT NOT NULL,
         scheduled_time TEXT NOT NULL,
         notification_type text NOT NULL,
-        is_delivered INTEGER DEFAULT 0
+        is_delivered INTEGER DEFAULT 0,
         is_read INTEGER DEFAULT 0,
         created_at TEXT NOT NULL,
         FOREIGN KEY (task_id) REFERENCES task(id) ON DELETE CASCADE

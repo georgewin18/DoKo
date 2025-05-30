@@ -27,7 +27,7 @@ class NotificationModel {
       'task_id': taskId,
       'title': title,
       'body': body,
-      'scheduled_time': scheduledTime,
+      'scheduled_time': scheduledTime.toIso8601String(),
       'notification_type': notificationType,
       'is_delivered': isDelivered ? 1 : 0,
       'is_read': isRead ? 1 : 0,

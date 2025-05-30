@@ -14,12 +14,20 @@ class NotificationService {
   final FlutterLocalNotificationsPlugin _notificationsPlugin = FlutterLocalNotificationsPlugin();
   final NotificationHelper _notificationHelper = NotificationHelper();
 
+  // Tambahkan timezone location untuk Indonesia
+  static const String _indonesiaTimeZone = 'Asia/Jakarta';
+
   // Initialization Notification Service
   Future<void> initialize() async {
     tz.initializeTimeZones();
+    
+    // Set timezone location untuk Indonesia
+    final jakarta = tz.getLocation(_indonesiaTimeZone);
+    tz.setLocalLocation(jakarta);
 
     // Android Initialization
-    const AndroidInitializationSettings androidInitializationSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const AndroidInitializationSettings androidInitializationSettings = 
+        AndroidInitializationSettings('@mipmap/ic_launcher');
 
     const InitializationSettings initializationSettings = InitializationSettings(
       android: androidInitializationSettings,
@@ -35,7 +43,8 @@ class NotificationService {
 
   Future<void> _requestPermission() async {
     if (Platform.isAndroid) {
-      final AndroidFlutterLocalNotificationsPlugin? androidImplementation = _notificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+      final AndroidFlutterLocalNotificationsPlugin? androidImplementation = 
+          _notificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
 
       if (androidImplementation != null) {
         await androidImplementation.requestNotificationsPermission();
@@ -55,6 +64,8 @@ class NotificationService {
 
         if(notificationId != null) {
           await _notificationHelper.markNotificationAsRead(notificationId);
+          // Mark notification as delivered juga
+          await _notificationHelper.markNotificationAsDelivered(notificationId);
         }
 
         debugPrint('Notification tapped for taskId : $taskId');
@@ -68,6 +79,7 @@ class NotificationService {
     required DateTime taskDeadline,
     String? taskDescription
   }) async {
+    // Cancel existing notifications first
     await cancelTaskNotification(taskId);
 
     final now = DateTime.now();
@@ -86,10 +98,9 @@ class NotificationService {
       final scheduledTime = taskDeadline.subtract(duration);
 
       if (scheduledTime.isAfter(now)) {
-        final notificationId = _generateNotificationId(
-          taskId, type.value
-        );
+        final notificationId = _generateNotificationId(taskId, type.value);
 
+        // Buat notification model dulu untuk mendapatkan ID
         final notification = NotificationModel(
           taskId: taskId, 
           title: type.defaultMessage, 
@@ -99,19 +110,29 @@ class NotificationService {
         );
 
         notifications.add(notification);
-
-        await _scheduleNotification(
-          id: notificationId,
-          title: notification.title,
-          body: notification.body,
-          scheduledTime: scheduledTime,
-          payload: '$taskId|${notification.id}',
-        );
       }
     }
 
+    // Insert ke database dulu untuk mendapatkan ID
     if (notifications.isNotEmpty) {
       await _notificationHelper.insertNotifications(notifications);
+      
+      // Kemudian schedule notifikasinya
+      final savedNotifications = await _notificationHelper.getNotificationsByTaskId(taskId);
+      
+      for (var notification in savedNotifications) {
+        if (!notification.isDelivered && notification.scheduledTime.isAfter(now)) {
+          final notificationId = _generateNotificationId(taskId, notification.notificationType);
+          
+          await _scheduleNotification(
+            id: notificationId,
+            title: notification.title,
+            body: notification.body,
+            scheduledTime: notification.scheduledTime,
+            payload: '$taskId|${notification.id}',
+          );
+        }
+      }
     }
   }
 
@@ -134,22 +155,28 @@ class NotificationService {
       autoCancel: true,
       ongoing: false,
       showWhen: true,
+      visibility: NotificationVisibility.public,
     );
 
     const NotificationDetails platformChannelSpecifics = NotificationDetails(
       android: androidPlatformChannelSpecifics,
     );
 
-    await _notificationsPlugin.zonedSchedule(
-      id,
-      title,
-      body,
-      tz.TZDateTime.from(scheduledTime, tz.local),
-      platformChannelSpecifics,
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      payload: payload,
-      matchDateTimeComponents: null,
-    );
+    try {
+      await _notificationsPlugin.zonedSchedule(
+        id,
+        title,
+        body,
+        tz.TZDateTime.from(scheduledTime, tz.local),
+        platformChannelSpecifics,
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        payload: payload,
+      );
+      
+      debugPrint('✅ Scheduled notification ID: $id for time: $scheduledTime');
+    } catch (e) {
+      debugPrint('❌ Error scheduling notification: $e');
+    }
   }
 
   Future<void> cancelTaskNotification(int taskId) async {
@@ -177,26 +204,34 @@ class NotificationService {
     return taskId * 1000 + (typeHash % 1000).abs();
   }
 
-  // This Function will use after app restart
   Future<void> rescheduleAllNotification() async {
-    final notifications = await _notificationHelper.getAllNotification();
-    final now = DateTime.now();
+    try {
+      final notifications = await _notificationHelper.getAllNotification();
+      final now = DateTime.now();
+      int rescheduledCount = 0;
 
-    for (var notification in notifications) {
-      if (!notification.isDelivered && notification.scheduledTime.isAfter(now)) {
-        final notificationId = _generateNotificationId(
-          notification.taskId,
-          notification.notificationType,
-        );
+      for (var notification in notifications) {
+        if (!notification.isDelivered && notification.scheduledTime.isAfter(now)) {
+          final notificationId = _generateNotificationId(
+            notification.taskId,
+            notification.notificationType,
+          );
 
-        await _scheduleNotification(
-          id: notificationId,
-          title: notification.title,
-          body: notification.body,
-          scheduledTime: notification.scheduledTime,
-          payload: '${notification.taskId}|${notification.id}'
-        );
+          await _scheduleNotification(
+            id: notificationId,
+            title: notification.title,
+            body: notification.body,
+            scheduledTime: notification.scheduledTime,
+            payload: '${notification.taskId}|${notification.id}'
+          );
+          
+          rescheduledCount++;
+        }
       }
+      
+      debugPrint('✅ Rescheduled $rescheduledCount notifications');
+    } catch (e) {
+      debugPrint('❌ Error rescheduling notifications: $e');
     }
   }
 
@@ -209,11 +244,11 @@ class NotificationService {
     await scheduleTaskNotification(
       taskId: taskId, 
       taskName: taskName, 
-      taskDeadline: taskDeadline
+      taskDeadline: taskDeadline,
+      taskDescription: taskDescription,
     );
   }
 
-  // Get notification statistics
   Future<Map<String, int>> getNotificationStats() async {
     final totalCount = (await _notificationHelper.getAllNotification()).length;
     final unreadCount = await _notificationHelper.getUnreadNotificationCount();
@@ -224,8 +259,28 @@ class NotificationService {
     };
   }
 
-  // Cleanup old notifications
   Future<void> cleanupOldNotifications() async {
     await _notificationHelper.cleanupOldNotifications();
+  }
+
+  Future<void> showTestNotification() async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'test_channel',
+      'Test Notifications',
+      channelDescription: 'Test notification channel',
+      importance: Importance.high,
+      priority: Priority.high,
+    );
+
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+    );
+
+    await _notificationsPlugin.show(
+      999,
+      'Test Notification',
+      'This is a test notification',
+      platformChannelSpecifics,
+    );
   }
 }

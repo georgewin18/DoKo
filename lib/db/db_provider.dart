@@ -105,5 +105,16 @@ class DBProvider {
         WHERE id = NEW.task_group_id;
       END;
     ''');
+
+    await db.execute('''
+      CREATE TABLE focus_timer (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL UNIQUE,
+        focus_time INTEGER NOT NULL,
+        break_time INTEGER NOT NULL,
+        section INTEGER NOT NULL,
+        created_at TEXT NOT NULL
+      )
+    ''');
   }
 }

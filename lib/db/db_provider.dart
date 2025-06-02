@@ -52,11 +52,11 @@ class DBProvider {
       CREATE TABLE notification (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         task_id INTEGER NOT NULL,
+        notification_type TEXT NOT NULL,
+        scheduled_time TEXT NOT NULL,
         title TEXT NOT NULL,
         body TEXT NOT NULL,
-        scheduled_time TEXT NOT NULL,
-        notification_type text NOT NULL,
-        is_delivered INTEGER DEFAULT 0,
+        is_sent INTEGER DEFAULT 0,
         is_read INTEGER DEFAULT 0,
         created_at TEXT NOT NULL,
         FOREIGN KEY (task_id) REFERENCES task(id) ON DELETE CASCADE
@@ -118,6 +118,73 @@ class DBProvider {
           UPDATE task_group
         SET created_at = datetime('now', '+7 hours')
         WHERE id = NEW.task_group_id;
+      END;
+    ''');
+
+    await db.execute('''
+      CREATE TABLE focus_timer (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL UNIQUE,
+        focus_time INTEGER NOT NULL,
+        break_time INTEGER NOT NULL,
+        section INTEGER NOT NULL,
+        created_at TEXT NOT NULL
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TRIGGER auto_schedule_notifications_after_task_insert
+      AFTER INSERT ON task
+      FOR EACH ROW
+      WHEN NEW.progress < 100
+      BEGIN
+        -- Insert notifications for 3 days before
+        INSERT INTO notification (task_id, notification_type, scheduled_time, title, body, created_at)
+        SELECT NEW.id, '3_days', 
+               datetime(NEW.date || ' ' || NEW.time, '-3 days'),
+               'Task Reminder - 3 Days Left!',
+               'Your task "' || NEW.name || '" is due in 3 days. Time to start preparing!',
+               datetime('now', '+7 hours')
+        WHERE datetime(NEW.date || ' ' || NEW.time, '-3 days') > datetime('now', '+7 hours');
+
+        -- Insert notifications for 1 day before
+        INSERT INTO notification (task_id, notification_type, scheduled_time, title, body, created_at)
+        SELECT NEW.id, '1_day',
+               datetime(NEW.date || ' ' || NEW.time, '-1 day'),
+               'Task Reminder - 1 Day Left!',
+               'Your task "' || NEW.name || '" is due tomorrow. Don''t forget to complete it!',
+               datetime('now', '+7 hours')
+        WHERE datetime(NEW.date || ' ' || NEW.time, '-1 day') > datetime('now', '+7 hours');
+
+        -- Insert notifications for 6 hours before
+        INSERT INTO notification (task_id, notification_type, scheduled_time, title, body, created_at)
+        SELECT NEW.id, '6_hours',
+               datetime(NEW.date || ' ' || NEW.time, '-6 hours'),
+               'Task Reminder - 6 Hours Left!',
+               'Your task "' || NEW.name || '" is due in 6 hours. Better get started!',
+               datetime('now', '+7 hours')
+        WHERE datetime(NEW.date || ' ' || NEW.time, '-6 hours') > datetime('now', '+7 hours');
+
+        -- Insert notifications for 3 hours before
+        INSERT INTO notification (task_id, notification_type, scheduled_time, title, body, created_at)
+        SELECT NEW.id, '3_hours',
+               datetime(NEW.date || ' ' || NEW.time, '-3 hours'),
+               'Task Reminder - 3 Hours Left!',
+               'Your task "' || NEW.name || '" is due in 3 hours. Time is running out!',
+               datetime('now', '+7 hours')
+        WHERE datetime(NEW.date || ' ' || NEW.time, '-3 hours') > datetime('now', '+7 hours');
+      END;
+    ''');
+
+    // Trigger untuk cancel notifications saat task selesai
+    await db.execute('''
+      CREATE TRIGGER cancel_notifications_after_task_complete
+      AFTER UPDATE OF progress ON task
+      FOR EACH ROW
+      WHEN NEW.progress = 100 AND OLD.progress < 100
+      BEGIN
+        DELETE FROM notification 
+        WHERE task_id = NEW.id AND is_sent = 0;
       END;
     ''');
   }

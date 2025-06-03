@@ -84,10 +84,8 @@ class _FocusModePageState extends State<FocusModePage> {
                     context,
                     MaterialPageRoute(builder: (context) => FocusForm()),
                   );
-                  if (result != null && result is FocusTimer) {
-                    setState(() {
-                      displayedTimers.add(result);
-                    });
+                  if (result == true) {
+                    initFocusTimer();
                   }
                 },
                 backgroundColor: Colors.deepPurple,

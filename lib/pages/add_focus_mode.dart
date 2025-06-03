@@ -44,11 +44,15 @@ class _FocusFormState extends State<FocusForm> {
 
       await FocusTimerDbHelper.addFocusTimer(newTimer);
 
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Data saved to database!")),
       );
-      
-      Navigator.pop(context, newTimer); 
+
+      timerNameController.clear(); // Clear form after saving
+
+      if (!mounted) return;
+      Navigator.pop(context, true);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Please fill in all fields")),

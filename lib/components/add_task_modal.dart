@@ -152,7 +152,7 @@ class _AddTaskModalState extends State<AddTaskModal> {
                   });
                 },
                 decoration: InputDecoration(
-                  hintText: 'Add your drive link here',
+                  hintText: 'Add your link here',
                   hintStyle: TextStyle(color: Colors.grey),
                   border: InputBorder.none,
                 ),
@@ -200,7 +200,7 @@ class _AddTaskModalState extends State<AddTaskModal> {
 
                 if (attachment.isNotEmpty && !driveLinkRegex.hasMatch(attachment)) {
                   Fluttertoast.showToast(
-                    msg: "Invalid Google Drive link!",
+                    msg: "Invalid link!",
                     toastLength: Toast.LENGTH_LONG,
                     gravity: ToastGravity.TOP,
                     backgroundColor: Color(0xFFFF5454),

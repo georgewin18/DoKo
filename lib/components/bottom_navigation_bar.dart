@@ -5,9 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar.dart';
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar_item.dart';
-// import 'package:doko/pages/calender_screen.dart';
-// import 'package:doko/pages/group_screen.dart';
-// import 'package:doko/pages/task_screen.dart';
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({super.key});
@@ -19,7 +16,11 @@ class BottomNavBar extends StatefulWidget {
 class BottomNavBarState extends State<BottomNavBar> {
   int _selectedIndex = 0;
 
-  final List<Widget> _pages = [HomePage(), TaskGroupPage(), FocusModePage()];
+  final List<Widget> _pages = [
+    HomePage(),
+    TaskGroupPage(),
+    FocusModePage()
+  ];
 
   void _onItemTapped(int index) {
     setState(() {

@@ -4,6 +4,8 @@ import 'package:app/models/focus_timer_model.dart';
 import 'package:flutter/material.dart';
 import 'package:app/components/focus_timer_card.dart';
 import 'package:app/pages/add_focus_mode.dart';
+import 'package:app/components/delete_confirmation_dialog.dart';
+import 'package:app/pages/edit_focus_mode.dart';
 
 class FocusModePage extends StatefulWidget {
   const FocusModePage({super.key});
@@ -64,11 +66,63 @@ class _FocusModePageState extends State<FocusModePage> {
                         final timer = displayedTimers[index];
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 12.0),
-                          child: FocusModeCard(
-                            title: timer.name,
-                            focusTimeValue: timer.formattedFocusTimeValue,
-                            breakTimeValue: timer.formattedBreakTimeValue,
-                            sectionValue: timer.formattedSectionTimeValue,
+                          child: Stack(
+                            children: [
+                              FocusModeCard(
+                                title: timer.name,
+                                focusTimeValue: timer.formattedFocusTimeValue,
+                                breakTimeValue: timer.formattedBreakTimeValue,
+                                sectionValue: timer.formattedSectionTimeValue,
+                              ),
+                              Positioned(
+                                top: 8,
+                                right: 8,
+                                child: PopupMenuButton<String>(
+                                  onSelected: (value) async {
+                                    if (value == 'edit') {
+                                      final result = await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder:
+                                              (_) => EditFocusForm(
+                                                timer: timer,
+                                              ),
+                                        ),
+                                      );
+                                      print('editttt cuyyyyy');
+                                      if (result == true) {
+                                        initFocusTimer();
+                                      }
+                                    } else if (value == 'delete') {
+                                      final result =
+                                          await deleteFocusTimerConfirmationDialog(
+                                            context,
+                                            timer,
+                                          );
+                                      print('delete cuyyyyy');
+                                      if (result == true) {
+                                        initFocusTimer();
+                                      }
+                                    }
+                                  },
+                                  itemBuilder:
+                                      (context) => [
+                                        const PopupMenuItem(
+                                          value: 'edit',
+                                          child: Text('Edit'),
+                                        ),
+                                        const PopupMenuItem(
+                                          value: 'delete',
+                                          child: Text('Delete'),
+                                        ),
+                                      ],
+                                  icon: Icon(
+                                    Icons.more_vert,
+                                    color: const Color.fromARGB(255, 1, 1, 1),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         );
                       },

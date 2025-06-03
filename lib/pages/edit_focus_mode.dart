@@ -3,19 +3,32 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import '../db/focus_timer_db_helper.dart';
 import '../models/focus_timer_model.dart';
 
-class FocusForm extends StatefulWidget {
+class EditFocusForm extends StatefulWidget {
+  final FocusTimer timer;
+  const EditFocusForm({super.key, required this.timer});
+
   @override
-  _FocusFormState createState() => _FocusFormState();
+  State<EditFocusForm> createState() => _EditFocusFormState();
 }
 
-class _FocusFormState extends State<FocusForm> {
-  final TextEditingController timerNameController = TextEditingController();
+class _EditFocusFormState extends State<EditFocusForm> {
   final _formKey = GlobalKey<FormState>();
+  late TextEditingController timerNameController;
 
-  int focusTime = 20;
-  int breakTime = 5;
+  int focusTime = 0;
+  int breakTime = 0;
   int? selectedSection;
   final List<int> sections = [1, 2, 3, 4];
+
+  @override
+  void initState() {
+    super.initState();
+    final timer = widget.timer;
+    timerNameController = TextEditingController(text: timer.name);
+    focusTime = timer.focusTime;
+    breakTime = timer.breakTime;
+    selectedSection = timer.section;
+  }
 
   void _decrementTime(String type) {
     setState(() {
@@ -33,22 +46,21 @@ class _FocusFormState extends State<FocusForm> {
 
   void _saveData() async {
     if (_formKey.currentState!.validate() && selectedSection != null) {
-      final newTimer = FocusTimer(
+      final updatedTimer = FocusTimer(
+        id: widget.timer.id,
         name: timerNameController.text,
         focusTime: focusTime,
         breakTime: breakTime,
         section: selectedSection!,
-        createdAt: DateTime.now().toIso8601String(),
+        createdAt: widget.timer.createdAt,
       );
 
-      await FocusTimerDbHelper.addFocusTimer(newTimer);
+      await FocusTimerDbHelper.updateFocusTimer(updatedTimer);
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Data saved to database!")),
+        SnackBar(content: Text("Timer updated!")),
       );
-
-      timerNameController.clear(); // Clear form after saving
 
       if (!mounted) return;
       Navigator.pop(context, true);
@@ -58,7 +70,6 @@ class _FocusFormState extends State<FocusForm> {
       );
     }
   }
-
 
   void _discardData() async {
     final confirm = await showDialog<bool>(
@@ -80,10 +91,9 @@ class _FocusFormState extends State<FocusForm> {
     );
 
     if (confirm == true) {
-      Navigator.pop(context, false); // Kembali ke halaman sebelumnya tanpa menyimpan
+      Navigator.pop(context, false);
     }
   }
-
 
   Widget _buildCardWrapper({required Widget child}) {
     return Container(
@@ -111,11 +121,8 @@ class _FocusFormState extends State<FocusForm> {
             child: TextFormField(
               controller: timerNameController,
               textAlign: TextAlign.right,
-              validator:
-                  (value) =>
-                      value == null || value.isEmpty
-                          ? "Please enter a name"
-                          : null,
+              validator: (value) =>
+                  value == null || value.isEmpty ? "Please enter a name" : null,
               decoration: InputDecoration(
                 hintText: "Add Name",
                 border: InputBorder.none,
@@ -170,7 +177,7 @@ class _FocusFormState extends State<FocusForm> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text("Select Section", style: TextStyle(fontWeight: FontWeight.w600)),
+          Text("Sections", style: TextStyle(fontWeight: FontWeight.w600)),
           SizedBox(width: 12),
           Expanded(
             child: Padding(
@@ -180,17 +187,13 @@ class _FocusFormState extends State<FocusForm> {
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton2<int>(
                     value: selectedSection,
-                    items:
-                        sections
-                            .map(
-                              (e) => DropdownMenuItem<int>(
-                                value: e,
-                                child: Text("$e intervals"),
-                              ),
-                            )
-                            .toList(),
-                    onChanged:
-                        (value) => setState(() => selectedSection = value),
+                    items: sections
+                        .map((e) => DropdownMenuItem<int>(
+                              value: e,
+                              child: Text("$e intervals"),
+                            ))
+                        .toList(),
+                    onChanged: (value) => setState(() => selectedSection = value),
                     buttonStyleData: ButtonStyleData(
                       padding: EdgeInsets.symmetric(horizontal: 0),
                       height: 40,
@@ -245,7 +248,7 @@ class _FocusFormState extends State<FocusForm> {
               ),
               child: Center(
                 child: Text(
-                  'Add Your Focus',
+                  'Edit Your Focus',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 24,

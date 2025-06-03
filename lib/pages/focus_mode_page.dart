@@ -1,6 +1,7 @@
 import 'package:app/constants/colors.dart';
 import 'package:app/db/focus_timer_db_helper.dart';
 import 'package:app/models/focus_timer_model.dart';
+import 'package:app/pages/add_focus_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:app/components/focus_timer_card.dart';
 // import 'package:app/pages/add_focus_mode.dart';
@@ -50,20 +51,20 @@ class _FocusModePageState extends State<FocusModePage> {
           Padding(
             padding: const EdgeInsets.all(16.0),
               child: ListView.builder(
-                    itemCount: displayedTimers.length,
-                    itemBuilder: (context, index){
-                      final timer = displayedTimers[index];
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 12.0),
-                        child: FocusModeCard(
-                            title: timer.name,
-                            focusTimeValue: timer.formattedFocusTimeValue,
-                            breakTimeValue: timer.formattedBreakTimeValue,
-                            sectionValue: timer.formattedSectionTimeValue
-                        ),
-                      );
-                    },
-                  )
+                itemCount: displayedTimers.length,
+                itemBuilder: (context, index){
+                  final timer = displayedTimers[index];
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12.0),
+                    child: FocusModeCard(
+                      title: timer.name,
+                      focusTimeValue: timer.formattedFocusTimeValue,
+                      breakTimeValue: timer.formattedBreakTimeValue,
+                      sectionValue: timer.formattedSectionTimeValue
+                    ),
+                  );
+                },
+              )
           ),
           Align(
             alignment: Alignment.bottomRight,
@@ -71,10 +72,14 @@ class _FocusModePageState extends State<FocusModePage> {
               padding: const EdgeInsets.only(bottom: 60.0, right: 20.0),
               child: FloatingActionButton(
                 onPressed: () async {
-                  // final result = await Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(builder: (context) => const FocusForm()),
-                  // );
+                  final result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => FocusForm()),
+                  );
+
+                  if (result == true) {
+                    initFocusTimer();
+                  }
                 },
                 backgroundColor: Colors.deepPurple,
                 shape: const CircleBorder(),

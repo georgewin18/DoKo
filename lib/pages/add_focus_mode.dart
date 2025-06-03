@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import '../components/bottom_navigation_bar.dart';
+// import '../components/bottom_navigation_bar.dart';
 import '../db/focus_timer_db_helper.dart';
 import '../models/focus_timer_model.dart';
 
@@ -61,16 +61,30 @@ class _FocusFormState extends State<FocusForm> {
   }
 
 
-  void _discardData() {
-    setState(() {
-      timerNameController.clear();
-      focusTime = 20;
-      breakTime = 5;
-      selectedSection = null;
-    });
+  void _discardData() async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Discard Changes?'),
+        content: Text('Are you sure you want to discard your changes?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text('Yes, Discard'),
+          ),
+        ],
+      ),
+    );
 
-    Navigator.pop(context);
+    if (confirm == true) {
+      Navigator.pop(context, false); // Kembali ke halaman sebelumnya tanpa menyimpan
+    }
   }
+
 
   Widget _buildCardWrapper({required Widget child}) {
     return Container(

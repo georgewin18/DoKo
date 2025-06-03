@@ -44,11 +44,15 @@ class _FocusFormState extends State<FocusForm> {
 
       await FocusTimerDbHelper.addFocusTimer(newTimer);
 
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Data saved to database!")),
       );
 
-      _discardData(); // Clear form after saving
+      timerNameController.clear(); // Clear form after saving
+
+      if (!mounted) return;
+      Navigator.pop(context, true);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Please fill in all fields")),
@@ -64,6 +68,8 @@ class _FocusFormState extends State<FocusForm> {
       breakTime = 5;
       selectedSection = null;
     });
+
+    Navigator.pop(context);
   }
 
   Widget _buildCardWrapper({required Widget child}) {
@@ -203,7 +209,7 @@ class _FocusFormState extends State<FocusForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: BottomNavBar(),
+      // bottomNavigationBar: BottomNavBar(),
       extendBodyBehindAppBar: true,
       body: SafeArea(
         top: false,

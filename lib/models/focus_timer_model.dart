@@ -36,4 +36,24 @@ class FocusTimer {
       'created_at': createdAt,
     };
   }
+
+  String get formattedFocusTimeValue {
+    if (focusTime >= 60) {
+      final int hours = focusTime ~/ 60;
+      final int minutes = focusTime % 60;
+      if (minutes == 0) {
+        return '$hours h';
+      }
+      return '$hours h $minutes min';
+    }
+    return '$focusTime min';
+  }
+
+  String get formattedBreakTimeValue {
+    return '$breakTime min';
+  }
+
+  String get formattedSectionTimeValue {
+    return '$section sec';
+  }
 }

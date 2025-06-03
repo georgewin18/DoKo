@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import '../components/bottom_navigation_bar.dart';
 import '../db/focus_timer_db_helper.dart';
+import '../models/focus_timer_model.dart';
 
 class FocusForm extends StatefulWidget {
   @override
@@ -31,13 +32,14 @@ class _FocusFormState extends State<FocusForm> {
     });
   }
 
-  void _saveData() {
+  void _saveData() async {
     if (_formKey.currentState!.validate() && selectedSection != null) {
       final newTimer = FocusTimer(
-      name: timerNameController.text,
-      focusTimer: focusTime,
-      breakTimer: breakTime,
-      section: selectedSection!
+        name: timerNameController.text,
+        focusTime: focusTime,
+        breakTime: breakTime,
+        section: selectedSection!,
+        createdAt: DateTime.now().toIso8601String(),
       );
 
       await FocusTimerDbHelper.addFocusTimer(newTimer);
@@ -53,6 +55,7 @@ class _FocusFormState extends State<FocusForm> {
       );
     }
   }
+
 
   void _discardData() {
     setState(() {

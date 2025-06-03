@@ -1,5 +1,6 @@
 import 'package:app/db/task_db_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 
@@ -186,16 +187,25 @@ class _AddTaskModalState extends State<AddTaskModal> {
                 );
 
                 if (title.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Title can\'t be empty!')),
+                  Fluttertoast.showToast(
+                    msg: "Title can't be empty!",
+                    toastLength: Toast.LENGTH_LONG,
+                    gravity: ToastGravity.TOP,
+                    backgroundColor: Color(0xFFFF5454),
+                    textColor: Colors.white,
+                    fontSize: 16.0,
                   );
                   return;
                 }
 
-                if (attachment.isNotEmpty &&
-                    !driveLinkRegex.hasMatch(attachment)) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Invalid Google Drive link!')),
+                if (attachment.isNotEmpty && !driveLinkRegex.hasMatch(attachment)) {
+                  Fluttertoast.showToast(
+                    msg: "Invalid Google Drive link!",
+                    toastLength: Toast.LENGTH_LONG,
+                    gravity: ToastGravity.TOP,
+                    backgroundColor: Color(0xFFFF5454),
+                    textColor: Colors.white,
+                    fontSize: 16.0,
                   );
                   return;
                 }

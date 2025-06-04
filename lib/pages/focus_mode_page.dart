@@ -127,7 +127,7 @@ class _FocusModePageState extends State<FocusModePage> {
           Align(
             alignment: Alignment.bottomRight,
             child: Padding(
-              padding: const EdgeInsets.only(bottom: 60.0, right: 20.0),
+              padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 0.14, right: 20.0),
               child: FloatingActionButton(
                 onPressed: () async {
                   final result = await Navigator.push(

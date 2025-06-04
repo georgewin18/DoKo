@@ -1,4 +1,5 @@
 import 'package:app/components/task_group_card.dart';
+import 'package:app/constants/app_string.dart';
 import 'package:app/constants/colors.dart';
 import 'package:app/db/task_group_db_helper.dart';
 import 'package:app/models/task_group_model.dart';
@@ -91,6 +92,7 @@ class _TaskGroupPageState extends State<TaskGroupPage> {
 
   @override
   Widget build(BuildContext context) {
+    final appString = AppString(context);
     return Scaffold(
       body: LayoutBuilder(
         builder: (context, constraints) {
@@ -106,7 +108,7 @@ class _TaskGroupPageState extends State<TaskGroupPage> {
 
                     Center(
                       child: Text(
-                        "Task Group",
+                        appString.taskGroupTitle,
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -149,7 +151,7 @@ class _TaskGroupPageState extends State<TaskGroupPage> {
                                 Padding(
                                   padding: EdgeInsets.only(top: 2),
                                   child: Text(
-                                    "Sort by:",
+                                    "${appString.sortBy}",
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 12,
@@ -179,7 +181,7 @@ class _TaskGroupPageState extends State<TaskGroupPage> {
                                     ),
                                     child: Center(
                                       child: Text(
-                                        "Name",
+                                        appString.name,
                                         style: TextStyle(
                                           fontSize: 12,
                                           color: Colors.white,
@@ -210,7 +212,7 @@ class _TaskGroupPageState extends State<TaskGroupPage> {
                                     ),
                                     child: Center(
                                       child: Text(
-                                        "Date",
+                                        appString.date,
                                         style: TextStyle(
                                           fontSize: 12,
                                           color: Colors.white,
@@ -267,12 +269,15 @@ class _TaskGroupPageState extends State<TaskGroupPage> {
                           TaskGroup newGroupFromAddPage = result;
                           initTaskGroups();
 
-                          if(mounted) {
+                          if (mounted) {
                             final detailResult = await Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => DetailGroupPage(group: newGroupFromAddPage)
-                              )
+                                builder:
+                                    (context) => DetailGroupPage(
+                                      group: newGroupFromAddPage,
+                                    ),
+                              ),
                             );
 
                             if (detailResult == true) {
@@ -306,7 +311,7 @@ class _TaskGroupPageState extends State<TaskGroupPage> {
                             SizedBox(width: 16),
 
                             Text(
-                              "Create New Group",
+                              appString.createGroup,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,
@@ -330,7 +335,7 @@ class _TaskGroupPageState extends State<TaskGroupPage> {
                           child: Padding(
                             padding: const EdgeInsets.only(top: 32),
                             child: Text(
-                              "You don't have any group, create one now!",
+                              appString.noGroupNotifier,
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Colors.grey,

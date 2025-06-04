@@ -1,9 +1,12 @@
 import 'package:app/constants/colors.dart';
 import 'package:app/constants/length.dart';
+import 'package:app/constants/red_dates.dart';
+import 'package:app/constants/user_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:app/models/task_model.dart';
+import 'package:provider/provider.dart';
 
 final class Calendar extends StatefulWidget {
   const Calendar({
@@ -28,6 +31,18 @@ class CalendarState extends State<Calendar> {
   int currentIndex = 12;
   DateTime _currentDate = DateTime.now();
   DateTime _selectedDate = DateTime.now();
+  Map<String, List<String>> redDates = {};
+  Offset? _tapPosition;
+  List<Color> colorPreference = [];
+  bool _isInitialized = false;
+
+  Future<void> fetchRedDates(int year, int month) async {
+    final redDatesInstance = RedDates(context);
+    final result = redDatesInstance.getRedDatesForMonth(year, month);
+    setState(() {
+      redDates = result;
+    });
+  }
 
   @override
   void initState() {
@@ -44,61 +59,15 @@ class CalendarState extends State<Calendar> {
     pageController = PageController(initialPage: currentIndex);
   }
 
-  List<DateTime> _generateCalendarDays(DateTime date) {
-    final firstDayOfMonth = DateTime(date.year, date.month, 1);
-    final firstDayWeekday = firstDayOfMonth.weekday;
-
-    final daysBefore = (firstDayWeekday + 6) % 7;
-    final firstDisplayDay = firstDayOfMonth.subtract(
-      Duration(days: daysBefore),
-    );
-    final totalDisplayDays = 42;
-
-    return List.generate(
-      totalDisplayDays,
-      (index) => firstDisplayDay.add(Duration(days: index)),
-    );
-  }
-
-  List<String> _getWeekdayNames(String locale) {
-    final symbols = dateTimeSymbolMap()[locale];
-    List<String> weekdayNames = symbols.NARROWWEEKDAYS;
-
-    return [
-      weekdayNames[1],
-      weekdayNames[2],
-      weekdayNames[3],
-      weekdayNames[4],
-      weekdayNames[5],
-      weekdayNames[6],
-      weekdayNames[0],
-    ];
-  }
-
-  Widget _navButton(IconData icon, VoidCallback onPressed) {
-    return Container(
-      decoration: BoxDecoration(
-        color: widget.isHomepage ? white.withAlpha(51) : white,
-        shape: BoxShape.circle,
-        boxShadow: [
-          if (!widget.isHomepage)
-            BoxShadow(
-              color: gray3.withAlpha(51),
-              offset: Offset(0, 4),
-              blurRadius: 4,
-            ),
-        ],
-      ),
-      child: IconButton(
-        icon: Icon(icon),
-        color: widget.isHomepage ? white : black,
-        onPressed: onPressed,
-      ),
-    );
-  }
-
-  bool isSameDate(DateTime a, DateTime b) {
-    return a.year == b.year && a.month == b.month && a.day == b.day;
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isInitialized) {
+      colorPreference =
+          Provider.of<UserPreferences>(context, listen: false).colorPreference;
+      fetchRedDates(_currentDate.year, _currentDate.month);
+      _isInitialized = true;
+    }
   }
 
   @override
@@ -108,15 +77,13 @@ class CalendarState extends State<Calendar> {
         padding: EdgeInsets.all(10),
         width: Length(input: "calendar", context: context).width(),
         height: Length(input: "calendar", context: context).height(),
-        decoration: BoxDecoration(
-          // color: themeColors[6],
-          borderRadius: BorderRadius.circular(10),
-        ),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
         child: LayoutBuilder(
           builder: (context, constraints) {
             double width = constraints.maxWidth;
             double height = constraints.maxHeight;
-            double dayFontSize = width * 0.035;
+            double dayFontSize = width * 0.045;
+            double dateFontSize = width * 0.035;
             double monthFontSize = width * 0.07;
             double yearFontSize = width * 0.04;
 
@@ -198,6 +165,7 @@ class CalendarState extends State<Calendar> {
                             DateTime.now().month + (index - 12),
                           );
                           _selectedDate = DateTime.now();
+                          fetchRedDates(_currentDate.year, _currentDate.month);
                         });
                       },
                       itemBuilder: (context, index) {
@@ -242,7 +210,7 @@ class CalendarState extends State<Calendar> {
                                 child: GridView.builder(
                                   padding: EdgeInsets.only(
                                     left: width * 0.015,
-                                    top: width * 0.015,
+                                    top: width * 0.035,
                                     right: width * 0.015,
                                   ),
                                   gridDelegate:
@@ -272,7 +240,23 @@ class CalendarState extends State<Calendar> {
                                     );
 
                                     return GestureDetector(
+                                      onTapDown: (TapDownDetails details) {
+                                        _tapPosition = details.globalPosition;
+                                      },
                                       onTap: () {
+                                        if (_isRedDate(day) &&
+                                            _tapPosition != null) {
+                                          final messages =
+                                              redDates[DateFormat(
+                                                'yyyy-MM-dd',
+                                              ).format(day)]!;
+                                          _showRedDatePopup(
+                                            context,
+                                            messages,
+                                            _tapPosition!,
+                                          );
+                                        }
+
                                         setState(() {
                                           _selectedDate = day;
                                           widget.onDateSelected(
@@ -287,18 +271,21 @@ class CalendarState extends State<Calendar> {
                                         alignment: Alignment.center,
                                         children: [
                                           Container(
-                                            margin: EdgeInsets.all(5),
+                                            margin: EdgeInsets.all(
+                                              width * 0.03,
+                                            ),
                                             alignment: Alignment.center,
                                             decoration: BoxDecoration(
                                               shape: BoxShape.circle,
                                               color:
                                                   isSelected
-                                                      ? themeColors[6]
+                                                      ? colorPreference[2]
                                                       : Colors.transparent,
                                               border:
                                                   !isSelected && isToday
                                                       ? Border.all(
-                                                        color: themeColors[6],
+                                                        color:
+                                                            colorPreference[2],
                                                         width: 2,
                                                       )
                                                       : Border.all(
@@ -311,13 +298,13 @@ class CalendarState extends State<Calendar> {
                                               child: Text(
                                                 '${day.day}',
                                                 style: TextStyle(
-                                                  fontSize: dayFontSize,
+                                                  fontSize: dateFontSize,
                                                   fontWeight: FontWeight.w500,
                                                   color:
                                                       isSelected
-                                                          ? Colors.white
+                                                          ? white
                                                           : isToday
-                                                          ? themeColors[6]
+                                                          ? colorPreference[2]
                                                           : isCurrentMonth
                                                           ? (day.compareTo(
                                                                     normalizedToday,
@@ -332,6 +319,19 @@ class CalendarState extends State<Calendar> {
                                               ),
                                             ),
                                           ),
+                                          if (_isRedDate(day))
+                                            Positioned(
+                                              top: width * 0.02,
+                                              right: width * 0.025,
+                                              child: Container(
+                                                width: width * 0.021,
+                                                height: width * 0.021,
+                                                decoration: BoxDecoration(
+                                                  color: danger,
+                                                  shape: BoxShape.circle,
+                                                ),
+                                              ),
+                                            ),
                                           if (_hasTaskOnDate(day))
                                             Positioned(
                                               bottom: width * 0.01,
@@ -369,8 +369,7 @@ class CalendarState extends State<Calendar> {
         height: width * 0.01,
         margin: EdgeInsets.all(2),
         decoration: BoxDecoration(
-          color: themeColors[6],
-          // shape: BoxShape.circle,
+          color: colorPreference[2],
           borderRadius: BorderRadius.circular(20),
         ),
       ),
@@ -388,6 +387,185 @@ class CalendarState extends State<Calendar> {
       return taskDate.year == date.year &&
           taskDate.month == date.month &&
           taskDate.day == date.day;
+    });
+  }
+
+  List<DateTime> _generateCalendarDays(DateTime date) {
+    final firstDayOfMonth = DateTime(date.year, date.month, 1);
+    final firstDayWeekday = firstDayOfMonth.weekday;
+
+    final daysBefore = (firstDayWeekday + 6) % 7;
+    final firstDisplayDay = firstDayOfMonth.subtract(
+      Duration(days: daysBefore),
+    );
+    final totalDisplayDays = 42;
+
+    return List.generate(
+      totalDisplayDays,
+      (index) => firstDisplayDay.add(Duration(days: index)),
+    );
+  }
+
+  List<String> _getWeekdayNames(String locale) {
+    final symbols = dateTimeSymbolMap()[locale];
+    List<String> weekdayNames = symbols.NARROWWEEKDAYS;
+
+    return [
+      weekdayNames[1],
+      weekdayNames[2],
+      weekdayNames[3],
+      weekdayNames[4],
+      weekdayNames[5],
+      weekdayNames[6],
+      weekdayNames[0],
+    ];
+  }
+
+  Widget _navButton(IconData icon, VoidCallback onPressed) {
+    return Container(
+      decoration: BoxDecoration(
+        color: widget.isHomepage ? white.withAlpha(51) : white,
+        shape: BoxShape.circle,
+        boxShadow: [
+          if (!widget.isHomepage)
+            BoxShadow(
+              color: gray3.withAlpha(51),
+              offset: Offset(0, 4),
+              blurRadius: 4,
+            ),
+        ],
+      ),
+      child: IconButton(
+        icon: Icon(icon),
+        iconSize: Length(context: context, input: "box").width() * 0.075,
+        color: widget.isHomepage ? white : black,
+        onPressed: onPressed,
+      ),
+    );
+  }
+
+  bool isSameDate(DateTime a, DateTime b) {
+    return a.year == b.year && a.month == b.month && a.day == b.day;
+  }
+
+  bool _isRedDate(DateTime date) {
+    final key = DateFormat('yyyy-MM-dd').format(date);
+    return redDates.containsKey(key);
+  }
+
+  void _showRedDatePopup(
+    BuildContext context,
+    List<String> messages,
+    Offset tapPosition,
+  ) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final overlay =
+          Overlay.of(context).context.findRenderObject() as RenderBox;
+      final screenSize = overlay.size;
+
+      const double popupMaxWidth = 200;
+      const double popupMaxHeight = 200;
+      const double padding = 8;
+
+      double left = tapPosition.dx;
+      double top = tapPosition.dy;
+
+      if (left + popupMaxWidth + padding > screenSize.width) {
+        left = screenSize.width - popupMaxWidth - padding;
+      } else if (left < padding) {
+        left = padding;
+      }
+
+      if (top + popupMaxHeight + padding > screenSize.height) {
+        top = screenSize.height - popupMaxHeight - padding;
+      } else if (top < padding) {
+        top = padding;
+      }
+
+      final entry = OverlayEntry(
+        builder: (context) {
+          return Material(
+            color: Colors.transparent,
+            child: Stack(
+              children: [
+                Positioned(
+                  left: left,
+                  top: top,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      maxWidth: popupMaxWidth,
+                      maxHeight: popupMaxHeight,
+                    ),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: gray1,
+                            blurRadius: 3,
+                            offset: Offset(2, 2),
+                          ),
+                        ],
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children:
+                              messages.map((msg) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 4.0),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        width: 6,
+                                        height: 6,
+                                        margin: const EdgeInsets.only(
+                                          top: 6,
+                                          right: 8,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: danger,
+                                          shape: BoxShape.circle,
+                                        ),
+                                      ),
+                                      Flexible(
+                                        child: Text(
+                                          msg,
+                                          softWrap: true,
+                                          style: const TextStyle(
+                                            fontSize: 13,
+                                            color: black,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+
+      Overlay.of(context).insert(entry);
+
+      Future.delayed(const Duration(milliseconds: 1200), () {
+        entry.remove();
+      });
     });
   }
 }

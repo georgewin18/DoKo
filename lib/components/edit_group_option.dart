@@ -1,3 +1,4 @@
+import 'package:app/constants/app_string.dart';
 import 'package:app/constants/colors.dart';
 import 'package:flutter/material.dart';
 
@@ -6,6 +7,7 @@ Future<String?> editGroupOption(
   TapDownDetails details,
   RenderBox overlay,
 ) {
+  final appString = AppString(context);
   return showMenu(
     context: context,
     color: white,
@@ -20,7 +22,7 @@ Future<String?> editGroupOption(
           children: [
             Icon(Icons.edit_outlined, color: Color(0xFF7E1AD1)),
             const SizedBox(width: 10),
-            const Text("Edit Info Grup"),
+            Text(appString.editGroupTitle),
           ],
         ),
       ),
@@ -30,7 +32,7 @@ Future<String?> editGroupOption(
           children: [
             Icon(Icons.delete_outline, color: Colors.red),
             SizedBox(width: 10),
-            Text("Delete Group"),
+            Text(appString.deleteGroupTitle),
           ],
         ),
       ),

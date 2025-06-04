@@ -1,3 +1,4 @@
+import 'package:app/constants/app_string.dart';
 import 'package:app/db/task_db_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
@@ -145,7 +146,13 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
     final dateChanged = _selectedDate != _initialDate;
     final timeChanged = _selectedTime != _initialTime;
 
-    final changed = titleChanged || descChanged || attachmentChanged || progressChanged || dateChanged || timeChanged;
+    final changed =
+        titleChanged ||
+        descChanged ||
+        attachmentChanged ||
+        progressChanged ||
+        dateChanged ||
+        timeChanged;
 
     if (_hasChanged != changed) {
       setState(() {
@@ -165,6 +172,7 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final appString = AppString(context);
     return Padding(
       padding: EdgeInsets.only(
         left: 24,
@@ -195,9 +203,9 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       border: InputBorder.none,
-                      hintText: 'Task Title'
+                      hintText: appString.taskTitle,
                     ),
                   ),
                 ),
@@ -223,7 +231,7 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: Icon(Icons.calendar_today),
-              title: Text('Deadline'),
+              title: Text(appString.deadline),
               trailing: Text(
                 getFormattedDateTime(),
                 textAlign: TextAlign.right,
@@ -242,8 +250,8 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
               leading: const Icon(Icons.note),
               title: TextField(
                 controller: _notesController,
-                decoration: const InputDecoration(
-                  hintText: 'Add Notes...',
+                decoration: InputDecoration(
+                  hintText: appString.addNotesHint,
                   hintStyle: TextStyle(color: Colors.grey),
                   border: InputBorder.none,
                 ),
@@ -256,33 +264,34 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
               leading: const Icon(Icons.attach_file),
               title: TextField(
                 controller: _attachmentController,
-                decoration: const InputDecoration(
-                  hintText: 'Add your link here',
+                decoration: InputDecoration(
+                  hintText: appString.addYourLinkHint,
                   hintStyle: TextStyle(color: Colors.grey),
                   border: InputBorder.none,
                 ),
               ),
-              trailing: _initialAttachment.isNotEmpty
-                ? InkWell(
-                  onTap: () => _launchURL(_attachmentController.text),
-                  borderRadius: BorderRadius.circular(8),
-                  child: Container(
-                    padding: EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Color(0xff7E1AD1),
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Icon(
-                      LucideIcons.link,
-                      size: 16,
-                      color: Color(0xff7E1AD1),
-                    ),
-                  )
-                )
-                : null
+              trailing:
+                  _initialAttachment.isNotEmpty
+                      ? InkWell(
+                        onTap: () => _launchURL(_attachmentController.text),
+                        borderRadius: BorderRadius.circular(8),
+                        child: Container(
+                          padding: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Color(0xff7E1AD1),
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Icon(
+                            LucideIcons.link,
+                            size: 16,
+                            color: Color(0xff7E1AD1),
+                          ),
+                        ),
+                      )
+                      : null,
             ),
 
             const SizedBox(height: 16),
@@ -292,8 +301,8 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
               children: [
                 const Icon(Icons.show_chart, color: Colors.grey),
                 const SizedBox(width: 8),
-                const Text(
-                  'Progress',
+                Text(
+                  appString.progress,
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ],
@@ -346,8 +355,8 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
                       ),
                       minimumSize: const Size(double.infinity, 50),
                     ),
-                    child: const Text(
-                      'Cancel',
+                    child: Text(
+                      appString.cancel,
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -358,35 +367,48 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
                 const SizedBox(width: 10),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: _hasChanged
-                      ? () async {
-                        if (_selectedDate != null && _selectedTime != null) {
-                          final success = await saveTaskUpdate();
-                          if (success) {
-                            Navigator.of(context).pop({'action': 'update'});
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text("Gagal memperbarui task")),
-                            );
-                          }
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Please select a deadline')),
-                          );
-                        }
-                      }
-                    : null,
+                    onPressed:
+                        _hasChanged
+                            ? () async {
+                              if (_selectedDate != null &&
+                                  _selectedTime != null) {
+                                final success = await saveTaskUpdate();
+                                if (success) {
+                                  Navigator.of(
+                                    context,
+                                  ).pop({'action': 'update'});
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        appString.failedUpdatingTaskNotifier,
+                                      ),
+                                    ),
+                                  );
+                                }
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      appString.selectDeadlineNotifier,
+                                    ),
+                                  ),
+                                );
+                              }
+                            }
+                            : null,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: _hasChanged
-                        ? const Color.fromARGB(255, 126, 26, 209)
-                        : Colors.grey,
+                      backgroundColor:
+                          _hasChanged
+                              ? const Color.fromARGB(255, 126, 26, 209)
+                              : Colors.grey,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                       minimumSize: const Size(double.infinity, 50),
                     ),
-                    child: const Text(
-                      'Save',
+                    child: Text(
+                      appString.save,
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,

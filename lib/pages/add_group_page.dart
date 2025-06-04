@@ -1,3 +1,4 @@
+import 'package:app/constants/app_string.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter/services.dart';
@@ -29,6 +30,7 @@ class AddGroupPageState extends State<AddGroupPage> {
 
   @override
   Widget build(BuildContext context) {
+    final appString = AppString(context);
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -47,13 +49,10 @@ class AddGroupPageState extends State<AddGroupPage> {
                     onPressed: () async {
                       final title = _titleController.text.trim();
                       final description = _descriptionController.text.trim();
-                      //Navigator.pop(context, true);
 
                       if (title.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text("Title can't be empty!"),
-                          ),
+                          SnackBar(content: Text(appString.emptyTitleNotifier)),
                         );
                         return;
                       }
@@ -67,10 +66,12 @@ class AddGroupPageState extends State<AddGroupPage> {
                       int newGroupId;
 
                       try {
-                        newGroupId = await TaskGroupDBHelper.insertTaskGroup(newGroup);
+                        newGroupId = await TaskGroupDBHelper.insertTaskGroup(
+                          newGroup,
+                        );
                       } catch (e) {
                         Fluttertoast.showToast(
-                          msg: "Title must be unique!\nYou already have this group",
+                          msg: appString.uniqueTitleNotifier,
                           toastLength: Toast.LENGTH_LONG,
                           gravity: ToastGravity.TOP,
                           backgroundColor: Color(0xFFFF5454),
@@ -81,7 +82,10 @@ class AddGroupPageState extends State<AddGroupPage> {
                       }
 
                       if (newGroupId != 0) {
-                        final TaskGroup? newlyCreatedGroup = await TaskGroupDBHelper.getTaskGroupById(newGroupId);
+                        final TaskGroup? newlyCreatedGroup =
+                            await TaskGroupDBHelper.getTaskGroupById(
+                              newGroupId,
+                            );
 
                         if (newlyCreatedGroup != null) {
                           if (mounted) {
@@ -90,7 +94,11 @@ class AddGroupPageState extends State<AddGroupPage> {
                         } else {
                           if (mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text("Error: Could not retrieve the created group.")),
+                              const SnackBar(
+                                content: Text(
+                                  "Error: Could not retrieve the created group.",
+                                ),
+                              ),
                             );
                             Navigator.pop(context);
                           }
@@ -98,7 +106,9 @@ class AddGroupPageState extends State<AddGroupPage> {
                       } else {
                         if (mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("Failed to save the group.")),
+                            const SnackBar(
+                              content: Text("Failed to save the group."),
+                            ),
                           );
                           Navigator.pop(context);
                         }
@@ -114,8 +124,8 @@ class AddGroupPageState extends State<AddGroupPage> {
                       ),
                       minimumSize: const Size(120, 30),
                     ),
-                    child: const Text(
-                      'Save',
+                    child: Text(
+                      appString.save,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -147,8 +157,8 @@ class AddGroupPageState extends State<AddGroupPage> {
                             ],
                             textAlign: TextAlign.center,
                             maxLines: null,
-                            decoration: const InputDecoration(
-                              hintText: 'Group Title',
+                            decoration: InputDecoration(
+                              hintText: appString.taskGroupTitle,
                               hintStyle: TextStyle(
                                 fontSize: 30,
                                 fontWeight: FontWeight.bold,
@@ -214,8 +224,8 @@ class AddGroupPageState extends State<AddGroupPage> {
                                     _characterCount2 = text.length;
                                   });
                                 },
-                                decoration: const InputDecoration(
-                                  hintText: 'Description.....',
+                                decoration: InputDecoration(
+                                  hintText: appString.descriptionHint,
                                   hintStyle: TextStyle(
                                     fontSize: 18,
                                     color: Colors.grey,

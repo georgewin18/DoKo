@@ -4,6 +4,7 @@ import 'package:app/components/marquee.dart';
 import 'package:app/components/task_card.dart';
 import 'package:app/components/edit_task_bottom_sheet.dart';
 import 'package:app/components/edit_group_option.dart';
+import 'package:app/constants/app_string.dart';
 import 'package:app/constants/colors.dart';
 import 'package:app/db/task_db_helper.dart';
 import 'package:app/db/task_group_db_helper.dart';
@@ -85,6 +86,7 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
 
   @override
   Widget build(BuildContext context) {
+    final appString = AppString(context);
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
@@ -167,8 +169,8 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
                         return GestureDetector(
                           onTapDown: (TapDownDetails details) async {
                             final RenderBox overlay =
-                            Overlay.of(context).context.findRenderObject()
-                            as RenderBox;
+                                Overlay.of(context).context.findRenderObject()
+                                    as RenderBox;
 
                             final result = await editGroupOption(
                               context,
@@ -239,8 +241,8 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
-                            'My Task',
+                          Text(
+                            appString.myTask,
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -259,9 +261,9 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
                                 ),
                                 builder:
                                     (context) => AddTaskModal(
-                                  groupId: widget.group.id,
-                                  selectedDateOnCalendar: selectedDate,
-                                ),
+                                      groupId: widget.group.id,
+                                      selectedDateOnCalendar: selectedDate,
+                                    ),
                               );
                               if (result == true) {
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -288,7 +290,11 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
 
                     const Padding(
                       padding: EdgeInsets.symmetric(horizontal: 30),
-                      child: Divider(color: Colors.grey, thickness: 1, height: 1),
+                      child: Divider(
+                        color: Colors.grey,
+                        thickness: 1,
+                        height: 1,
+                      ),
                     ),
 
                     if (filteredTasks.isEmpty)
@@ -329,7 +335,7 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
                                         ),
                                         builder:
                                             (context) =>
-                                            EditTaskBottomSheet(task: task),
+                                                EditTaskBottomSheet(task: task),
                                       );
 
                                       if (result != null) {
@@ -339,23 +345,22 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
                                           SnackBar(
                                             content: Text(
                                               result['action'] == 'delete'
-                                                  ? "Task deleted"
-                                                  : "Task updated",
+                                                  ? appString.taskDeleted
+                                                  : appString.taskUpdated,
                                             ),
                                             behavior: SnackBarBehavior.floating,
                                             margin: EdgeInsets.only(
                                               bottom:
-                                              MediaQuery.of(
-                                                context,
-                                              ).viewInsets.bottom +
+                                                  MediaQuery.of(
+                                                    context,
+                                                  ).viewInsets.bottom +
                                                   20,
                                               left: 16,
                                               right: 16,
                                             ),
                                             shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(
-                                                12,
-                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
                                             ),
                                             duration: Duration(seconds: 2),
                                           ),
@@ -384,7 +389,7 @@ class _DetailGroupPageState extends State<DetailGroupPage> {
             ),
           ],
         ),
-      )
+      ),
     );
   }
 }

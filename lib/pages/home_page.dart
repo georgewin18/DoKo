@@ -1,6 +1,7 @@
 import 'package:app/components/calendar.dart';
 import 'package:app/components/edit_task_bottom_sheet.dart';
 import 'package:app/components/home_task_card.dart';
+import 'package:app/constants/app_string.dart';
 import 'package:app/db/task_db_helper.dart';
 import 'package:app/db/task_group_db_helper.dart';
 import 'package:app/models/task_model.dart';
@@ -52,6 +53,8 @@ class _HomePageState extends State<HomePage> {
           return isSameDate(taskDate, _selectedDate);
         }).toList();
 
+    final appString = AppString(context);
+
     return Scaffold(
       body: Stack(
         children: [
@@ -69,10 +72,8 @@ class _HomePageState extends State<HomePage> {
               backgroundColor: Colors.transparent,
               elevation: 0,
               highlightElevation: 0,
-              splashColor: Colors.transparent, 
-              shape: CircleBorder(
-                side: BorderSide.none, 
-              ),
+              splashColor: Colors.transparent,
+              shape: CircleBorder(side: BorderSide.none),
               child: Icon(LucideIcons.bell, color: Colors.white),
             ),
           ),
@@ -88,7 +89,7 @@ class _HomePageState extends State<HomePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Hello!",
+                        appString.greeting,
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -97,7 +98,7 @@ class _HomePageState extends State<HomePage> {
                       ),
 
                       Text(
-                        "Manage your task with DoKo",
+                        appString.jargon,
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
@@ -135,7 +136,7 @@ class _HomePageState extends State<HomePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Task List",
+                          appString.taskListTitle,
                           style: TextStyle(
                             color: Color(0xFF7E1AD1),
                             fontSize: 20,
@@ -153,7 +154,7 @@ class _HomePageState extends State<HomePage> {
                                     child: Padding(
                                       padding: const EdgeInsets.only(top: 32),
                                       child: Text(
-                                        "You don't have any task for now!",
+                                        appString.noTaskNotifier,
                                         style: TextStyle(
                                           fontSize: 16,
                                           color: Colors.grey,
@@ -168,7 +169,7 @@ class _HomePageState extends State<HomePage> {
                                       final task = filteredTasks[index];
                                       final groupName =
                                           groupNames[task.task_group_id] ??
-                                          "Unknown Group";
+                                          appString.unknownGroup;
 
                                       return Padding(
                                         padding: EdgeInsets.only(bottom: 12),
@@ -207,8 +208,8 @@ class _HomePageState extends State<HomePage> {
                                                   content: Text(
                                                     (result['action'] ==
                                                             'delete')
-                                                        ? "Task deleted"
-                                                        : "Task updated",
+                                                        ? appString.taskDeleted
+                                                        : appString.taskUpdated,
                                                   ),
                                                   behavior:
                                                       SnackBarBehavior.floating,

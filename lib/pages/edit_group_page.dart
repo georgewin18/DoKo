@@ -1,3 +1,4 @@
+import 'package:app/constants/app_string.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter/services.dart';
@@ -64,6 +65,7 @@ class EditGroupPageState extends State<EditGroupPage> {
 
   @override
   Widget build(BuildContext context) {
+    final appString = AppString(context);
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -97,8 +99,8 @@ class EditGroupPageState extends State<EditGroupPage> {
                       ),
                       minimumSize: const Size(120, 30),
                     ),
-                    child: const Text(
-                      'Save',
+                    child: Text(
+                      appString.save,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -130,8 +132,8 @@ class EditGroupPageState extends State<EditGroupPage> {
                             ],
                             textAlign: TextAlign.center,
                             maxLines: null,
-                            decoration: const InputDecoration(
-                              hintText: 'Group Title',
+                            decoration: InputDecoration(
+                              hintText: appString.groupTitleHint,
                               hintStyle: TextStyle(
                                 fontSize: 30,
                                 fontWeight: FontWeight.bold,
@@ -180,8 +182,8 @@ class EditGroupPageState extends State<EditGroupPage> {
                               LengthLimitingTextInputFormatter(200),
                             ],
                             onChanged: null,
-                            decoration: const InputDecoration(
-                              hintText: 'Description.....',
+                            decoration: InputDecoration(
+                              hintText: appString.groupTitleHint,
                               hintStyle: TextStyle(
                                 fontSize: 18,
                                 color: Colors.grey,

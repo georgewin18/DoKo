@@ -16,13 +16,15 @@ class BottomNavBar extends StatefulWidget {
 class BottomNavBarState extends State<BottomNavBar> {
   int _selectedIndex = 0;
 
-  final List<Widget> _pages = [
-    HomePage(),
-    TaskGroupPage(),
-    FocusModePage()
-  ];
+  final List<Widget> _pages = [HomePage(), TaskGroupPage(), FocusModePage()];
 
-  void _onItemTapped(int index) {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  void onItemTapped(int index) {
+    if (_selectedIndex == index) return;
     setState(() {
       _selectedIndex = index;
     });
@@ -31,50 +33,64 @@ class BottomNavBarState extends State<BottomNavBar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _pages[_selectedIndex],
-      bottomNavigationBar: Theme(
-        data: Theme.of(
-          context,
-        ).copyWith(iconTheme: IconThemeData(color: Colors.white)),
-        child: CurvedNavigationBar(
-          color: const Color(0xFF4D107F),
-          backgroundColor: Colors.transparent,
-          animationCurve: Curves.ease,
-          buttonBackgroundColor: const Color(0xFFE4D1F5),
-          onTap: _onItemTapped,
-          items: [
-            CurvedNavigationBarItem(
-              child: Icon(
-                LucideIcons.house,
-                color: _selectedIndex == 0 ? Color(0xFF4D107F) : Colors.white,
+      body: Stack(
+        children: [
+          _pages[_selectedIndex],
+
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Theme(
+              data: Theme.of(
+                context,
+              ).copyWith(iconTheme: IconThemeData(color: Colors.white)),
+              child: CurvedNavigationBar(
+                color: const Color(0xFF4D107F),
+                backgroundColor: Colors.transparent,
+                animationCurve: Curves.ease,
+                buttonBackgroundColor: const Color(0xFFE4D1F5),
+                index: _selectedIndex,
+                onTap: onItemTapped,
+                items: [
+                  CurvedNavigationBarItem(
+                    child: Icon(
+                      LucideIcons.house,
+                      color:
+                          _selectedIndex == 0
+                              ? Color(0xFF4D107F)
+                              : Colors.white,
+                    ),
+                    label: 'Home',
+                    labelStyle: TextStyle(color: Colors.white),
+                  ),
+                  CurvedNavigationBarItem(
+                    child: Icon(
+                      LucideIcons.group,
+                      color:
+                          _selectedIndex == 1
+                              ? const Color(0xFF4D107F)
+                              : Colors.white,
+                    ),
+                    label: 'Group',
+                    labelStyle: TextStyle(color: Colors.white),
+                  ),
+                  CurvedNavigationBarItem(
+                    child: Icon(
+                      LucideIcons.timer_reset,
+                      color:
+                          _selectedIndex == 2
+                              ? const Color(0xFF4D107F)
+                              : Colors.white,
+                    ),
+                    label: 'Focus',
+                    labelStyle: TextStyle(color: Colors.white),
+                  ),
+                ],
               ),
-              label: 'Home',
-              labelStyle: TextStyle(color: Colors.white), // Label tetap putih
             ),
-            CurvedNavigationBarItem(
-              child: Icon(
-                LucideIcons.group,
-                color:
-                    _selectedIndex == 1
-                        ? const Color(0xFF4D107F)
-                        : Colors.white, 
-              ),
-              label: 'Group',
-              labelStyle: TextStyle(color: Colors.white), // Label tetap putih
-            ),
-            CurvedNavigationBarItem(
-              child: Icon(
-                LucideIcons.timer_reset,
-                color:
-                    _selectedIndex == 2
-                        ? const Color(0xFF4D107F)
-                        : Colors.white,
-              ),
-              label: 'Focus',
-              labelStyle: TextStyle(color: Colors.white), // Label tetap putih
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

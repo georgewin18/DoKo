@@ -1,3 +1,4 @@
+import 'package:app/pages/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:app/constants/user_preferences.dart';
 import 'package:app/db/notification_helper.dart';
@@ -38,7 +39,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: "Doko",
       theme: ThemeData(useMaterial3: true, fontFamily: "Poppins"),
-      home: const BottomNavBar(),
+      home: const SplashScreen(),
     );
   }
 }

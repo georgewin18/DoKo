@@ -25,7 +25,7 @@ class FocusTimerDbHelper {
     );
   }
 
-  Future<int> deleteFocusTimer(int? id) async {
+  static Future<int> deleteFocusTimer(int? id) async {
     final db = await DBProvider.database;
     return await db.delete(_tableName, where: 'id = ?', whereArgs: [id]);
   }

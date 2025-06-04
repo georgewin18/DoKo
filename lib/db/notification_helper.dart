@@ -1,148 +1,317 @@
-import 'package:sqflite/sqflite.dart';
-
-import 'db_provider.dart';
+import 'dart:io';
 import 'package:app/models/notification_model.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/timezone.dart' as tz;
+import 'package:timezone/data/latest.dart' as tz;
+import 'db_provider.dart';
 
 class NotificationHelper {
-  static const _tableName = 'notification';
+  static final FlutterLocalNotificationsPlugin _notificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+  
+  static bool _initialized = false;
 
-  Future<int> insertNotification(NotificationModel notification) async {
-    final db = await DBProvider.database;
-    return await db.insert(
-      _tableName,
-      notification.toMap()
-    );
-  }
-
-  // Insert more than 1 notification
-  Future<void> insertNotifications(List<NotificationModel> notifications) async {
-    final db = await DBProvider.database;
-    final batch = db.batch();
-
-    for (var notification in notifications) {
-      batch.insert(
-        _tableName,
-        notification.toMap()
-      );
+  static DateTime getIndonesiaTime() {
+    try {
+      return tz.TZDateTime.now(tz.getLocation('Asia/Jakarta'));
+    } catch (e) {
+      return DateTime.now().toUtc().add(const Duration(hours: 7));
     }
-
-    await batch.commit(noResult: true);
   }
 
-  Future<List<NotificationModel>> getAllNotification() async {
-    final db = await DBProvider.database;
-    final getData = await db.query(
-      _tableName,
-      orderBy: 'scheduled_time DESC'
-    );
-    return getData.map((map) => NotificationModel.fromMap(map)).toList();
+  static Future<void> initialize() async {
+    if (_initialized) return;
+
+    try {
+      tz.initializeTimeZones();
+      tz.setLocalLocation(tz.getLocation('Asia/Jakarta'));
+
+      const AndroidInitializationSettings initializationSettingsAndroid =
+          AndroidInitializationSettings('@mipmap/doko_logo');
+
+      const InitializationSettings initializationSettings =
+          InitializationSettings(
+        android: initializationSettingsAndroid,
+      );
+
+      await _notificationsPlugin.initialize(
+        initializationSettings,
+        onDidReceiveNotificationResponse: _onNotificationTapped,
+      );
+
+      if (Platform.isAndroid) {
+        final androidPlugin = _notificationsPlugin
+            .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+        
+        if (androidPlugin != null) {
+          await androidPlugin.requestNotificationsPermission();
+        }
+      }
+
+      _initialized = true;
+      _startNotificationChecker();
+      
+    } catch (e) {
+      rethrow;
+    }
   }
 
-  Future<List<NotificationModel>> getNotificationsByTaskId(int taskId) async {
-    final db = await DBProvider.database;
-    final result = await db.query(
-      'notification',
-      where: 'task_id = ?',
-      whereArgs: [taskId],
-      orderBy: 'scheduled_time ASC',
-    );
-    return result.map((map) => NotificationModel.fromMap(map)).toList();
+  static void _onNotificationTapped(NotificationResponse response) async {
+    try {
+      final notificationId = int.tryParse(response.payload ?? '');
+      if (notificationId != null) {
+        await markNotificationAsRead(notificationId);
+      }
+    } catch (e) {
+      // Silent error handling
+    }
   }
 
-  Future<List<NotificationModel>> getUnreadNotification() async {
-    final db = await DBProvider.database;
-    final getData = await db.query(
-      _tableName,
-      where: 'is_read = ?',
-      whereArgs: [0],
-      orderBy: 'scheduled_time DESC'
-    );
-    return getData.map((map) => NotificationModel.fromMap(map)).toList();
+  static Future<void> scheduleNotificationsForTask(
+    int taskId,
+    String taskName,
+    DateTime taskDateTime,
+  ) async {
+    try {
+      final now = getIndonesiaTime();
+      
+      if (taskDateTime.isBefore(now)) {
+        return;
+      }
+
+      final notifications = <NotificationModel>[];
+      
+      final threeDaysBefore = taskDateTime.subtract(const Duration(days: 3));
+      if (threeDaysBefore.isAfter(now)) {
+        notifications.add(NotificationModel(
+          taskId: taskId,
+          notificationType: NotificationModel.threeDays,
+          scheduledTime: threeDaysBefore,
+          title: 'Task Reminder - 3 Days Left!',
+          body: 'Your task "$taskName" is due in 3 days. Time to start preparing!',
+          createdAt: now,
+        ));
+      }
+
+      final oneDayBefore = taskDateTime.subtract(const Duration(days: 1));
+      if (oneDayBefore.isAfter(now)) {
+        notifications.add(NotificationModel(
+          taskId: taskId,
+          notificationType: NotificationModel.oneDay,
+          scheduledTime: oneDayBefore,
+          title: 'Task Reminder - 1 Day Left!',
+          body: 'Your task "$taskName" is due tomorrow. Don\'t forget to complete it!',
+          createdAt: now,
+        ));
+      }
+
+      final sixHoursBefore = taskDateTime.subtract(const Duration(hours: 6));
+      if (sixHoursBefore.isAfter(now)) {
+        notifications.add(NotificationModel(
+          taskId: taskId,
+          notificationType: NotificationModel.sixHours,
+          scheduledTime: sixHoursBefore,
+          title: 'Task Reminder - 6 Hours Left!',
+          body: 'Your task "$taskName" is due in 6 hours. Better get started!',
+          createdAt: now,
+        ));
+      }
+
+      final threeHoursBefore = taskDateTime.subtract(const Duration(hours: 3));
+      if (threeHoursBefore.isAfter(now)) {
+        notifications.add(NotificationModel(
+          taskId: taskId,
+          notificationType: NotificationModel.threeHours,
+          scheduledTime: threeHoursBefore,
+          title: 'Task Reminder - 3 Hours Left!',
+          body: 'Your task "$taskName" is due in 3 hours. Time is running out!',
+          createdAt: now,
+        ));
+      }
+
+      for (final notification in notifications) {
+        await _saveNotificationToDatabase(notification);
+      }
+      
+    } catch (e) {
+      // Silent error handling
+    }
   }
 
-  Future<int> updateNotification(NotificationModel notification) async {
-    final db = await DBProvider.database;
-    return await db.update(
-      _tableName,
-      notification.toMap(),
-      where: 'id = ?',
-      whereArgs: [notification.id],
-    );
+  static Future<int> _saveNotificationToDatabase(NotificationModel notification) async {
+    try {
+      final db = await DBProvider.database;
+      return await db.insert('notification', notification.toMap());
+    } catch (e) {
+      rethrow;
+    }
   }
 
-  Future<int> markNotificationAsDelivered(int notificationId) async {
-    final db = await DBProvider.database;
-    return await db.update(
-      'notification',
-      {'is_delivered': 1},
-      where: 'id = ?',
-      whereArgs: [notificationId],
-    );
+  static Future<void> cancelNotificationsForTask(int taskId) async {
+    try {
+      final db = await DBProvider.database;
+      
+      final notifications = await db.query(
+        'notification',
+        where: 'task_id = ? AND is_sent = 0',
+        whereArgs: [taskId],
+      );
+
+      for (final notificationMap in notifications) {
+        final notification = NotificationModel.fromMap(notificationMap);
+        if (notification.id != null) {
+          await _notificationsPlugin.cancel(notification.id!);
+        }
+      }
+
+      await db.delete(
+        'notification',
+        where: 'task_id = ? AND is_sent = 0',
+        whereArgs: [taskId],
+      );
+      
+    } catch (e) {
+      // Silent error handling
+    }
   }
 
-  // Mark Notification as Read
-  Future<int> markNotificationAsRead(int notificationId) async {
-    final db = await DBProvider.database;
-    return await db.update(
-      _tableName,
-      {'is_read': 1},
-      where: 'id = ?',
-      whereArgs: [notificationId]
-    );
+  static Future<List<NotificationModel>> getAllNotifications() async {
+    try {
+      final db = await DBProvider.database;
+      final maps = await db.query(
+        'notification',
+        orderBy: 'scheduled_time DESC',
+      );
+      return maps.map((map) => NotificationModel.fromMap(map)).toList();
+    } catch (e) {
+      return [];
+    }
   }
 
-  Future<int> markAllNotificationsAsRead() async {
-    final db = await DBProvider.database;
-    return await db.update(
-      'notification',
-      {'is_read': 1},
-      where: 'is_read = ?',
-      whereArgs: [0],
-    );
+  static Future<List<NotificationModel>> getUnreadNotifications() async {
+    try {
+      final db = await DBProvider.database;
+      final maps = await db.query(
+        'notification',
+        where: 'is_read = 0',
+        orderBy: 'scheduled_time DESC',
+      );
+      return maps.map((map) => NotificationModel.fromMap(map)).toList();
+    } catch (e) {
+      return [];
+    }
   }
 
-  Future<int> deleteNotification(int id) async {
-    final db = await DBProvider.database;
-    return await db.delete(
-      _tableName,
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+  static Future<void> markNotificationAsRead(int notificationId) async {
+    try {
+      final db = await DBProvider.database;
+      await db.update(
+        'notification',
+        {'is_read': 1},
+        where: 'id = ?',
+        whereArgs: [notificationId],
+      );
+    } catch (e) {
+      // Silent error handling
+    }
   }
 
-  Future<int> deleteNotificationsByTaskId(int taskId) async {
-    final db = await DBProvider.database;
-    return await db.delete(
-      _tableName,
-      where: 'task_id = ?',
-      whereArgs: [taskId]
-    );
+  static Future<void> markNotificationAsSent(int notificationId) async {
+    try {
+      final db = await DBProvider.database;
+      await db.update(
+        'notification',
+        {'is_sent': 1},
+        where: 'id = ?',
+        whereArgs: [notificationId],
+      );
+    } catch (e) {
+      // Silent error handling
+    }
   }
 
-  Future<int> getNotificationCountForTask(int taskId) async {
-    final db = await DBProvider.database;
-    final result = await db.rawQuery(
-      'SELECT COUNT(*) as count FROM notification WHERE task_id = ?',
-      [taskId],
-    );
-    return Sqflite.firstIntValue(result) ?? 0;
+  static Future<void> showNotification(NotificationModel notification) async {
+    try {
+      const AndroidNotificationDetails androidNotificationDetails =
+          AndroidNotificationDetails(
+        'task_reminders',
+        'Task Reminders',
+        channelDescription: 'Notifications for upcoming task deadlines',
+        importance: Importance.high,
+        priority: Priority.high,
+        showWhen: true,
+        enableVibration: true,
+        enableLights: true,
+        color: Colors.blue,
+      );
+
+      const NotificationDetails notificationDetails = NotificationDetails(
+        android: androidNotificationDetails,
+      );
+
+      await _notificationsPlugin.show(
+        notification.id!,
+        notification.title,
+        notification.body,
+        notificationDetails,
+        payload: notification.id.toString(),
+      );
+
+      await markNotificationAsSent(notification.id!);
+    } catch (e) {
+      // Silent error handling
+    }
   }
 
-  Future<int> getUnreadNotificationCount() async {
-    final db = await DBProvider.database;
-    final getData = await db.rawQuery(
-      'SELECT COUNT(*) as count FROM notification WHERE is_read = 0'
-    );
-    return Sqflite.firstIntValue(getData) ?? 0;
+  static Future<void> checkAndSendDueNotifications() async {
+    try {
+      final db = await DBProvider.database;
+      final now = getIndonesiaTime();
+      
+      final checkTime = now.add(const Duration(seconds: 10));
+
+      final maps = await db.query(
+        'notification',
+        where: 'is_sent = 0 AND scheduled_time <= ?',
+        whereArgs: [checkTime.toIso8601String()],
+      );
+
+      for (final map in maps) {
+        final notification = NotificationModel.fromMap(map);
+        final scheduledTime = notification.scheduledTime;
+        
+        final tolerance = const Duration(seconds: 30);
+        final shouldSend = scheduledTime.isBefore(now.add(tolerance));
+        
+        if (shouldSend) {
+          await showNotification(notification);
+        }
+      }
+    } catch (e) {
+      // Silent error handling
+    }
   }
 
-  Future<int> cleanupOldNotifications() async {
-    final db = await DBProvider.database;
-    final thirtyDaysAgo = DateTime.now().subtract(Duration(days: 30));
-    return await db.delete(
-      'notification',
-      where: 'is_delivered = 1 AND created_at < ?',
-      whereArgs: [thirtyDaysAgo.toIso8601String()],
-    );
+  static void _startNotificationChecker() {
+    Stream.periodic(const Duration(seconds: 30)).listen((_) {
+      checkAndSendDueNotifications();
+    });
+  }
+
+  static Future<void> deleteNotification(int notificationId) async {
+    try {
+      final db = await DBProvider.database;
+      
+      await _notificationsPlugin.cancel(notificationId);
+      
+      await db.delete(
+        'notification',
+        where: 'id = ?',
+        whereArgs: [notificationId],
+      );
+    } catch (e) {
+      // Silent error handling
+    }
   }
 }

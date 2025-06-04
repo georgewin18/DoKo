@@ -1,98 +1,131 @@
 class NotificationModel {
   final int? id;
   final int taskId;
+  final String notificationType;
+  final DateTime scheduledTime;
   final String title;
   final String body;
-  final DateTime scheduledTime;
-  final String notificationType; // 3_days, 1_day, 6_hours, 3_hours
-  final bool isDelivered;
+  final bool isSent;
   final bool isRead;
   final DateTime createdAt;
 
   NotificationModel({
     this.id,
     required this.taskId,
+    required this.notificationType,
+    required this.scheduledTime,
     required this.title,
     required this.body,
-    required this.scheduledTime,
-    required this.notificationType,
-    this.isDelivered = false,
+    this.isSent = false,
     this.isRead = false,
-    DateTime? createdAt,
-  }) : createdAt = createdAt ?? DateTime.now();
-
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'task_id': taskId,
-      'title': title,
-      'body': body,
-      'scheduled_time': scheduledTime,
-      'notification_type': notificationType,
-      'is_delivered': isDelivered ? 1 : 0,
-      'is_read': isRead ? 1 : 0,
-      'created_at': createdAt.toIso8601String(),
-    };
-  }
+    required this.createdAt,
+  });
 
   factory NotificationModel.fromMap(Map<String, dynamic> map) {
     return NotificationModel(
       id: map['id'],
       taskId: map['task_id'],
+      notificationType: map['notification_type'],
+      scheduledTime: DateTime.parse(map['scheduled_time']),
       title: map['title'],
       body: map['body'],
-      scheduledTime: DateTime.parse(map['scheduled_time']),
-      notificationType: map['notification_type'],
-      isDelivered: map['is_delivered'] == 1,
+      isSent: map['is_sent'] == 1,
       isRead: map['is_read'] == 1,
       createdAt: DateTime.parse(map['created_at']),
     );
   }
 
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'task_id': taskId,
+      'notification_type': notificationType,
+      'scheduled_time': scheduledTime.toIso8601String(),
+      'title': title,
+      'body': body,
+      'is_sent': isSent ? 1 : 0,
+      'is_read': isRead ? 1 : 0,
+      'created_at': createdAt.toIso8601String(),
+    };
+  }
+
   NotificationModel copyWith({
     int? id,
     int? taskId,
+    String? notificationType,
+    DateTime? scheduledTime,
     String? title,
     String? body,
-    DateTime? scheduledTime,
-    String? notificationType,
-    bool? isDelivered,
+    bool? isSent,
     bool? isRead,
-    DateTime? createdAt
+    DateTime? createdAt,
   }) {
     return NotificationModel(
       id: id ?? this.id,
       taskId: taskId ?? this.taskId,
+      notificationType: notificationType ?? this.notificationType,
+      scheduledTime: scheduledTime ?? this.scheduledTime,
       title: title ?? this.title,
       body: body ?? this.body,
-      scheduledTime: scheduledTime ?? this.scheduledTime,
-      notificationType: notificationType ?? this.notificationType,
-      isDelivered: isDelivered ?? this.isDelivered,
+      isSent: isSent ?? this.isSent,
       isRead: isRead ?? this.isRead,
-      createdAt: createdAt ?? this.createdAt
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 
   @override
   String toString() {
-    return 'NotificationModel{id: $id, taskId: $taskId, title: $title, scheduledTime: $scheduledTime, type: $notificationType}';
+    return 'NotificationModel{id: $id, taskId: $taskId, notificationType: $notificationType, scheduledTime: $scheduledTime, title: $title, body: $body, isSent: $isSent, isRead: $isRead, createdAt: $createdAt}';
   }
-}
 
-enum NotificationType {
-  threeDays('3_days', 'Reminder: Task due in 3 days'),
-  oneDay('1_day', 'Reminder: Task due tomorrow'),
-  sixHours('6_hours', 'Reminder: Task due in 6 hours'),
-  threeHours('3_hours', 'Urgent: Task due in 3 hours');
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is NotificationModel &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          taskId == other.taskId &&
+          notificationType == other.notificationType;
 
-  const NotificationType(this.value, this.defaultMessage);
-  final String value;
-  final String defaultMessage;
+  @override
+  int get hashCode => id.hashCode ^ taskId.hashCode ^ notificationType.hashCode;
 
-  static NotificationType fromValue(String value) {
-    return NotificationType.values.firstWhere(
-      (type) => type.value == value,
-      orElse: () => NotificationType.threeDays
-    );
+  static const String threeDays = '3_days';
+  static const String oneDay = '1_day';
+  static const String sixHours = '6_hours';
+  static const String threeHours = '3_hours';
+
+  static List<String> get allNotificationTypes => [
+    threeDays,
+    oneDay,
+    sixHours,
+    threeHours,
+  ];
+
+  String get readableNotificationType {
+    switch (notificationType) {
+      case threeDays:
+        return '3 Days Before';
+      case oneDay:
+        return '1 Day Before';
+      case sixHours:
+        return '6 Hours Before';
+      case threeHours:
+        return '3 Hours Before';
+      default:
+        return notificationType;
+    }
+  }
+
+  bool get shouldSendNow {
+    return !isSent && DateTime.now().isAfter(scheduledTime);
+  }
+
+  Duration get timeUntilNotification {
+    return scheduledTime.difference(DateTime.now());
+  }
+
+  bool get isOverdue {
+    return !isSent && DateTime.now().isAfter(scheduledTime);
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:app/pages/onboarding_page.dart';
+import 'package:app/pages/onBoarding_page.dart';
 import 'package:app/components/bottom_navigation_bar.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -21,7 +21,6 @@ class _SplashScreenState extends State<SplashScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool isFirstTime = prefs.getBool('first_time') ?? true;
 
-    // Delay sebentar untuk splash effect
     await Future.delayed(const Duration(milliseconds: 1500));
 
     if (mounted) {
@@ -43,11 +42,10 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF8B5CF6),
-      body: Center( // Removed const here
-        child: Column( // Removed const here
+      body: Center(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Ganti Icon dengan logo dari asset
             Image.asset(
               'assets/logo/playstore.png',
               width: 100,

@@ -1,7 +1,7 @@
 import 'package:app/constants/app_string.dart';
 import 'package:app/db/notification_helper.dart';
+import 'package:app/pages/splash_screen.dart'; // Import SplashScreen dari file terpisah
 import 'package:flutter/material.dart';
-import 'package:app/components/bottom_navigation_bar.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter/services.dart';
 
@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: title,
       theme: ThemeData(useMaterial3: true, fontFamily: "Poppins"),
-      home: const BottomNavBar(),
+      home: const SplashScreen(), // Tetap menggunakan SplashScreen sebagai entry point
     );
   }
 }

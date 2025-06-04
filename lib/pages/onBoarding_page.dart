@@ -118,40 +118,40 @@ class OnboardingScreen extends StatelessWidget {
       speed: 1.8,
       pageBodies: [
         OnboardingContent(
-          imagePath: 'assets/images/onboarding_welcome.png',
-          title: 'Selamat Datang di Doko',
+          imagePath: 'assets/images/doko.png',
+          title: 'Welcome',
           description:
-              'Aplikasi manajemen tugas terbaik untuk meningkatkan produktivitas Anda setiap hari.',
+              'Welcome to our app, Doko the best task management app in Playstore.',
         ),
         OnboardingContent(
-          imagePath: 'assets/images/onboarding_calendar.png',
-          title: 'Kalender Interaktif',
+          imagePath: 'assets/images/1.png',
+          title: 'Interactive Calendar For Task Management',
           description:
-              'Klik pada tanggal di kalender untuk melihat tugas spesifik hari tersebut. Kelola jadwal Anda dengan mudah.',
+              'No task for today? No Worries Doko would solve that problem for you!',
         ),
         OnboardingContent(
-          imagePath: 'assets/images/onboarding_tasks.png',
-          title: 'Manajemen Tugas',
+          imagePath: 'assets/images/2.png',
+          title: 'Create Your Group',
           description:
-              'Tambah, edit, dan hapus tugas dengan mudah. Atur prioritas dan pantau progress Anda setiap hari.',
+              'Hop onto your group tab and then click on the Create New Group button.',
         ),
         OnboardingContent(
-          imagePath: 'assets/images/onboarding_notifications.png',
-          title: 'Notifikasi & Pengingat',
+          imagePath: 'assets/images/3.png',
+          title: 'Group Flow',
           description:
-              'Dapatkan notifikasi untuk tugas penting dan jangan pernah melewatkan deadline lagi.',
+              'Give your group a name as you wish and let the magic calculate your task progress.',
         ),
         OnboardingContent(
-          imagePath: 'assets/images/onboarding_start.png',
-          title: 'Siap Memulai?',
+          imagePath: 'assets/images/4.png',
+          title: 'Easy Task Making',
           description:
-              'Mulai perjalanan produktivitas Anda bersama Doko. Atur tugas, capai tujuan, dan tingkatkan efisiensi!',
+              'Just a few click! With Doko you can create your task and manage it easily.',
         ),
         OnboardingContent(
-          imagePath: 'assets/images/onboarding_start.png',
-          title: 'Siap Memulai?',
+          imagePath: 'assets/images/5.png',
+          title: 'Focus Mode',
           description:
-              'Mulai perjalanan produktivitas Anda bersama Doko. Atur tugas, capai tujuan, dan tingkatkan efisiensi!',
+              'No focus, its okay! We got you. With our new focus mode you could be more focus on your task.',
         ),
       ],
     );

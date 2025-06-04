@@ -31,7 +31,7 @@ class ModeCard extends StatelessWidget {
             children: [
               _infoItem('$focusDurationMinutes min', Colors.deepPurple),
               _infoItem('$breakDurationMinutes min', Colors.green),
-              _infoItem('$totalSections sections', Colors.blue),
+              _infoItem('$totalSections intervals', Colors.blue),
             ],
           ),
         ),

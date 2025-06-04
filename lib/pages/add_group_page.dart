@@ -3,6 +3,7 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter/services.dart';
 import 'package:app/models/task_group_model.dart';
 import 'package:app/db/task_group_db_helper.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class AddGroupPage extends StatefulWidget {
   const AddGroupPage({super.key});
@@ -46,7 +47,7 @@ class AddGroupPageState extends State<AddGroupPage> {
                     onPressed: () async {
                       final title = _titleController.text.trim();
                       final description = _descriptionController.text.trim();
-                      Navigator.pop(context, true);
+                      //Navigator.pop(context, true);
 
                       if (title.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -63,7 +64,46 @@ class AddGroupPageState extends State<AddGroupPage> {
                         createdAt: DateTime.now().toIso8601String(),
                       );
 
-                      await TaskGroupDBHelper.insertTaskGroup(newGroup);
+                      int newGroupId;
+
+                      try {
+                        newGroupId = await TaskGroupDBHelper.insertTaskGroup(newGroup);
+                      } catch (e) {
+                        Fluttertoast.showToast(
+                          msg: "Title must be unique!\nYou already have this group",
+                          toastLength: Toast.LENGTH_LONG,
+                          gravity: ToastGravity.TOP,
+                          backgroundColor: Color(0xFFFF5454),
+                          textColor: Colors.white,
+                          fontSize: 16.0,
+                        );
+                        return;
+                      }
+
+                      if (newGroupId != 0) {
+                        final TaskGroup? newlyCreatedGroup = await TaskGroupDBHelper.getTaskGroupById(newGroupId);
+
+                        if (newlyCreatedGroup != null) {
+                          if (mounted) {
+                            Navigator.pop(context, newlyCreatedGroup);
+                          }
+                        } else {
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text("Error: Could not retrieve the created group.")),
+                            );
+                            Navigator.pop(context);
+                          }
+                        }
+                      } else {
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text("Failed to save the group.")),
+                          );
+                          Navigator.pop(context);
+                        }
+                      }
+                      //await TaskGroupDBHelper.insertTaskGroup(newGroup);
                     },
 
                     style: ElevatedButton.styleFrom(

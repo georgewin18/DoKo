@@ -1,6 +1,8 @@
 import 'package:app/db/task_db_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'delete_confirmation_dialog.dart';
 import '../models/task_model.dart';
 
@@ -152,6 +154,15 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
     }
   }
 
+  Future<void> _launchURL(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -246,11 +257,32 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet> {
               title: TextField(
                 controller: _attachmentController,
                 decoration: const InputDecoration(
-                  hintText: 'Add your drive link here',
+                  hintText: 'Add your link here',
                   hintStyle: TextStyle(color: Colors.grey),
                   border: InputBorder.none,
                 ),
               ),
+              trailing: _initialAttachment.isNotEmpty
+                ? InkWell(
+                  onTap: () => _launchURL(_attachmentController.text),
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    padding: EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Color(0xff7E1AD1),
+                        width: 1,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(
+                      LucideIcons.link,
+                      size: 16,
+                      color: Color(0xff7E1AD1),
+                    ),
+                  )
+                )
+                : null
             ),
 
             const SizedBox(height: 16),

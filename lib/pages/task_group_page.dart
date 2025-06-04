@@ -263,7 +263,23 @@ class _TaskGroupPageState extends State<TaskGroupPage> {
                           ),
                         );
 
-                        if (result == true) {
+                        if (result is TaskGroup) {
+                          TaskGroup newGroupFromAddPage = result;
+                          initTaskGroups();
+
+                          if(mounted) {
+                            final detailResult = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => DetailGroupPage(group: newGroupFromAddPage)
+                              )
+                            );
+
+                            if (detailResult == true) {
+                              initTaskGroups();
+                            }
+                          }
+                        } else if (result == true) {
                           initTaskGroups();
                         }
                       },

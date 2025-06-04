@@ -76,29 +76,40 @@ class TaskCard extends StatelessWidget {
             children: [
               Expanded(
                 child:
-                    description.isNotEmpty
-                        ? Text(
-                          description,
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.grey[600],
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        )
-                        : SizedBox.shrink(),
+                description.isNotEmpty
+                  ? Text(
+                    description,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.grey[600],
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  )
+                  : SizedBox.shrink(),
               ),
               const SizedBox(width: 8),
               // Tombol icon link
-              if (task.attachment != null && task.attachment!.isNotEmpty)
+              if (task.task_attachment != null && task.task_attachment!.isNotEmpty)
                 InkWell(
-                  onTap: () => _launchURL(task.attachment!),
-                  child: const Icon(
-                    LucideIcons.link,
-                    size: 16,
-                    color: Color(0xff7E1AD1),
-                  ),
+                  onTap: () => _launchURL(task.task_attachment!),
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    padding: EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Color(0xff7E1AD1),
+                        width: 1,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(
+                      LucideIcons.link,
+                      size: 16,
+                      color: Color(0xff7E1AD1),
+                    ),
+                  )
                 ),
             ],
           ),

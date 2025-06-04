@@ -2,7 +2,6 @@ import 'package:app/pages/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:app/constants/user_preferences.dart';
 import 'package:app/db/notification_helper.dart';
-import 'package:app/components/bottom_navigation_bar.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';

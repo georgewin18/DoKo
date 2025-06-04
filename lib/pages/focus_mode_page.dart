@@ -140,7 +140,7 @@ class _FocusModePageState extends State<FocusModePage> {
                 },
                 backgroundColor: Colors.deepPurple,
                 shape: const CircleBorder(),
-                child: Icon(Icons.add, color: white, size: 30),
+                child: Icon(Icons.add, color: Colors.white, size: 30),
               ),
             ),
           ),

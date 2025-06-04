@@ -181,7 +181,7 @@ class _EditFocusFormState extends State<EditFocusForm> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text("Sections", style: TextStyle(fontWeight: FontWeight.w600)),
+          Text("Interval", style: TextStyle(fontWeight: FontWeight.w600)),
           SizedBox(width: 12),
           Expanded(
             child: Padding(

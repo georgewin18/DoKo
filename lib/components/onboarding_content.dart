@@ -17,18 +17,15 @@ class OnboardingContent extends StatelessWidget {
     return Container(
       alignment: Alignment.center,
       width: MediaQuery.of(context).size.width,
-      padding: const EdgeInsets.symmetric(horizontal: 40),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Container(
-            width: 200,
-            height: 200,
-            child: Image.asset(
-              imagePath,
-              fit: BoxFit.contain,
-            ),
+            width: 350,
+            height: 350,
+            child: Image.asset(imagePath, fit: BoxFit.contain),
           ),
           const SizedBox(height: 30),
           Text(

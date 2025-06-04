@@ -54,6 +54,6 @@ class FocusTimer {
   }
 
   String get formattedSectionTimeValue {
-    return '$section section';
+    return '$section intervals';
   }
 }

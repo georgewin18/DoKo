@@ -18,7 +18,7 @@ class _EditFocusFormState extends State<EditFocusForm> {
   int focusTime = 0;
   int breakTime = 0;
   int? selectedSection;
-  final List<int> sections = [1, 2, 3, 4];
+  final List<int> sections = [2, 3, 4, 5];
 
   @override
   void initState() {
@@ -58,36 +58,37 @@ class _EditFocusFormState extends State<EditFocusForm> {
       await FocusTimerDbHelper.updateFocusTimer(updatedTimer);
 
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Timer updated!")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Timer updated!")));
 
       if (!mounted) return;
       Navigator.pop(context, true);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Please fill in all fields")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Please fill in all fields")));
     }
   }
 
   void _discardData() async {
     final confirm = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Discard Changes?'),
-        content: Text('Are you sure you want to discard your changes?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text('Cancel'),
+      builder:
+          (context) => AlertDialog(
+            title: Text('Discard Changes?'),
+            content: Text('Are you sure you want to discard your changes?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: Text('Yes, Discard'),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text('Yes, Discard'),
-          ),
-        ],
-      ),
     );
 
     if (confirm == true) {
@@ -121,8 +122,11 @@ class _EditFocusFormState extends State<EditFocusForm> {
             child: TextFormField(
               controller: timerNameController,
               textAlign: TextAlign.right,
-              validator: (value) =>
-                  value == null || value.isEmpty ? "Please enter a name" : null,
+              validator:
+                  (value) =>
+                      value == null || value.isEmpty
+                          ? "Please enter a name"
+                          : null,
               decoration: InputDecoration(
                 hintText: "Add Name",
                 border: InputBorder.none,
@@ -177,7 +181,7 @@ class _EditFocusFormState extends State<EditFocusForm> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text("Sections", style: TextStyle(fontWeight: FontWeight.w600)),
+          Text("Interval", style: TextStyle(fontWeight: FontWeight.w600)),
           SizedBox(width: 12),
           Expanded(
             child: Padding(
@@ -187,13 +191,17 @@ class _EditFocusFormState extends State<EditFocusForm> {
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton2<int>(
                     value: selectedSection,
-                    items: sections
-                        .map((e) => DropdownMenuItem<int>(
-                              value: e,
-                              child: Text("$e intervals"),
-                            ))
-                        .toList(),
-                    onChanged: (value) => setState(() => selectedSection = value),
+                    items:
+                        sections
+                            .map(
+                              (e) => DropdownMenuItem<int>(
+                                value: e,
+                                child: Text("$e intervals"),
+                              ),
+                            )
+                            .toList(),
+                    onChanged:
+                        (value) => setState(() => selectedSection = value),
                     buttonStyleData: ButtonStyleData(
                       padding: EdgeInsets.symmetric(horizontal: 0),
                       height: 40,

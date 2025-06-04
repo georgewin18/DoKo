@@ -15,7 +15,7 @@ class _FocusFormState extends State<FocusForm> {
   int focusTime = 20;
   int breakTime = 5;
   int? selectedSection;
-  final List<int> sections = [1, 2, 3, 4];
+  final List<int> sections = [2, 3, 4, 5];
 
   void _decrementTime(String type) {
     setState(() {

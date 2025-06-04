@@ -1,4 +1,3 @@
-import 'package:app/constants/colors.dart';
 import 'package:app/db/focus_timer_db_helper.dart';
 import 'package:app/models/focus_timer_model.dart';
 import 'package:flutter/material.dart';

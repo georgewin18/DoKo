@@ -84,12 +84,10 @@ class _FocusModePageState extends State<FocusModePage> {
                                         context,
                                         MaterialPageRoute(
                                           builder:
-                                              (_) => EditFocusForm(
-                                                timer: timer,
-                                              ),
+                                              (_) =>
+                                                  EditFocusForm(timer: timer),
                                         ),
                                       );
-                                      print('editttt cuyyyyy');
                                       if (result == true) {
                                         initFocusTimer();
                                       }
@@ -99,7 +97,6 @@ class _FocusModePageState extends State<FocusModePage> {
                                             context,
                                             timer,
                                           );
-                                      print('delete cuyyyyy');
                                       if (result == true) {
                                         initFocusTimer();
                                       }
@@ -144,7 +141,7 @@ class _FocusModePageState extends State<FocusModePage> {
                 },
                 backgroundColor: Colors.deepPurple,
                 shape: const CircleBorder(),
-                child: const Icon(Icons.add, color: Colors.white, size: 30),
+                child: Icon(Icons.add, color: white, size: 30),
               ),
             ),
           ),

@@ -4,7 +4,6 @@ android/app/build.gradle.kts
 android/app/my-release-key.jks
 lib/main.dart
 pubspec.lock
-android/app/build.gradle.kts
 macos/Flutter/GeneratedPluginRegistrant.swift
 windows/flutter/generated_plugins.cmake
 .flutter-plugins

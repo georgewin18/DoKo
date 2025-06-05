@@ -15,7 +15,7 @@ class NotificationService {
       tz.getLocation('Asia/Jakarta'),
     );
 
-    const androidSettings = AndroidInitializationSettings('@mipmap/doko_logo');
+    const androidSettings = AndroidInitializationSettings('doko_logo');
 
     const InitializationSettings initializationSettings = InitializationSettings(
       android: androidSettings,

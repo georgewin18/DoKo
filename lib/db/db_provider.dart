@@ -4,7 +4,7 @@ import 'package:path/path.dart';
 class DBProvider {
   static Database? _db;
   static const String _dbName = 'task_manager.db';
-  static const int _dbVersion = 1;
+  static const int _dbVersion = 2;
 
   static Future<Database> get database async {
     if (_db != null) return _db!;
@@ -18,6 +18,7 @@ class DBProvider {
       path,
       version: _dbVersion,
       onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
     );
   }
 
@@ -187,5 +188,22 @@ class DBProvider {
         WHERE task_id = NEW.id AND is_sent = 0;
       END;
     ''');
+  }
+
+  static Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      final tablesToDrop = [
+        'notification',
+        'focus_timer',
+        'task',
+        'task_group'
+      ];
+
+      for (final tableName in tablesToDrop) {
+        await db.execute('DROP TABLE IF EXISTS $tableName;');
+      }
+
+      await _onCreate(db, newVersion);
+    }
   }
 }

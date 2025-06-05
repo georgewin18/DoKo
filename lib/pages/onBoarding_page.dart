@@ -22,7 +22,7 @@ class OnboardingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return OnBoardingSlider(
-      finishButtonText: 'Mulai Sekarang',
+      finishButtonText: 'Start Now',
       onFinish: () => _completeOnboarding(context),
       finishButtonStyle: const FinishButtonStyle(
         backgroundColor: Color(0xFF8B5CF6),
@@ -31,7 +31,7 @@ class OnboardingScreen extends StatelessWidget {
         ),
       ),
       skipTextButton: const Text(
-        'Lewati',
+        'Skip',
         style: TextStyle(
           fontSize: 16,
           color: Color(0xFF8B5CF6),
@@ -40,7 +40,7 @@ class OnboardingScreen extends StatelessWidget {
         ),
       ),
       trailing: const Text(
-        'Lewati',
+        'Skip',
         style: TextStyle(
           fontSize: 16,
           color: Color(0xFF8B5CF6),
